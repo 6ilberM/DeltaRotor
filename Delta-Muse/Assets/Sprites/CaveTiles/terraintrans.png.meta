@@ -114,7 +114,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 60aa923bc2ec1624caa793908b48e66d
+      spriteID: 38998580b938b15408fb487da1bf215d
       vertices: []
       indices: 
       edges: []
@@ -134,7 +134,31 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3c352f15f531eb64784672eebd43c0c9
+      spriteID: 10f6735bc82926546ad656ceafd67877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: terraintrans_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 160
+        width: 288
+        height: 103
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -144, y: 32.5}
+        - {x: -144, y: 51.5}
+        - {x: -112, y: 51.5}
+        - {x: -112, y: 32.5}
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4dc9693f719f00641bce2b01687d4be3
       vertices: []
       indices: 
       edges: []
@@ -154,7 +178,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cd95119f017a6bf4f94ba42e0e73fad9
+      spriteID: a600512098e186b4f8e6a02847512da2
       vertices: []
       indices: 
       edges: []
@@ -174,27 +198,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2aa5debd377d280439c72302d26e1e98
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: terraintrans_2
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 234
-        width: 36
-        height: 28
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9a117b9655641e44e8e99250a5097472
+      spriteID: 131def85de6c32446a23d0fdb50c4d29
       vertices: []
       indices: 
       edges: []

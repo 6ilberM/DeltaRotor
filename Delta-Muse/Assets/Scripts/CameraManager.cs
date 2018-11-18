@@ -23,9 +23,12 @@ public class CameraManager : MonoBehaviour
     private void FixedUpdate()
     {
         Myposition = transform.position;
-        // transform.position = new Vector(Mathf.Lerp(Myposition.x, myplayer.position.x, 1));
-        transform.position = new Vector3(Mathf.Lerp(Myposition.x, myplayer.position.x, 1), transform.position.y, transform.position.z);
-
+        if (myplayer != null)
+        {
+            transform.position = new Vector3(
+           Mathf.Lerp(Myposition.x, myplayer.position.x, .5f),
+           Mathf.Lerp(Myposition.y, myplayer.position.y, .5f), transform.position.z);
+        }
     }
 
 }

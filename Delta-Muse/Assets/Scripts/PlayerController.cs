@@ -10,7 +10,10 @@ public class PlayerController : MonoBehaviour
 
     //Variables
     [Range(1, 80)] public float f_SpeedScalar = 1.0f;
+    [Range(1, 80)] public float f_RotationSpeed = 1.0f;
     [Range(100, 600)] public int i_JumpForce = 100;
+
+    bool b_rotationComplete;
 
     //Misc
 
@@ -31,25 +34,32 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Rotatorobj!=null)
+        RotateParent();
+    }
+
+    private void RotateParent()
+    {
+        if (Rotatorobj != null)
         {
+            Vector3 RotationAxis = new Vector3(0, 0, 1);
             if (Input.GetKeyDown(KeyCode.Q))
             {
-
-
+                Rotatorobj.Rotate(RotationAxis, 90);
+                Debug.Log(Rotatorobj.rotation);
             }
 
             if (Input.GetKeyDown(KeyCode.R))
             {
-
+                Rotatorobj.Rotate(-RotationAxis, 90);
             }
+
         }
         else
         {
             //do nothing
         }
-
     }
+
     private void FixedUpdate()
     {
         if (Input.GetButton("Horizontal"))
@@ -66,7 +76,6 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-
 
 
 }

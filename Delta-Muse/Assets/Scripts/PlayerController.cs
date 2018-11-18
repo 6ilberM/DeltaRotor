@@ -10,15 +10,16 @@ public class PlayerController : MonoBehaviour
 
     //Variables
     [Range(1, 80)] public float f_SpeedScalar = 1.0f;
-    [Range(1, 80)] public float f_RotationSpeed = 1.0f;
+    [Range(0, 1)] public float f_RotSpeed = 0.1f;
     [Range(100, 600)] public int i_JumpForce = 100;
 
-    bool b_rotationComplete;
+    bool b_DirChosen;
 
-    //Misc
+    int i_jumpCount;
+    Quaternion qt_DesiredRot;
 
     //obj References
-    public Transform Rotatorobj;
+    public Transform Tr_obj;
 
     // Use this for initialization
     void Start()
@@ -34,29 +35,25 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        RotateParent();
+        EnableRotation();
     }
 
-    private void RotateParent()
+    private void EnableRotation()
     {
-        if (Rotatorobj != null)
+        if (Tr_obj != null && b_DirChosen == false)
         {
-            Vector3 RotationAxis = new Vector3(0, 0, 1);
+            var este = Tr_obj.eulerAngles;
             if (Input.GetKeyDown(KeyCode.Q))
             {
-                Rotatorobj.Rotate(RotationAxis, 90);
-                Debug.Log(Rotatorobj.rotation);
+                b_DirChosen = true;
+                qt_DesiredRot = Quaternion.Euler(0, 0, -90 + este.z);
             }
 
-            if (Input.GetKeyDown(KeyCode.R))
+            if (Input.GetKeyDown(KeyCode.E))
             {
-                Rotatorobj.Rotate(-RotationAxis, 90);
+                b_DirChosen = true;
+                qt_DesiredRot = Quaternion.Euler(0, 0, 90 + este.z);
             }
-
-        }
-        else
-        {
-            //do nothing
         }
     }
 
@@ -70,12 +67,31 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && i_jumpCount < 2)
         {
             rb2_MyBody.AddForce(Vector2.up * i_JumpForce);
+            i_jumpCount++;
         }
 
-    }
+        if (Tr_obj != null)
+        {
+            if (b_DirChosen == true&&qt_DesiredRot != Tr_obj.rotation)
+            {
+                Tr_obj.rotation = Quaternion.Slerp(Tr_obj.rotation, qt_DesiredRot, f_RotSpeed);
+            }
+            else if (qt_DesiredRot == Tr_obj.rotation&&b_DirChosen==true)
+            {
+                b_DirChosen = false;
+                qt_DesiredRot = new Quaternion();
+            }
 
+            
+            string mystr = Tr_obj.rotation.ToString();
+            mystr += " , ";
+            mystr += qt_DesiredRot.ToString();
+            Debug.Log(mystr);
+
+        }
+    }
 
 }

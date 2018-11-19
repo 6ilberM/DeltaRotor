@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
 
     //obj References
     public Transform Tr_obj;
+    private bool isgrounded;
 
     // Use this for initialization
     void Start()
@@ -42,17 +43,15 @@ public class PlayerController : MonoBehaviour
     {
         if (Tr_obj != null && b_DirChosen == false)
         {
-            var este = Tr_obj.eulerAngles;
             if (Input.GetKeyDown(KeyCode.Q))
             {
+                qt_DesiredRot = Quaternion.Euler(0, 0, -90 + Tr_obj.eulerAngles.z);
                 b_DirChosen = true;
-                qt_DesiredRot = Quaternion.Euler(0, 0, -90 + este.z);
             }
-
             if (Input.GetKeyDown(KeyCode.E))
             {
+                qt_DesiredRot = Quaternion.Euler(0, 0, 90 + Tr_obj.eulerAngles.z);
                 b_DirChosen = true;
-                qt_DesiredRot = Quaternion.Euler(0, 0, 90 + este.z);
             }
         }
     }
@@ -73,25 +72,26 @@ public class PlayerController : MonoBehaviour
             i_jumpCount++;
         }
 
-        if (Tr_obj != null)
+        if (isgrounded)
         {
-            if (b_DirChosen == true&&qt_DesiredRot != Tr_obj.rotation)
+            i_jumpCount = 0;
+            isgrounded = false;
+        }
+
+        if (Tr_obj != null && b_DirChosen == true)
+        {
+            float a, b;
+            a = qt_DesiredRot.eulerAngles.z;
+            b = Tr_obj.rotation.eulerAngles.z;
+            if (Mathf.Abs(a - b) <= .5)
+            {
+                Tr_obj.rotation = qt_DesiredRot;
+                b_DirChosen = false;
+            }
+            else
             {
                 Tr_obj.rotation = Quaternion.Slerp(Tr_obj.rotation, qt_DesiredRot, f_RotSpeed);
             }
-            else if (qt_DesiredRot == Tr_obj.rotation&&b_DirChosen==true)
-            {
-                b_DirChosen = false;
-                qt_DesiredRot = new Quaternion();
-            }
-
-            
-            string mystr = Tr_obj.rotation.ToString();
-            mystr += " , ";
-            mystr += qt_DesiredRot.ToString();
-            Debug.Log(mystr);
-
         }
     }
-
 }

@@ -32127,15 +32127,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4307462971292938, guid: bdacf25dafb85b34dbd8400ac64f805e, type: 2}
       propertyPath: m_LocalRotation.z
-      value: 0.0044180453
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4307462971292938, guid: bdacf25dafb85b34dbd8400ac64f805e, type: 2}
       propertyPath: m_LocalRotation.w
-      value: 0.9999903
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4307462971292938, guid: bdacf25dafb85b34dbd8400ac64f805e, type: 2}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0.50600004
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8195094280977251606, guid: bdacf25dafb85b34dbd8400ac64f805e,
         type: 2}
@@ -32156,6 +32156,22 @@ Prefab:
         type: 2}
       propertyPath: m_Tiles.Array.data[777].first.x
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4307462971292938, guid: bdacf25dafb85b34dbd8400ac64f805e, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4307462971292938, guid: bdacf25dafb85b34dbd8400ac64f805e, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1973227953396950, guid: bdacf25dafb85b34dbd8400ac64f805e, type: 2}
+      propertyPath: m_Name
+      value: floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942889852701086, guid: bdacf25dafb85b34dbd8400ac64f805e, type: 2}
+      propertyPath: m_Name
+      value: Tile
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bdacf25dafb85b34dbd8400ac64f805e, type: 2}
@@ -32275,7 +32291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   f_SpeedScalar: 16.15
-  f_RotSpeed: 0.1
+  f_RotSpeed: 0.15
   i_JumpForce: 359
   Tr_obj: {fileID: 1361738995}
 --- !u!50 &888954306

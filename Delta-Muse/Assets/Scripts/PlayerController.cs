@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     //Variables
     [Range(1, 80)] public float f_SpeedScalar = 1.0f;
     [Range(0, 1)] public float f_RotSpeed = 0.1f;
-    [Range(100, 600)] public int i_JumpForce = 100;
+    [Range(2, 14)] public int i_JumpScalar = 2;
 
     bool b_DirChosen;
 
@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     //obj References
     public Transform Tr_obj;
     private bool isgrounded;
+    bool b_jumpL, b_HorizL = false;
 
     // Use this for initialization
     void Start()
@@ -36,10 +37,106 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        EnableRotation();
+        RotationSelect();
+        MoveInputListen();
+
     }
 
-    private void EnableRotation()
+    private void FixedUpdate()
+    {
+   if (isgrounded)
+        {
+            i_jumpCount = 0;
+        }
+
+        if (b_HorizL)
+        {
+            rb2_MyBody.AddForce(new Vector2(Input.GetAxis("Horizontal") * f_SpeedScalar, 0));
+        }
+     
+        if (b_jumpL)
+        {
+            if (rb2_MyBody.velocity.y < 0)
+            {
+                rb2_MyBody.velocity = new Vector2(rb2_MyBody.velocity.x, 0);
+            }
+
+            switch (i_jumpCount)
+            {
+                case 0:
+                    rb2_MyBody.AddForce(Vector2.up * i_JumpScalar, ForceMode2D.Impulse);
+                    i_jumpCount++;
+
+                    b_jumpL = false;
+                    break;
+
+                case 1:
+                    rb2_MyBody.AddForce(Vector2.up * i_JumpScalar * .5f, ForceMode2D.Impulse);
+                    i_jumpCount++;
+
+                    b_jumpL = false;
+                    break;
+
+                default:
+
+                    b_jumpL = false;
+                    break;
+
+            }
+        }
+
+//Rotate!
+        if (Tr_obj != null && b_DirChosen == true)
+        {
+            float a, b;
+            a = qt_DesiredRot.eulerAngles.z;
+            b = Tr_obj.rotation.eulerAngles.z;
+            //Close Enough? w/ thresholdCheck
+            if (Mathf.Abs(a - b) <= .5)
+            {
+                Tr_obj.rotation = qt_DesiredRot;
+                b_DirChosen = false;
+            }
+            else
+            {
+                Tr_obj.rotation = Quaternion.Slerp(Tr_obj.rotation, qt_DesiredRot, f_RotSpeed);
+            }
+        }
+
+    }
+
+    private void MoveInputListen()
+    {
+        if (Input.GetButton("Horizontal"))
+        {
+            if (rb2_MyBody.velocity.magnitude < 400)
+            {
+                b_HorizL = true;
+            }
+            else if (Input.GetAxis("Horizontal") == 0)
+            {
+                b_HorizL = false;
+            }
+        }
+
+        if (Input.GetButtonDown("Jump") && i_jumpCount < 2)
+        {
+            // rb2_MyBody.AddForce(new Vector2(0, -rb2_MyBody.velocity.y));
+            b_jumpL = true;
+        }
+        else if (Input.GetButtonDown("Jump"))
+        {
+            //Do nothing
+            Debug.Log("pastLimit");
+        }
+
+        if (Input.GetKeyDown(KeyCode.Period))
+        {
+            i_jumpCount = 0;
+        }
+    }
+
+    private void RotationSelect()
     {
         if (Tr_obj != null && b_DirChosen == false)
         {
@@ -52,45 +149,6 @@ public class PlayerController : MonoBehaviour
             {
                 qt_DesiredRot = Quaternion.Euler(0, 0, 90 + Tr_obj.eulerAngles.z);
                 b_DirChosen = true;
-            }
-        }
-    }
-
-    private void FixedUpdate()
-    {
-        if (Input.GetButton("Horizontal"))
-        {
-            if (rb2_MyBody.velocity.magnitude < 400)
-            {
-                rb2_MyBody.AddForce(new Vector2(Input.GetAxis("Horizontal") * f_SpeedScalar, 0));
-            }
-        }
-
-        if (Input.GetButtonDown("Jump") && i_jumpCount < 2)
-        {
-            rb2_MyBody.AddForce(Vector2.up * i_JumpForce);
-            i_jumpCount++;
-        }
-
-        if (isgrounded)
-        {
-            i_jumpCount = 0;
-            isgrounded = false;
-        }
-
-        if (Tr_obj != null && b_DirChosen == true)
-        {
-            float a, b;
-            a = qt_DesiredRot.eulerAngles.z;
-            b = Tr_obj.rotation.eulerAngles.z;
-            if (Mathf.Abs(a - b) <= .5)
-            {
-                Tr_obj.rotation = qt_DesiredRot;
-                b_DirChosen = false;
-            }
-            else
-            {
-                Tr_obj.rotation = Quaternion.Slerp(Tr_obj.rotation, qt_DesiredRot, f_RotSpeed);
             }
         }
     }

@@ -32292,7 +32292,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   f_SpeedScalar: 16.15
   f_RotSpeed: 0.15
-  i_JumpForce: 359
+  i_JumpForce: 10
   Tr_obj: {fileID: 1361738995}
 --- !u!50 &888954306
 Rigidbody2D:
@@ -32323,7 +32323,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1361738995}
   m_Layer: 0
-  m_Name: RotatorManager
+  m_Name: RotatorParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

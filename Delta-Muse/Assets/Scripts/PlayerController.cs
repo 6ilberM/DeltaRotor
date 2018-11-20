@@ -44,7 +44,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-   if (isgrounded)
+        if (isgrounded)
         {
             i_jumpCount = 0;
         }
@@ -53,7 +53,7 @@ public class PlayerController : MonoBehaviour
         {
             rb2_MyBody.AddForce(new Vector2(Input.GetAxis("Horizontal") * f_SpeedScalar, 0));
         }
-     
+
         if (b_jumpL)
         {
             if (rb2_MyBody.velocity.y < 0)
@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-//Rotate!
+        //Rotate!
         if (Tr_obj != null && b_DirChosen == true)
         {
             float a, b;
@@ -100,6 +100,7 @@ public class PlayerController : MonoBehaviour
             else
             {
                 Tr_obj.rotation = Quaternion.Slerp(Tr_obj.rotation, qt_DesiredRot, f_RotSpeed);
+                rb2_MyBody.velocity = Vector2.zero;
             }
         }
 

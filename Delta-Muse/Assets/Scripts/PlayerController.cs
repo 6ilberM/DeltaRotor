@@ -12,8 +12,9 @@ public class PlayerController : MonoBehaviour
     [Range(1, 80)] public float f_SpeedScalar = 1.0f;
     [Range(0, 1)] public float f_RotSpeed = 0.1f;
     [Range(2, 14)] public int i_JumpScalar = 2;
-
-    bool b_DirChosen;
+    
+//Make a check on this on the Rotation manager
+    public bool b_DirChosen;
 
     int i_jumpCount;
     Quaternion qt_DesiredRot;

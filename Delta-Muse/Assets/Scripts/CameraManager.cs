@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class CameraManager : MonoBehaviour
 {
 
 
     public Transform myplayer;
-    Vector2 Myposition;
+    Vector2 Myposition; 
     // Use this for initialization
     void Start()
     {

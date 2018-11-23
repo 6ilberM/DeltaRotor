@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
     public Transform Tr_obj;
     private bool b_isgrounded;
     bool b_jumpL, b_HorizL, b_HasKey = false;
+    public bool b_DeathRequest = false;
 
     // Use this for initialization
     void Start()
@@ -63,7 +64,7 @@ public class PlayerController : MonoBehaviour
         }
         if (GetComponent<BoxCollider2D>().OverlapCollider(Cfilter2d1, overlapResults) != 0)
         {
-            Debug.Log(GetComponent<BoxCollider2D>().OverlapCollider(Cfilter2d1, overlapResults)); 
+            Debug.Log(GetComponent<BoxCollider2D>().OverlapCollider(Cfilter2d1, overlapResults));
         }
 
     }
@@ -109,6 +110,7 @@ public class PlayerController : MonoBehaviour
         //Rotate!
         if (Tr_obj != null && b_DirChosen == true)
         {
+
             float a, b;
             a = qt_DesiredRot.eulerAngles.z;
             b = Tr_obj.rotation.eulerAngles.z;
@@ -117,11 +119,14 @@ public class PlayerController : MonoBehaviour
             {
                 Tr_obj.rotation = qt_DesiredRot;
                 b_DirChosen = false;
+                rb2_MyBody.simulated = true;
+
             }
             else
             {
                 Tr_obj.rotation = Quaternion.Slerp(Tr_obj.rotation, qt_DesiredRot, f_RotSpeed);
                 rb2_MyBody.velocity = Vector2.zero;
+                rb2_MyBody.simulated = false;
             }
         }
 
@@ -174,4 +179,5 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
 }

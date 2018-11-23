@@ -10,11 +10,20 @@ public class Pickup : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Wow!");
+        Debug.Log(other.name);
+
+        if (ref_portal != null)
+        {
+            ref_portal.b_isOpen = true;
+        }
+        else
+        {
+            Debug.LogWarning("Dportal Ref,Cannot be found.");
+        }
         //Play Little animation here and sound Woo!
         //Start Timer!
-        Destroy(gameObject);
-        TimerToVanish();
+        // Destroy(gameObject);
+        // TimerToVanish();
     }
 
 

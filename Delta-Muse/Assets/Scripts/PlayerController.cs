@@ -40,7 +40,6 @@ public class PlayerController : MonoBehaviour
         RotationSelect();
         MoveInputListen();
 
-
         if (Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks")))
         {
             b_isgrounded = true;
@@ -61,7 +60,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-
 
         if (b_HorizL)
         {

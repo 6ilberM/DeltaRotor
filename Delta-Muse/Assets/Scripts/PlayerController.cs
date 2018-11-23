@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
 
     //obj References
     public Transform Tr_obj;
-    private bool isgrounded;
+    private bool b_isgrounded;
     bool b_jumpL, b_HorizL = false;
 
     // Use this for initialization
@@ -40,14 +40,28 @@ public class PlayerController : MonoBehaviour
         RotationSelect();
         MoveInputListen();
 
+
+        if (Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks")))
+        {
+            b_isgrounded = true;
+            // GetComponent<Animator>().SetBool("isGrounded", true);
+        }
+        else
+        {
+            b_isgrounded = false;
+            // GetComponent<Animator>().SetBool("isGrounded", false)
+        }
+
+        //No Need to check every Tick.
+        if (b_isgrounded)
+        {
+            i_jumpCount = 0;
+        }
     }
 
     private void FixedUpdate()
     {
-        if (isgrounded)
-        {
-            i_jumpCount = 0;
-        }
+
 
         if (b_HorizL)
         {
@@ -81,7 +95,6 @@ public class PlayerController : MonoBehaviour
 
                     b_jumpL = false;
                     break;
-
             }
         }
 

@@ -12,22 +12,26 @@ public class PlayerController : MonoBehaviour
     [Range(1, 80)] public float f_SpeedScalar = 1.0f;
     [Range(0, 1)] public float f_RotSpeed = 0.1f;
     [Range(2, 14)] public int i_JumpScalar = 2;
-    
-//Make a check on this on the Rotation manager
+
+    //Make a check on this on the Rotation manager
     public bool b_DirChosen;
 
     int i_jumpCount;
     Quaternion qt_DesiredRot;
-
+    //Overlap methods 
+    ContactFilter2D Cfilter2d1;
+    Collider2D[] overlapResults;
     //obj References
     public Transform Tr_obj;
     private bool b_isgrounded;
-    bool b_jumpL, b_HorizL = false;
+    bool b_jumpL, b_HorizL, b_HasKey = false;
 
     // Use this for initialization
     void Start()
     {
-
+        Cfilter2d1.useTriggers = true;
+        Cfilter2d1.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer));
+        Cfilter2d1.useLayerMask = true;
     }
 
     private void Awake()
@@ -57,6 +61,11 @@ public class PlayerController : MonoBehaviour
         {
             i_jumpCount = 0;
         }
+        if (GetComponent<BoxCollider2D>().OverlapCollider(Cfilter2d1, overlapResults) != 0)
+        {
+            Debug.Log(GetComponent<BoxCollider2D>().OverlapCollider(Cfilter2d1, overlapResults)); 
+        }
+
     }
 
     private void FixedUpdate()

@@ -35,14 +35,13 @@ public class MovingBlock : MonoBehaviour
             t += Time.deltaTime;
             Debug.Log("isadding");
         }
+        transform.position = SineFunction(transform.position.x, transform.position.y, t, f_customStep, i_speed);
+
     }
 
 
     private void FixedUpdate()
     {
-
-
-        transform.position = SineFunction(transform.position.x, transform.position.y, t, f_customStep, i_speed);
     }
     const float pi = 3.14f;
     // static Vector3 SineFunction(float _X, float _z, float _t, float Amplitude)
@@ -61,7 +60,7 @@ public class MovingBlock : MonoBehaviour
         if (!MyController.b_DirChosen)
         {
             p.x = _X;
-            p.y = Amplitude * Mathf.Sin((_X + (_t)) / _period);
+            p.y = Amplitude * Mathf.Sin(( (_t)) / _period);
 
         }
         else

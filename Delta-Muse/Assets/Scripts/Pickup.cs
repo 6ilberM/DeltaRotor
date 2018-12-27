@@ -6,26 +6,29 @@ using UnityEngine;
 
 public class Pickup : MonoBehaviour
 {
-    public DPortal ref_portal;
+    public DPortal[] ref_portal;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log(other.name);
 
-        if (ref_portal != null)
+        if (ref_portal != null && ref_portal.Length > 1)
         {
-            ref_portal.b_isOpen = true;
+            for (int i = 0; i < ref_portal.Length; i++)
+            {
+                ref_portal[i].b_isOpen = true;
+            }
         }
         else
         {
             Debug.LogWarning("Dportal Ref,Cannot be found.");
         }
+
         //Play Little animation here and sound Woo!
         //Start Timer!
         // Destroy(gameObject);
         // TimerToVanish();
     }
-
 
     IEnumerator TimerToVanish()
     {

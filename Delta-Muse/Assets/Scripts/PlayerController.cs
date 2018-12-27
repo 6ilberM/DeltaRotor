@@ -68,6 +68,7 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+    bool b_negateonce = false;
 
     private void FixedUpdate()
     {
@@ -108,6 +109,12 @@ public class PlayerController : MonoBehaviour
         }
 
         //Rotate!
+        RotationLogic();
+
+    }
+
+    private void RotationLogic()
+    {
         if (Tr_obj != null && b_DirChosen == true)
         {
 
@@ -115,21 +122,25 @@ public class PlayerController : MonoBehaviour
             a = qt_DesiredRot.eulerAngles.z;
             b = Tr_obj.rotation.eulerAngles.z;
             //Close Enough? w/ thresholdCheck
-            if (Mathf.Abs(a - b) <= .5)
+            if (Mathf.Abs(a - b) <= 0.3f)
             {
                 Tr_obj.rotation = qt_DesiredRot;
                 b_DirChosen = false;
                 rb2_MyBody.simulated = true;
-
+                b_negateonce = false;
             }
+
             else
             {
-                Tr_obj.rotation = Quaternion.Slerp(Tr_obj.rotation, qt_DesiredRot, f_RotSpeed);
-                rb2_MyBody.velocity = Vector2.zero;
-                rb2_MyBody.simulated = false;
+                Tr_obj.rotation = Quaternion.Lerp(Tr_obj.rotation, qt_DesiredRot, f_RotSpeed);
+                if (!b_negateonce)
+                {
+                    rb2_MyBody.velocity = Vector2.zero;
+                    rb2_MyBody.simulated = false;
+                    b_negateonce = true;
+                }
             }
         }
-
     }
 
     private void MoveInputListen()

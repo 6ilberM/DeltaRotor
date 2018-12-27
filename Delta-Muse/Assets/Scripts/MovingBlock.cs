@@ -6,10 +6,18 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class MovingBlock : MonoBehaviour
 {
-    [Range(1, 8)] public int i_speed = 1;
+    [Range(0.01f, 10)] public float f_speed;
+    [Range(0.1f, 5)] public float f_distance = .5f;
+
     Rigidbody2D rb2_Body;
+
+    ///My initial position
+    Vector2 v2_inPos;
+    Vector2 v2_Dir;
+
     //temp fix
     public Transform Player;
+
     PlayerController MyController;
 
     [Range(1, 8)] public float f_customStep = 1; //Time Not good enough 
@@ -17,8 +25,10 @@ public class MovingBlock : MonoBehaviour
     float t;
     private void Start()
     {
-
+        v2_inPos = transform.position;
+        v2_Dir = gameObject.transform.up;
     }
+
     private void Awake()
     {
         rb2_Body = GetComponent<Rigidbody2D>();
@@ -28,47 +38,49 @@ public class MovingBlock : MonoBehaviour
         }
     }
 
+    //temp
+    Vector2 huh;
+    private bool b_up;
+
     private void Update()
     {
-        if (MyController.b_DirChosen == false)
+
+        // transform.position = SineFunction(transform.position.x, transform.position.y, t, f_customStep, i_speed);
+        huh = (Vector2)transform.position - v2_inPos;
+        if (huh.magnitude > f_distance - 0.5f && b_up)
         {
-            t += Time.deltaTime;
-            Debug.Log("isadding");
+            b_up = false;
         }
-        transform.position = SineFunction(transform.position.x, transform.position.y, t, f_customStep, i_speed);
-
+        else if (huh.magnitude < .5f && !b_up)
+        {
+            b_up = true;
+        }
     }
-
 
     private void FixedUpdate()
     {
-    }
-    const float pi = 3.14f;
-    // static Vector3 SineFunction(float _X, float _z, float _t, float Amplitude)
-    // {
-    //     Vector3 p;
-    //     p.x = _X;
-    //     p.y = Mathf.Sin(pi * (_X + _t));
-    //     p.z = _z;
-    //     return p;
-    // }
-    Vector2 SineFunction(float _X, float _Y, float _t, float _period, float Amplitude)
-    {
-        Vector2 p;
-        Quaternion why = gameObject.transform.rotation;
-        Vector3 hm = why.eulerAngles;
-        if (!MyController.b_DirChosen)
+        if (MyController.b_DirChosen == false)
         {
-            p.x = _X;
-            p.y = Amplitude * Mathf.Sin(( (_t)) / _period);
+            // t += Time.deltaTime;
+            Debug.Log("isadding");
+            if (b_up)
+            {
+                transform.position = Vector2.Lerp(transform.position, v2_inPos + v2_Dir * f_distance, Time.deltaTime / f_speed);
 
+            }
+            else
+            {
+                transform.position = Vector2.Lerp(transform.position, v2_inPos, Time.deltaTime / f_speed);
+
+            }
+
+            // transform.position = transform.position + (Vector3)v2_Dir * i_speed;
         }
+
         else
         {
-            p.x = _X;
-            p.y = _Y;
+            v2_Dir = gameObject.transform.up;
+            v2_inPos = (Vector2)transform.position - huh;
         }
-        return p;
     }
-
 }

@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 public class DPortal : MonoBehaviour
 {
     public bool b_isOpen = false;
+    public DPortal lobj;
 
     private void Start()
     {
@@ -27,12 +28,15 @@ public class DPortal : MonoBehaviour
             //Animate Openning -- Shake Screen a little
         }
     }
+    //move funct
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.name == "pl1" && b_isOpen)
+        if (other.gameObject.name == "pl1" && b_isOpen && lobj != null)
         {
-            Debug.Log("Let's Go to the next Level!");
-            SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
+            lobj.b_isOpen = false;
+            other.gameObject.transform.position = new Vector3(lobj.transform.position.x, lobj.transform.position.y, other.gameObject.transform.position.z);
+
+            b_isOpen = false;
 
         }
     }

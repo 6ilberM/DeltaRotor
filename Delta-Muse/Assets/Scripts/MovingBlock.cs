@@ -26,7 +26,7 @@ public class MovingBlock : MonoBehaviour
     private void Start()
     {
         v2_inPos = transform.position;
-        v2_Dir = gameObject.transform.up;
+        v2_Dir = transform.up;
     }
 
     private void Awake()
@@ -44,9 +44,8 @@ public class MovingBlock : MonoBehaviour
 
     private void Update()
     {
-
-        // transform.position = SineFunction(transform.position.x, transform.position.y, t, f_customStep, i_speed);
         huh = (Vector2)transform.position - v2_inPos;
+
         if (huh.magnitude > f_distance - 0.5f && b_up)
         {
             b_up = false;
@@ -54,6 +53,7 @@ public class MovingBlock : MonoBehaviour
         else if (huh.magnitude < .5f && !b_up)
         {
             b_up = true;
+            v2_inPos = (Vector2)transform.position - huh;
         }
     }
 
@@ -61,26 +61,23 @@ public class MovingBlock : MonoBehaviour
     {
         if (MyController.b_DirChosen == false)
         {
+
             // t += Time.deltaTime;
             Debug.Log("isadding");
             if (b_up)
             {
                 transform.position = Vector2.Lerp(transform.position, v2_inPos + v2_Dir * f_distance, Time.deltaTime / f_speed);
-
             }
             else
             {
                 transform.position = Vector2.Lerp(transform.position, v2_inPos, Time.deltaTime / f_speed);
 
             }
-
-            // transform.position = transform.position + (Vector3)v2_Dir * i_speed;
         }
 
         else
         {
             v2_Dir = gameObject.transform.up;
-            v2_inPos = (Vector2)transform.position - huh;
         }
     }
 }

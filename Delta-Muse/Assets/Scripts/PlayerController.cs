@@ -10,11 +10,14 @@ public class PlayerController : MonoBehaviour
 
     //Variables
     [Range(1, 80)] public float f_SpeedScalar = 1.0f;
-    [Range(0, 1)] public float f_RotSpeed = 0.1f;
     [Range(2, 14)] public int i_JumpScalar = 2;
 
+    float currentTime = 0.0f;
+    ///How long An object Rotates
+    public float f_DesRDelta = 0.62f;
+
     //Make a check on this on the Rotation manager
-    public bool b_DirChosen;
+    public bool b_DirChosen, b_RotDoOnce;
 
     int i_jumpCount;
     Quaternion qt_DesiredRot;
@@ -56,7 +59,6 @@ public class PlayerController : MonoBehaviour
             b_isgrounded = false;
             // GetComponent<Animator>().SetBool("isGrounded", false)
         }
-
         //No Need to check every Tick.
         if (b_isgrounded)
         {
@@ -118,21 +120,25 @@ public class PlayerController : MonoBehaviour
         if (Tr_obj != null && b_DirChosen == true)
         {
 
+            currentTime += Time.deltaTime;
+
             float a, b;
             a = qt_DesiredRot.eulerAngles.z;
             b = Tr_obj.rotation.eulerAngles.z;
             //Close Enough? w/ thresholdCheck
-            if (Mathf.Abs(a - b) <= 0.3f)
+            if (Mathf.Abs(a - b) <= 0.0001f)
             {
                 Tr_obj.rotation = qt_DesiredRot;
                 b_DirChosen = false;
                 rb2_MyBody.simulated = true;
                 b_negateonce = false;
+                b_RotDoOnce = false;
+                currentTime = 0.0f;
             }
 
             else
             {
-                Tr_obj.rotation = Quaternion.Lerp(Tr_obj.rotation, qt_DesiredRot, f_RotSpeed);
+                Tr_obj.rotation = Quaternion.Lerp(Tr_obj.rotation, qt_DesiredRot, currentTime / f_DesRDelta);
                 if (!b_negateonce)
                 {
                     rb2_MyBody.velocity = Vector2.zero;

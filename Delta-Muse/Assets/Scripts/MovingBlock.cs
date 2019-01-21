@@ -6,10 +6,15 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class MovingBlock : MonoBehaviour
 {
-    [Range(0.01f, 10)] public float f_speed;
+    [Range(0.1f, 25)] public float f_DesiredTime = 1;
     [Range(0.1f, 5)] public float f_distance = .5f;
 
+    float f_dt;
     Rigidbody2D rb2_Body;
+
+    //temp
+    Vector2 huh;
+    private bool b_up;
 
     ///My initial position
     Vector2 v2_inPos;
@@ -22,7 +27,6 @@ public class MovingBlock : MonoBehaviour
 
     [Range(1, 8)] public float f_customStep = 1; //Time Not good enough 
 
-    float t;
     private void Start()
     {
         v2_inPos = transform.position;
@@ -38,9 +42,6 @@ public class MovingBlock : MonoBehaviour
         }
     }
 
-    //temp
-    Vector2 huh;
-    private bool b_up;
 
     private void Update()
     {
@@ -49,11 +50,13 @@ public class MovingBlock : MonoBehaviour
         if (huh.magnitude > f_distance - 0.5f && b_up)
         {
             b_up = false;
+            f_dt = 0;
         }
         else if (huh.magnitude < .5f && !b_up)
         {
             b_up = true;
             v2_inPos = (Vector2)transform.position - huh;
+            f_dt = 0;
         }
     }
 
@@ -61,20 +64,16 @@ public class MovingBlock : MonoBehaviour
     {
         if (MyController.b_DirChosen == false)
         {
-
-            // t += Time.deltaTime;
-            Debug.Log("isadding");
+            f_dt += Time.deltaTime;
             if (b_up)
             {
-                transform.position = Vector2.Lerp(transform.position, v2_inPos + v2_Dir * f_distance, Time.deltaTime / f_speed);
+                transform.position = Vector2.Lerp(transform.position, v2_inPos + v2_Dir * f_distance, f_dt / f_DesiredTime);
             }
             else
             {
-                transform.position = Vector2.Lerp(transform.position, v2_inPos, Time.deltaTime / f_speed);
-
+                transform.position = Vector2.Lerp(transform.position, v2_inPos, f_dt / f_DesiredTime);
             }
         }
-
         else
         {
             v2_Dir = gameObject.transform.up;

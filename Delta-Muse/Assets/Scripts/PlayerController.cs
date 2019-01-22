@@ -6,9 +6,10 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     //Components
-    Rigidbody2D rb2_MyBody;
+    public Rigidbody2D rb2_MyBody;
 
     //Variables
+    public RotationManager rm_Main;
     [Range(1, 80)] public float f_SpeedScalar = 1.0f;
     [Range(2, 14)] public int i_JumpScalar = 2;
 
@@ -21,13 +22,15 @@ public class PlayerController : MonoBehaviour
 
     int i_jumpCount;
     Quaternion qt_DesiredRot;
+    
     //Overlap methods 
     ContactFilter2D Cfilter2d1;
     Collider2D[] overlapResults;
     //obj References
-    public Transform Tr_obj;
+
     private bool b_isgrounded;
     bool b_jumpL, b_HorizL, b_HasKey = false;
+
     public bool b_DeathRequest = false;
 
     // Use this for initialization
@@ -36,13 +39,14 @@ public class PlayerController : MonoBehaviour
         Cfilter2d1.useTriggers = true;
         Cfilter2d1.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer));
         Cfilter2d1.useLayerMask = true;
+        rm_Main = Object.FindObjectOfType<RotationManager>();
     }
 
     private void Awake()
     {
         rb2_MyBody = GetComponent<Rigidbody2D>();
+        // rm_Main = Object.FindObjectOfType<RotationManager>();
     }
-
     // Update is called once per frame
     void Update()
     {
@@ -111,42 +115,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //Rotate!
-        RotationLogic();
-
-    }
-
-    private void RotationLogic()
-    {
-        if (Tr_obj != null && b_DirChosen == true)
-        {
-
-            currentTime += Time.deltaTime;
-
-            float a, b;
-            a = qt_DesiredRot.eulerAngles.z;
-            b = Tr_obj.rotation.eulerAngles.z;
-            //Close Enough? w/ thresholdCheck
-            if (Mathf.Abs(a - b) <= 0.0001f)
-            {
-                Tr_obj.rotation = qt_DesiredRot;
-                b_DirChosen = false;
-                rb2_MyBody.simulated = true;
-                b_negateonce = false;
-                b_RotDoOnce = false;
-                currentTime = 0.0f;
-            }
-
-            else
-            {
-                Tr_obj.rotation = Quaternion.Lerp(Tr_obj.rotation, qt_DesiredRot, currentTime / f_DesRDelta);
-                if (!b_negateonce)
-                {
-                    rb2_MyBody.velocity = Vector2.zero;
-                    rb2_MyBody.simulated = false;
-                    b_negateonce = true;
-                }
-            }
-        }
+        rm_Main.Rotate(b_DirChosen, qt_DesiredRot);
     }
 
     private void MoveInputListen()
@@ -180,19 +149,23 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //Make conditional Versions of this for enabling bigger rotations
+
     private void RotationSelect()
     {
-        if (Tr_obj != null && b_DirChosen == false)
+        if (b_DirChosen == false)
         {
             if (Input.GetKeyDown(KeyCode.Q))
             {
-                qt_DesiredRot = Quaternion.Euler(0, 0, -90 + Tr_obj.eulerAngles.z);
+                qt_DesiredRot = Quaternion.Euler(0, 0, -90 + rm_Main.transform.eulerAngles.z);
                 b_DirChosen = true;
+                rb2_MyBody.simulated = false;
             }
             if (Input.GetKeyDown(KeyCode.E))
             {
-                qt_DesiredRot = Quaternion.Euler(0, 0, 90 + Tr_obj.eulerAngles.z);
+                qt_DesiredRot = Quaternion.Euler(0, 0, 90 + rm_Main.transform.eulerAngles.z);
                 b_DirChosen = true;
+                rb2_MyBody.simulated = false;
             }
         }
     }

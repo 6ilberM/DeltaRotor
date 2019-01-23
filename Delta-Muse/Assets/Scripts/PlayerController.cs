@@ -13,23 +13,23 @@ public class PlayerController : MonoBehaviour
     [Range(1, 80)] public float f_SpeedScalar = 1.0f;
     [Range(2, 14)] public int i_JumpScalar = 2;
 
-    float currentTime = 0.0f;
     ///How long An object Rotates
     public float f_DesRDelta = 0.62f;
 
     //Make a check on this on the Rotation manager
-    public bool b_DirChosen, b_RotDoOnce;
+    public bool b_DirChosen;
 
     int i_jumpCount;
     Quaternion qt_DesiredRot;
-    
+
     //Overlap methods 
     ContactFilter2D Cfilter2d1;
-    Collider2D[] overlapResults;
+    Collider2D[] overlapResults= null;
+    
     //obj References
 
     private bool b_isgrounded;
-    bool b_jumpL, b_HorizL, b_HasKey = false;
+    bool b_jumpL, b_HorizL = false;
 
     public bool b_DeathRequest = false;
 
@@ -74,7 +74,15 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-    bool b_negateonce = false;
+
+    //Temp
+    float cutime;
+    ///Determines how fast the player rotates
+    public float plyrotspeed = 2;
+    bool b_securitycheck;
+
+    int RotId = 0;
+
 
     private void FixedUpdate()
     {
@@ -101,7 +109,7 @@ public class PlayerController : MonoBehaviour
                     break;
 
                 case 1:
-                    rb2_MyBody.AddForce(Vector2.up * i_JumpScalar * .5f, ForceMode2D.Impulse);
+                    rb2_MyBody.AddForce(Vector2.up * i_JumpScalar * .7f, ForceMode2D.Impulse);
                     i_jumpCount++;
 
                     b_jumpL = false;
@@ -116,6 +124,53 @@ public class PlayerController : MonoBehaviour
 
         //Rotate!
         rm_Main.Rotate(b_DirChosen, qt_DesiredRot);
+
+        OrientSelfUp();
+    }
+
+    private void OrientSelfUp()
+    {
+        if (!b_DirChosen)
+        {
+            if (Mathf.Abs(qt_DesiredRot.eulerAngles.z
+        - transform.localRotation.eulerAngles.z) <= 0.0001f)
+            {
+                transform.localRotation = rm_Main.transform.localRotation;
+                cutime = 0.0f;
+            }
+            else
+            {
+                cutime += Time.deltaTime;
+
+                Quaternion qtDir;
+
+                switch (RotId)
+                {
+                    case 1:
+                        qtDir = Quaternion.Euler(0, 0, 180 + 90);
+                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, cutime / plyrotspeed);
+
+                        break;
+
+                    case 3:
+                        qtDir = Quaternion.Euler(0, 0, 90);
+                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, cutime / plyrotspeed);
+
+                        break;
+
+                    default:
+                        qtDir = qt_DesiredRot;
+                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, cutime / plyrotspeed);
+                        break;
+
+                }
+            }
+        }
+        else
+        {
+            cutime = 0;
+        }
+
     }
 
     private void MoveInputListen()
@@ -150,22 +205,88 @@ public class PlayerController : MonoBehaviour
     }
 
     //Make conditional Versions of this for enabling bigger rotations
-
     private void RotationSelect()
     {
         if (b_DirChosen == false)
         {
-            if (Input.GetKeyDown(KeyCode.Q))
+            switch (RotId)
             {
-                qt_DesiredRot = Quaternion.Euler(0, 0, -90 + rm_Main.transform.eulerAngles.z);
-                b_DirChosen = true;
-                rb2_MyBody.simulated = false;
-            }
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                qt_DesiredRot = Quaternion.Euler(0, 0, 90 + rm_Main.transform.eulerAngles.z);
-                b_DirChosen = true;
-                rb2_MyBody.simulated = false;
+                case 0:
+                    if (Input.GetKeyDown(KeyCode.Q))
+                    {
+                        qt_DesiredRot = Quaternion.Euler(0, 0, 180 + 90);
+                        b_DirChosen = true;
+                        rb2_MyBody.simulated = false;
+                        RotId = 3;
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        qt_DesiredRot = Quaternion.Euler(0, 0, 90);
+                        b_DirChosen = true;
+                        rb2_MyBody.simulated = false;
+                        RotId++;
+                    }
+
+                    break;
+                case 1:
+                    if (Input.GetKeyDown(KeyCode.Q))
+                    {
+                        qt_DesiredRot = Quaternion.Euler(0, 0, 0);
+                        b_DirChosen = true;
+                        rb2_MyBody.simulated = false;
+                        RotId = 0;
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        qt_DesiredRot = Quaternion.Euler(0, 0, 180);
+                        b_DirChosen = true;
+                        rb2_MyBody.simulated = false;
+                        RotId++;
+                    }
+                    break;
+
+                case 2:
+                    if (Input.GetKeyDown(KeyCode.Q))
+                    {
+                        qt_DesiredRot = Quaternion.Euler(0, 0, 90);
+                        b_DirChosen = true;
+                        rb2_MyBody.simulated = false;
+                        RotId--;
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        qt_DesiredRot = Quaternion.Euler(0, 0, 180 + 90);
+                        b_DirChosen = true;
+                        rb2_MyBody.simulated = false;
+                        RotId++;
+                    }
+                    break;
+
+                case 3:
+                    if (Input.GetKeyDown(KeyCode.Q))
+                    {
+                        qt_DesiredRot = Quaternion.Euler(0, 0, 180);
+                        b_DirChosen = true;
+                        rb2_MyBody.simulated = false;
+                        RotId--;
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        qt_DesiredRot = Quaternion.Euler(0, 0, 0);
+                        b_DirChosen = true;
+                        rb2_MyBody.simulated = false;
+                        RotId = 0;
+                    }
+                    break;
+
+
+                default:
+                    //Unknown State
+                    break;
             }
         }
     }

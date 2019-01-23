@@ -10,7 +10,6 @@ public class MovingBlock : MonoBehaviour
     [Range(0.1f, 5)] public float f_distance = .5f;
 
     float f_dt;
-    Rigidbody2D rb2_Body;
 
     //temp
     Vector2 huh;
@@ -35,7 +34,6 @@ public class MovingBlock : MonoBehaviour
 
     private void Awake()
     {
-        rb2_Body = GetComponent<Rigidbody2D>();
         if (Player != null)
         {
             MyController = Player.GetComponent<PlayerController>();

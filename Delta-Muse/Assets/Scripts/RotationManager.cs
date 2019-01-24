@@ -10,6 +10,8 @@ public class RotationManager : MonoBehaviour
 
     public bool b_Rotate;
     public float f_RotDuration = 2.0f;
+    public int rotationId = 0;
+
 
     // Use this for initialization
 
@@ -39,15 +41,15 @@ public class RotationManager : MonoBehaviour
             if (Mathf.Abs(a - b) <= 0.4f)
             {
                 // transform.rotation = DesiredRotation;
-                player.b_DirChosen = false;
+                player.b_dirChosen = false;
                 b_Rotate = b_DirCh;
                 currentTime = 0.0f;
-                player.rb2_MyBody.simulated = true;
+                player.m_rigidBody.simulated = true;
 
                 //how much force should be lost after Rotating 
-                if (player.rb2_MyBody.velocity.y <= -0.5f)
+                if (player.m_rigidBody.velocity.y <= -0.5f)
                 {
-                    player.rb2_MyBody.velocity = new Vector2(player.rb2_MyBody.velocity.x, player.rb2_MyBody.velocity.y * 0.25f);
+                    player.m_rigidBody.velocity = new Vector2(player.m_rigidBody.velocity.x, player.m_rigidBody.velocity.y * 0.25f);
                 }
             }
             else

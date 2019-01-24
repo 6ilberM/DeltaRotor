@@ -10,8 +10,7 @@ public class Pickup : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log(other.name);
-
+        // Debug.Log(other.name);
         if (ref_portal != null && ref_portal.Length > 1)
         {
             for (int i = 0; i < ref_portal.Length; i++)

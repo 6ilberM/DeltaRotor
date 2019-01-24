@@ -60,7 +60,7 @@ public class MovingBlock : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (MyController.b_DirChosen == false)
+        if (MyController.b_dirChosen == false)
         {
             f_dt += Time.deltaTime;
             if (b_up)

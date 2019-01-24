@@ -6,32 +6,38 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     //Components
-    public Rigidbody2D rb2_MyBody;
+    public Rigidbody2D m_rigidBody;
 
     //Variables
-    public RotationManager rm_Main;
+    public RotationManager rotManager;
 
-    [Range(1, 80)] public float f_SpeedScalar = 16.15f;
-    [Range(2, 14)] public int i_JumpScalar = 2;
-    [Range(15, 30)] public float MaxFallSpeed = 17.0f;
+    [Range(1, 80)] public float f_speedScalar = 16.15f;
+    [Range(2, 14)] public int i_jumpScalar = 2;
+    public float f_jumpForce = 300.0f;
+    [Range(15, 30)] public float maxfallSpeed = 17.0f;
 
     //Temp
-    float cutime;
-    ///Determines how fast the player rotates
-    public float plyrotspeed = 2;
-    bool b_securitycheck;
+    float timeElapsed;
+    private Vector3 m_Velocity = Vector3.zero;
 
-    int RotId = 0;
+    /// How much to smooth out the movement
+    [Range(0, .3f)] [SerializeField] private float m_faSmoothing = .05f;
+
+    ///Determines how fast the player rotates
+    public float rotSpeed = 2;
+
+    bool b_securityCheck;
+
 
     ///How long An object Rotates
-    public float f_DesRDelta = 0.62f;
-
+    public float f_rotationDelay = 0.62f;
 
     //Make a check on this on the Rotation manager
-    public bool b_DirChosen;
+    public bool b_dirChosen;
 
     int i_jumpCount;
-    Quaternion qt_DesiredRot;
+
+    Quaternion qt_desiredRot;
 
     //Overlap methods 
     ContactFilter2D Cfilter2d1;
@@ -39,11 +45,11 @@ public class PlayerController : MonoBehaviour
 
     //obj References
 
-
-    private bool b_isgrounded;
+    private bool b_isGrounded;
     bool b_jumpL, b_HorizL = false;
 
     public bool b_DeathRequest = false;
+    private bool m_FacingRight;
 
     // Use this for initialization
     void Start()
@@ -53,12 +59,12 @@ public class PlayerController : MonoBehaviour
         Cfilter2d1.useLayerMask = true;
         Cfilter2d1.useTriggers = true;
 
-        rm_Main = Object.FindObjectOfType<RotationManager>();
+        rotManager = Object.FindObjectOfType<RotationManager>();
     }
 
     private void Awake()
     {
-        rb2_MyBody = GetComponent<Rigidbody2D>();
+        m_rigidBody = GetComponent<Rigidbody2D>();
     }
     // Update is called once per frame
     void Update()
@@ -69,16 +75,16 @@ public class PlayerController : MonoBehaviour
         if (Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks"))
         || Physics2D.Raycast(transform.position, Vector2.down, GetComponent<CapsuleCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks")))
         {
-            b_isgrounded = true;
+            b_isGrounded = true;
             // GetComponent<Animator>().SetBool("isGrounded", true);
         }
         else
         {
-            b_isgrounded = false;
+            b_isGrounded = false;
             // GetComponent<Animator>().SetBool("isGrounded", false)
         }
         //No Need to check every Tick.
-        if (b_isgrounded)
+        if (b_isGrounded)
         {
             i_jumpCount = 0;
         }
@@ -90,46 +96,11 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
 
-        if (b_HorizL)
-        {
-            rb2_MyBody.AddForce(new Vector2(Input.GetAxis("Horizontal") * f_SpeedScalar, 0));
-        }
-
-        if (b_jumpL)
-        {
-            if (rb2_MyBody.velocity.y < 0)
-            {
-                rb2_MyBody.velocity = new Vector2(rb2_MyBody.velocity.x, 0);
-            }
-
-            switch (i_jumpCount)
-            {
-                case 0:
-                    rb2_MyBody.AddForce(Vector2.up * i_JumpScalar, ForceMode2D.Impulse);
-                    i_jumpCount++;
-
-                    b_jumpL = false;
-                    break;
-
-                case 1:
-                    rb2_MyBody.AddForce(Vector2.up * i_JumpScalar * .7f, ForceMode2D.Impulse);
-                    i_jumpCount++;
-
-                    b_jumpL = false;
-                    break;
-
-                default:
-
-                    b_jumpL = false;
-                    break;
-            }
-        }
-
         //MaxFallSpeed
-        rb2_MyBody.velocity = new Vector3(rb2_MyBody.velocity.x, Mathf.Clamp(rb2_MyBody.velocity.y, -MaxFallSpeed, 9000.0f), 0);
+        m_rigidBody.velocity = new Vector3(m_rigidBody.velocity.x, Mathf.Clamp(m_rigidBody.velocity.y, -maxfallSpeed, 9000.0f), 0);
 
         //Rotate!
-        rm_Main.Rotate(b_DirChosen, qt_DesiredRot);
+        rotManager.Rotate(b_dirChosen, qt_desiredRot);
 
         OrientSelfUp();
     }
@@ -137,166 +108,189 @@ public class PlayerController : MonoBehaviour
     //Should be called in fixed time
     public void Move(float _velocityX, bool _Jump, bool _Rot)
     {
-        if (!rm_Main.b_Rotate)
+        if (!rotManager.b_Rotate)
         {
+            Vector3 v3_targetVel = new Vector2(_velocityX * 10f, m_rigidBody.velocity.y);
+            m_rigidBody.velocity = Vector3.SmoothDamp(m_rigidBody.velocity, v3_targetVel, ref m_Velocity, m_faSmoothing);
 
+            // If the input is moving the player right and the player is facing left...
+            if (_velocityX > 0 && !m_FacingRight)
+            {
+                // ... flip the player.
+                Flip();
+            }
+            // Otherwise if the input is moving the player left and the player is facing right...
+            else if (_velocityX < 0 && m_FacingRight)
+            {
+                // ... flip the player.
+                Flip();
+            }
+
+            if (_Jump && i_jumpCount < 2)
+            {
+                // Add a vertical force to the player.
+                if (m_rigidBody.velocity.y < 0)
+                {
+                    m_rigidBody.velocity = new Vector2(m_rigidBody.velocity.x, 0);
+                }
+
+                if (i_jumpCount == 0)
+                {
+                    m_rigidBody.AddForce(new Vector2(0f, f_jumpForce), ForceMode2D.Impulse);
+                    i_jumpCount++;
+                }
+
+                else if (i_jumpCount == 1)
+                {
+                    m_rigidBody.AddForce(new Vector2(0f, f_jumpForce * 0.7f), ForceMode2D.Impulse);
+                    i_jumpCount++;
+                }
+
+                else
+                {
+                    //do nothing
+                }
+                b_isGrounded = false;
+
+            }
         }
     }
 
     private void OrientSelfUp()
     {
-        if (!b_DirChosen || !rm_Main.b_Rotate)
+        if (!b_dirChosen || !rotManager.b_Rotate)
         {
-            if (Mathf.Abs(qt_DesiredRot.eulerAngles.z
+            if (Mathf.Abs(qt_desiredRot.eulerAngles.z
         - transform.localRotation.eulerAngles.z) <= 0.0001f)
             {
-                transform.localRotation = rm_Main.transform.localRotation;
-                cutime = 0.0f;
+                transform.localRotation = rotManager.transform.localRotation;
+                timeElapsed = 0.0f;
             }
             else
             {
-                cutime += Time.fixedDeltaTime;
+                timeElapsed += Time.fixedDeltaTime;
 
                 Quaternion qtDir;
 
-                switch (RotId)
+                switch (rotManager.rotationId)
                 {
                     case 1:
                         qtDir = Quaternion.Euler(0, 0, 180 + 90);
-                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, cutime / plyrotspeed);
+                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, timeElapsed / rotSpeed);
 
                         break;
 
                     case 3:
                         qtDir = Quaternion.Euler(0, 0, 90);
-                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, cutime / plyrotspeed);
+                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, timeElapsed / rotSpeed);
 
                         break;
 
                     default:
-                        qtDir = qt_DesiredRot;
-                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, cutime / plyrotspeed);
+                        qtDir = qt_desiredRot;
+                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, timeElapsed / rotSpeed);
                         break;
-
                 }
             }
         }
         else
         {
-            cutime = 0;
+            timeElapsed = 0;
         }
 
     }
 
-    private void MoveInputListen()
+
+    ///Flips Character
+    private void Flip()
     {
-        if (Input.GetButton("Horizontal"))
-        {
-            if (rb2_MyBody.velocity.magnitude < 400)
-            {
-                b_HorizL = true;
-            }
-            else if (Input.GetAxis("Horizontal") == 0)
-            {
-                b_HorizL = false;
-            }
-        }
+        // Switch the way the player is labelled as facing.
+        m_FacingRight = !m_FacingRight;
 
-        if (Input.GetButtonDown("Jump") && i_jumpCount < 2)
-        {
-            // rb2_MyBody.AddForce(new Vector2(0, -rb2_MyBody.velocity.y));
-            b_jumpL = true;
-        }
-        else if (Input.GetButtonDown("Jump"))
-        {
-            //Do nothing
-        }
-
-        if (Input.GetKeyDown(KeyCode.Period))
-        {
-            i_jumpCount = 0;
-        }
+        // Multiply the player's x local scale by -1.
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
     }
 
     //Make conditional Versions of this for enabling bigger rotations
     public void RotationSelect()
     {
-        if (b_DirChosen == false)
+        if (b_dirChosen == false)
         {
-            switch (RotId)
+            switch (rotManager.rotationId)
             {
                 case 0:
                     if (Input.GetKeyDown(KeyCode.Q))
                     {
-                        qt_DesiredRot = Quaternion.Euler(0, 0, 180 + 90);
-                        b_DirChosen = true;
-                        rb2_MyBody.simulated = false;
-                        RotId = 3;
+                        qt_desiredRot = Quaternion.Euler(0, 0, 180 + 90);
+                        b_dirChosen = true;
+                        m_rigidBody.simulated = false;
+                        rotManager.rotationId = 3;
                     }
 
                     if (Input.GetKeyDown(KeyCode.E))
                     {
-                        qt_DesiredRot = Quaternion.Euler(0, 0, 90);
-                        b_DirChosen = true;
-                        rb2_MyBody.simulated = false;
-                        RotId++;
+                        qt_desiredRot = Quaternion.Euler(0, 0, 90);
+                        b_dirChosen = true;
+                        m_rigidBody.simulated = false;
+                        rotManager.rotationId++;
                     }
 
                     break;
                 case 1:
                     if (Input.GetKeyDown(KeyCode.Q))
                     {
-                        qt_DesiredRot = Quaternion.Euler(0, 0, 0);
-                        b_DirChosen = true;
-                        rb2_MyBody.simulated = false;
-                        RotId = 0;
+                        qt_desiredRot = Quaternion.Euler(0, 0, 0);
+                        b_dirChosen = true;
+                        m_rigidBody.simulated = false;
+                        rotManager.rotationId = 0;
                     }
 
                     if (Input.GetKeyDown(KeyCode.E))
                     {
-                        qt_DesiredRot = Quaternion.Euler(0, 0, 180);
-                        b_DirChosen = true;
-                        rb2_MyBody.simulated = false;
-                        RotId++;
+                        qt_desiredRot = Quaternion.Euler(0, 0, 180);
+                        b_dirChosen = true;
+                        m_rigidBody.simulated = false;
+                        rotManager.rotationId++;
                     }
                     break;
 
                 case 2:
                     if (Input.GetKeyDown(KeyCode.Q))
                     {
-                        qt_DesiredRot = Quaternion.Euler(0, 0, 90);
-                        b_DirChosen = true;
-                        rb2_MyBody.simulated = false;
-                        RotId--;
+                        qt_desiredRot = Quaternion.Euler(0, 0, 90);
+                        b_dirChosen = true;
+                        m_rigidBody.simulated = false;
+                        rotManager.rotationId--;
                     }
 
                     if (Input.GetKeyDown(KeyCode.E))
                     {
-                        qt_DesiredRot = Quaternion.Euler(0, 0, 180 + 90);
-                        b_DirChosen = true;
-                        rb2_MyBody.simulated = false;
-                        RotId++;
+                        qt_desiredRot = Quaternion.Euler(0, 0, 180 + 90);
+                        b_dirChosen = true;
+                        m_rigidBody.simulated = false;
+                        rotManager.rotationId++;
                     }
                     break;
 
                 case 3:
                     if (Input.GetKeyDown(KeyCode.Q))
                     {
-                        qt_DesiredRot = Quaternion.Euler(0, 0, 180);
-                        b_DirChosen = true;
-                        rb2_MyBody.simulated = false;
-                        RotId--;
+                        qt_desiredRot = Quaternion.Euler(0, 0, 180);
+                        b_dirChosen = true;
+                        m_rigidBody.simulated = false;
+                        rotManager.rotationId--;
                     }
 
                     if (Input.GetKeyDown(KeyCode.E))
                     {
-                        qt_DesiredRot = Quaternion.Euler(0, 0, 0);
-                        b_DirChosen = true;
-                        rb2_MyBody.simulated = false;
-                        RotId = 0;
+                        qt_desiredRot = Quaternion.Euler(0, 0, 0);
+                        b_dirChosen = true;
+                        m_rigidBody.simulated = false;
+                        rotManager.rotationId = 0;
                     }
                     break;
-
 
                 default:
                     //Unknown State

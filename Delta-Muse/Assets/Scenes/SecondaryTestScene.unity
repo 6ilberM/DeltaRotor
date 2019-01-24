@@ -13592,7 +13592,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 888954301}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.18, y: 3.98, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 0}
   m_Children: []
@@ -13641,11 +13641,11 @@ MonoBehaviour:
   rm_Main: {fileID: 0}
   f_SpeedScalar: 16.15
   i_JumpScalar: 11
-  f_DesRDelta: 0.62
   MaxFallSpeed: 15
+  plyrotspeed: 0.5
+  f_DesRDelta: 0.62
   b_DirChosen: 0
   b_DeathRequest: 0
-  plyrotspeed: 0.5
 --- !u!50 &888954306
 Rigidbody2D:
   serializedVersion: 4
@@ -13751,6 +13751,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  b_Rotate: 0
   f_RotDuration: 0.79
 --- !u!4 &1631961012 stripped
 Transform:

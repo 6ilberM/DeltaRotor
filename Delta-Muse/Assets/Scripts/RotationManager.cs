@@ -44,7 +44,7 @@ public class RotationManager : MonoBehaviour
                 //how much force should be lost after Rotating 
                 if (player.rb2_MyBody.velocity.y <= -0.5f)
                 {
-                    player.rb2_MyBody.velocity = new Vector2(player.rb2_MyBody.velocity.x, player.rb2_MyBody.velocity.y * 0.45f);
+                    player.rb2_MyBody.velocity = new Vector2(player.rb2_MyBody.velocity.x, player.rb2_MyBody.velocity.y * 0.25f);
                 }
             }
             else

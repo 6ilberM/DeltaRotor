@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     ///How long An object Rotates
     public float f_DesRDelta = 0.62f;
 
+    [Range(15, 30)] public float MaxFallSpeed = 17.0f;
     //Make a check on this on the Rotation manager
     public bool b_DirChosen;
 
@@ -24,8 +25,8 @@ public class PlayerController : MonoBehaviour
 
     //Overlap methods 
     ContactFilter2D Cfilter2d1;
-    Collider2D[] overlapResults= null;
-    
+    Collider2D[] overlapResults = null;
+
     //obj References
 
     private bool b_isgrounded;
@@ -53,7 +54,8 @@ public class PlayerController : MonoBehaviour
         RotationSelect();
         MoveInputListen();
 
-        if (Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks")))
+        if (Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks"))
+        || Physics2D.Raycast(transform.position, Vector2.down, GetComponent<CapsuleCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks")))
         {
             b_isgrounded = true;
             // GetComponent<Animator>().SetBool("isGrounded", true);
@@ -122,6 +124,9 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        //MaxFallSpeed
+        rb2_MyBody.velocity = new Vector3(rb2_MyBody.velocity.x, Mathf.Clamp(rb2_MyBody.velocity.y, -MaxFallSpeed, 9000.0f), 0);
+
         //Rotate!
         rm_Main.Rotate(b_DirChosen, qt_DesiredRot);
 
@@ -172,7 +177,6 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-
     private void MoveInputListen()
     {
         if (Input.GetButton("Horizontal"))
@@ -195,7 +199,6 @@ public class PlayerController : MonoBehaviour
         else if (Input.GetButtonDown("Jump"))
         {
             //Do nothing
-            Debug.Log("pastLimit");
         }
 
         if (Input.GetKeyDown(KeyCode.Period))

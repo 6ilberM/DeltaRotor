@@ -31,7 +31,7 @@ public class DPortal : MonoBehaviour
     //move funct
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.name == "pl1" && b_isOpen && lobj != null)
+        if (other.gameObject.GetComponent<PlayerController>() != null && b_isOpen && lobj != null)
         {
             lobj.b_isOpen = false;
             other.gameObject.transform.position = new Vector3(lobj.transform.position.x, lobj.transform.position.y, other.gameObject.transform.position.z);

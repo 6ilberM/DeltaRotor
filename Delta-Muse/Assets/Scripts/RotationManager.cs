@@ -8,6 +8,7 @@ public class RotationManager : MonoBehaviour
     private float currentTime;
     public PlayerController player;
 
+    public bool b_Rotate;
     public float f_RotDuration = 2.0f;
 
     // Use this for initialization
@@ -28,7 +29,8 @@ public class RotationManager : MonoBehaviour
     {
         if (b_DirCh == true)
         {
-            currentTime += Time.deltaTime;
+            b_Rotate = b_DirCh;
+            currentTime += Time.fixedDeltaTime;
 
             float a, b;
             a = DesiredRotation.eulerAngles.z;
@@ -38,6 +40,7 @@ public class RotationManager : MonoBehaviour
             {
                 // transform.rotation = DesiredRotation;
                 player.b_DirChosen = false;
+                b_Rotate = b_DirCh;
                 currentTime = 0.0f;
                 player.rb2_MyBody.simulated = true;
 

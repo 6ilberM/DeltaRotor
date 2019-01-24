@@ -10,13 +10,23 @@ public class PlayerController : MonoBehaviour
 
     //Variables
     public RotationManager rm_Main;
-    [Range(1, 80)] public float f_SpeedScalar = 1.0f;
+
+    [Range(1, 80)] public float f_SpeedScalar = 16.15f;
     [Range(2, 14)] public int i_JumpScalar = 2;
+    [Range(15, 30)] public float MaxFallSpeed = 17.0f;
+
+    //Temp
+    float cutime;
+    ///Determines how fast the player rotates
+    public float plyrotspeed = 2;
+    bool b_securitycheck;
+
+    int RotId = 0;
 
     ///How long An object Rotates
     public float f_DesRDelta = 0.62f;
 
-    [Range(15, 30)] public float MaxFallSpeed = 17.0f;
+
     //Make a check on this on the Rotation manager
     public bool b_DirChosen;
 
@@ -29,6 +39,7 @@ public class PlayerController : MonoBehaviour
 
     //obj References
 
+
     private bool b_isgrounded;
     bool b_jumpL, b_HorizL = false;
 
@@ -37,23 +48,24 @@ public class PlayerController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Cfilter2d1.useTriggers = true;
+
         Cfilter2d1.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer));
         Cfilter2d1.useLayerMask = true;
+        Cfilter2d1.useTriggers = true;
+
         rm_Main = Object.FindObjectOfType<RotationManager>();
     }
 
     private void Awake()
     {
         rb2_MyBody = GetComponent<Rigidbody2D>();
-        // rm_Main = Object.FindObjectOfType<RotationManager>();
     }
     // Update is called once per frame
     void Update()
     {
         RotationSelect();
-        MoveInputListen();
 
+        //Check if we are on the ground
         if (Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks"))
         || Physics2D.Raycast(transform.position, Vector2.down, GetComponent<CapsuleCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks")))
         {
@@ -70,20 +82,9 @@ public class PlayerController : MonoBehaviour
         {
             i_jumpCount = 0;
         }
-        if (GetComponent<BoxCollider2D>().OverlapCollider(Cfilter2d1, overlapResults) != 0)
-        {
-            Debug.Log(GetComponent<BoxCollider2D>().OverlapCollider(Cfilter2d1, overlapResults));
-        }
 
     }
 
-    //Temp
-    float cutime;
-    ///Determines how fast the player rotates
-    public float plyrotspeed = 2;
-    bool b_securitycheck;
-
-    int RotId = 0;
 
 
     private void FixedUpdate()
@@ -133,9 +134,18 @@ public class PlayerController : MonoBehaviour
         OrientSelfUp();
     }
 
+    //Should be called in fixed time
+    public void Move(float _velocityX, bool _Jump, bool _Rot)
+    {
+        if (!rm_Main.b_Rotate)
+        {
+
+        }
+    }
+
     private void OrientSelfUp()
     {
-        if (!b_DirChosen)
+        if (!b_DirChosen || !rm_Main.b_Rotate)
         {
             if (Mathf.Abs(qt_DesiredRot.eulerAngles.z
         - transform.localRotation.eulerAngles.z) <= 0.0001f)
@@ -145,7 +155,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                cutime += Time.deltaTime;
+                cutime += Time.fixedDeltaTime;
 
                 Quaternion qtDir;
 
@@ -177,6 +187,7 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+
     private void MoveInputListen()
     {
         if (Input.GetButton("Horizontal"))
@@ -208,7 +219,7 @@ public class PlayerController : MonoBehaviour
     }
 
     //Make conditional Versions of this for enabling bigger rotations
-    private void RotationSelect()
+    public void RotationSelect()
     {
         if (b_DirChosen == false)
         {

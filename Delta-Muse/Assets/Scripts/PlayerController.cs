@@ -18,13 +18,15 @@ public class PlayerController : MonoBehaviour
 
     //Temp
     float timeElapsed;
+
+    Quaternion PrevRot;
     private Vector3 m_Velocity = Vector3.zero;
 
     /// How much to smooth out the movement
     [Range(0, .3f)] [SerializeField] private float m_faSmoothing = .05f;
 
     ///Determines how fast the player rotates
-    public float rotSpeed = 2;
+    public float rotSpeed = 0.34f;
 
     bool b_securityCheck;
 
@@ -149,53 +151,61 @@ public class PlayerController : MonoBehaviour
                     //do nothing
                 }
                 b_isGrounded = false;
-
             }
         }
     }
-
+    public bool b_lock1 = true;
+    Quaternion qtDir;
     private void OrientSelfUp()
     {
-        if (!rotManager.m_rotate)
+        if (!rotManager.m_rotate && !b_lock1)
         {
-            if (Mathf.Abs(qt_desiredRot.eulerAngles.z
-        - transform.localRotation.eulerAngles.z) <= 6.0f)
+            timeElapsed += Time.fixedDeltaTime;
+
+            if (timeElapsed > rotSpeed)
             {
+                PrevRot = qtDir;
                 m_rigidBody.simulated = true;
-                transform.localRotation = rotManager.transform.localRotation;
+
+                transform.localRotation = qtDir;
                 timeElapsed = 0.0f;
+                b_lock1 = true;
             }
             else
             {
-                timeElapsed += Time.fixedDeltaTime;
+                float t = timeElapsed / rotSpeed;
+                string theeese = timeElapsed.ToString();
+                theeese += ", ";
+                theeese += t.ToString();
 
-                Quaternion qtDir;
+                Debug.Log(theeese);
+                // t = t * t * t * (t * (6f * t - 15f) + 10f);
 
                 switch (rotManager.rotationId)
                 {
                     case 1:
-                        qtDir = Quaternion.Euler(0, 0, 180 + 90);
-                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, Time.fixedDeltaTime / rotSpeed);
+                        qtDir = rotManager.transform.rotation;
+                        qtDir = Quaternion.Inverse(qtDir);
+                        transform.localRotation = Quaternion.Slerp(PrevRot, qtDir, t);
 
                         break;
 
                     case 3:
-                        qtDir = Quaternion.Euler(0, 0, 90);
-                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, Time.fixedDeltaTime / rotSpeed);
+                        qtDir = rotManager.transform.rotation;
+                        qtDir = Quaternion.Inverse(qtDir);
+
+                        transform.localRotation = Quaternion.Slerp(PrevRot, qtDir, t);
 
                         break;
 
                     default:
-                        qtDir = qt_desiredRot;
-                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, Time.fixedDeltaTime / rotSpeed);
+                        qtDir = rotManager.transform.rotation;
+                        transform.localRotation = Quaternion.Slerp(PrevRot, qtDir, t);
+
                         break;
                 }
             }
         }
-        {
-            timeElapsed = 0;
-        }
-
     }
 
     ///Flips Character
@@ -215,6 +225,7 @@ public class PlayerController : MonoBehaviour
     {
         if (rotManager.m_rotate == false)
         {
+            PrevRot = transform.localRotation;
             switch (rotManager.rotationId)
             {
                 case 0:

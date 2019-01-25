@@ -27,7 +27,6 @@ public class RotationManager : MonoBehaviour
 
     }
 
-
     //Handles World Rotation
     public void Rotate(bool _dirchosen, Quaternion _desiredrotation)
     {
@@ -42,19 +41,13 @@ public class RotationManager : MonoBehaviour
             m_rotate = true;
             currentTime += Time.fixedDeltaTime;
 
-            // float a, b;
-
-            // a = _desiredrotation.eulerAngles.z;
-            // b = transform.rotation.eulerAngles.z;
-
             //Close Enough? w/ thresholdCheck
             if (currentTime >= f_RotDuration)
             {
-                Debug.Log(currentTime);
-
                 transform.rotation = _desiredrotation;
                 player.b_dirChosen = false;
                 m_rotate = false;
+                player.b_lock1 = false;
                 currentTime = 0.0f;
                 //Or you could set do once back off and it can once again go through
                 prev = _desiredrotation;
@@ -72,9 +65,9 @@ public class RotationManager : MonoBehaviour
                 // easeoutquart
                 // t = (--t) * t;
                 // t =( 1 - t * t);
+
                 // easeoutquad
                 t = (t * (2 - t));
-
                 transform.rotation = Quaternion.Slerp(prev, _desiredrotation, t);
             }
         }
@@ -112,18 +105,15 @@ public class RotationManager : MonoBehaviour
                     break;
             }
 
-            float a, b;
-
-            a = DesiredRotation.eulerAngles.z;
-            b = transform.rotation.eulerAngles.z;
             //Close Enough? w/ thresholdCheck
             if (currentTime > f_RotDuration)
             {
                 transform.rotation = DesiredRotation;
                 m_rotate = false;
                 currentTime = 0.0f;
+                player.b_lock1 = false;
                 // player.m_rigidBody.simulated = true;
-
+                prev = DesiredRotation;
                 //how much force should be lost after Rotating 
                 if (player.m_rigidBody.velocity.y <= -0.5f)
                 {
@@ -132,9 +122,12 @@ public class RotationManager : MonoBehaviour
             }
             else
             {
-                ///percent of lerp
-                float perc = currentTime / f_RotDuration;
-                transform.rotation = Quaternion.Lerp(transform.rotation, DesiredRotation, perc);
+                //percent of lerp
+                float t = currentTime / f_RotDuration;
+
+                //easeOutQuad
+                t = (t * (2 - t));
+                transform.rotation = Quaternion.Slerp(transform.rotation, DesiredRotation, t);
             }
         }
     }

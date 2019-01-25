@@ -27,14 +27,25 @@ public class DummyTest : MonoBehaviour
                 id = 3;
             }
         }
-    }
-
-    private void FixedUpdate()
-    {
-        if (TestScript != null && Input.GetKey(KeyCode.Period))
+        if (!TestScript.m_rotate)
+        {
+            imperative = false;
+        }
+        if (TestScript != null && Input.GetKeyDown(KeyCode.Period) && !TestScript.m_rotate)
         {
             //execute
-            TestScript.Rotate(true, id);
+            imperative = true;
+            TestScript.rotationId = id;
+        }
+    }
+    bool imperative;
+    private void FixedUpdate()
+    {
+        if (TestScript != null)
+        {
+            //execute
+            TestScript.Rotate(imperative, id);
+
         }
 
     }

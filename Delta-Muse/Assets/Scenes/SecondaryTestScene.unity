@@ -13613,7 +13613,7 @@ MonoBehaviour:
   f_jumpForce: 300
   maxfallSpeed: 17
   m_faSmoothing: 0.05
-  rotSpeed: 0.3
+  rotSpeed: 0.4
   b_dirChosen: 0
   b_DeathRequest: 0
 --- !u!50 &888954306

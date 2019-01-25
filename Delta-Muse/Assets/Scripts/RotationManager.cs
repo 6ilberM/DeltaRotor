@@ -9,7 +9,7 @@ public class RotationManager : MonoBehaviour
     public PlayerController player;
 
     public bool m_rotate, m_doOnce;
-    public float f_RotDuration = 2.0f;
+    public float f_RotDuration = 0.39f;
     public int rotationId = 0;
 
     Quaternion prev;
@@ -47,7 +47,7 @@ public class RotationManager : MonoBehaviour
                 transform.rotation = _desiredrotation;
                 player.b_dirChosen = false;
                 m_rotate = false;
-                player.b_lock1 = false;
+                player.b_ShouldSelfOrient = true;
                 currentTime = 0.0f;
                 //Or you could set do once back off and it can once again go through
                 prev = _desiredrotation;
@@ -80,7 +80,7 @@ public class RotationManager : MonoBehaviour
         {
             m_rotate = true;
             currentTime += Time.deltaTime;
-
+            player.m_rigidBody.simulated = false;
             Quaternion DesiredRotation = transform.rotation;
 
             switch (_ID)
@@ -109,9 +109,10 @@ public class RotationManager : MonoBehaviour
             if (currentTime > f_RotDuration)
             {
                 transform.rotation = DesiredRotation;
+                player.b_ShouldSelfOrient = true;
                 m_rotate = false;
                 currentTime = 0.0f;
-                player.b_lock1 = false;
+                // // player.b_lock1 = false;
                 // player.m_rigidBody.simulated = true;
                 prev = DesiredRotation;
                 //how much force should be lost after Rotating 

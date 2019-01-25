@@ -13612,8 +13612,11 @@ MonoBehaviour:
   i_jumpScalar: 2
   f_jumpForce: 300
   maxfallSpeed: 17
+  m_PrevRot: {x: 0, y: 0, z: 0, w: 0}
   m_faSmoothing: 0.05
-  rotSpeed: 0.4
+  f_rotDuration: 0.3
+  b_ShouldSelfOrient: 0
+  m_doOnceCatchOriginalRot: 0
   b_dirChosen: 0
   b_DeathRequest: 0
 --- !u!50 &888954306
@@ -13724,7 +13727,7 @@ MonoBehaviour:
   player: {fileID: 0}
   m_rotate: 0
   m_doOnce: 0
-  f_RotDuration: 0.63
+  f_RotDuration: 0.39
   rotationId: 0
 --- !u!114 &1361738997
 MonoBehaviour:

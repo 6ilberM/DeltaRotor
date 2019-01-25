@@ -17,18 +17,22 @@ public class PlayerController : MonoBehaviour
     [Range(15, 30)] public float maxfallSpeed = 17.0f;
 
     //Temp
-    float timeElapsed;
+    float m_curentTime;
 
-    Quaternion PrevRot;
+    public Quaternion m_PrevRot;
     private Vector3 m_Velocity = Vector3.zero;
 
     /// How much to smooth out the movement
     [Range(0, .3f)] [SerializeField] private float m_faSmoothing = .05f;
 
     ///Determines how fast the player rotates
-    public float rotSpeed = 0.34f;
+    public float f_rotDuration = 0.3f;
 
     bool b_securityCheck;
+
+    public bool b_ShouldSelfOrient = false;
+    bool m_StoreRotation;
+    Quaternion qtDir;
 
 
     ///How long An object Rotates
@@ -92,8 +96,6 @@ public class PlayerController : MonoBehaviour
 
     }
 
-
-
     private void FixedUpdate()
     {
         //MaxFallSpeed
@@ -154,56 +156,48 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    public bool b_lock1 = true;
-    Quaternion qtDir;
+
     private void OrientSelfUp()
     {
-        if (!rotManager.m_rotate && !b_lock1)
+        if (!m_StoreRotation)
         {
-            timeElapsed += Time.fixedDeltaTime;
+            m_PrevRot = transform.localRotation;
+            m_StoreRotation = true;
+        }
 
-            if (timeElapsed > rotSpeed)
+        //If It no longer is rotating and should OrientSelf
+        if (!rotManager.m_rotate && b_ShouldSelfOrient)
+        {
+
+            m_curentTime += Time.fixedDeltaTime;
+            //Close Enough? w/ thresholdCheck
+            if (m_curentTime > f_rotDuration)
             {
-                PrevRot = qtDir;
-                m_rigidBody.simulated = true;
-
                 transform.localRotation = qtDir;
-                timeElapsed = 0.0f;
-                b_lock1 = true;
+
+                m_rigidBody.simulated = true;
+                b_ShouldSelfOrient = false;
+                m_StoreRotation = false;
+                m_curentTime = 0.0f;
             }
             else
             {
-                float t = timeElapsed / rotSpeed;
-                string theeese = timeElapsed.ToString();
-                theeese += ", ";
-                theeese += t.ToString();
+                float t = m_curentTime / f_rotDuration;
 
-                Debug.Log(theeese);
-                // t = t * t * t * (t * (6f * t - 15f) + 10f);
+                t = t * t * t * (t * (6f * t - 15f) + 10f);
 
-                switch (rotManager.rotationId)
+                qtDir = rotManager.transform.localRotation;
+
+                if (rotManager.rotationId == 1 || rotManager.rotationId == 3)
                 {
-                    case 1:
-                        qtDir = rotManager.transform.rotation;
-                        qtDir = Quaternion.Inverse(qtDir);
-                        transform.localRotation = Quaternion.Slerp(PrevRot, qtDir, t);
+                    qtDir = Quaternion.Inverse(qtDir);
 
-                        break;
-
-                    case 3:
-                        qtDir = rotManager.transform.rotation;
-                        qtDir = Quaternion.Inverse(qtDir);
-
-                        transform.localRotation = Quaternion.Slerp(PrevRot, qtDir, t);
-
-                        break;
-
-                    default:
-                        qtDir = rotManager.transform.rotation;
-                        transform.localRotation = Quaternion.Slerp(PrevRot, qtDir, t);
-
-                        break;
                 }
+                else
+                {
+                }
+                transform.localRotation = Quaternion.Slerp(m_PrevRot, qtDir, t);
+
             }
         }
     }
@@ -225,7 +219,7 @@ public class PlayerController : MonoBehaviour
     {
         if (rotManager.m_rotate == false)
         {
-            PrevRot = transform.localRotation;
+            // m_PrevRot = transform.localRotation;
             switch (rotManager.rotationId)
             {
                 case 0:

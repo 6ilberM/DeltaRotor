@@ -8,10 +8,11 @@ public class RotationManager : MonoBehaviour
     private float currentTime;
     public PlayerController player;
 
-    public bool b_Rotate;
+    public bool m_rotate, m_doOnce;
     public float f_RotDuration = 2.0f;
     public int rotationId = 0;
 
+    Quaternion prev;
 
     // Use this for initialization
 
@@ -26,25 +27,102 @@ public class RotationManager : MonoBehaviour
 
     }
 
+
     //Handles World Rotation
-    public void Rotate(bool b_DirCh, Quaternion DesiredRotation)
+    public void Rotate(bool _dirchosen, Quaternion _desiredrotation)
     {
-        if (b_DirCh == true)
+        if (!m_doOnce)
         {
-            b_Rotate = b_DirCh;
+            prev = transform.rotation;
+            m_doOnce = true;
+        }
+
+        if (_dirchosen == true)
+        {
+            m_rotate = true;
             currentTime += Time.fixedDeltaTime;
 
+            // float a, b;
+
+            // a = _desiredrotation.eulerAngles.z;
+            // b = transform.rotation.eulerAngles.z;
+
+            //Close Enough? w/ thresholdCheck
+            if (currentTime >= f_RotDuration)
+            {
+                Debug.Log(currentTime);
+
+                transform.rotation = _desiredrotation;
+                player.b_dirChosen = false;
+                m_rotate = false;
+                currentTime = 0.0f;
+                //Or you could set do once back off and it can once again go through
+                prev = _desiredrotation;
+                //how much force should be lost after Rotating 
+                if (player.m_rigidBody.velocity.y <= -0.5f)
+                {
+                    player.m_rigidBody.velocity = new Vector2(player.m_rigidBody.velocity.x, player.m_rigidBody.velocity.y * 0.25f);
+                }
+            }
+            else
+            {
+                float t = currentTime / f_RotDuration;
+                // easeout cubic
+                // t = (1 + (--t) * t * t);
+                // easeoutquart
+                // t = (--t) * t;
+                // t =( 1 - t * t);
+                // easeoutquad
+                t = (t * (2 - t));
+
+                transform.rotation = Quaternion.Slerp(prev, _desiredrotation, t);
+            }
+        }
+    }
+
+    //Handles World Rotation
+    public void Rotate(bool _confirm, int _ID)
+    {
+        if (_confirm == true)
+        {
+            m_rotate = true;
+            currentTime += Time.deltaTime;
+
+            Quaternion DesiredRotation = transform.rotation;
+
+            switch (_ID)
+            {
+                case 0:
+                    DesiredRotation = Quaternion.Euler(0, 0, 0);
+                    break;
+
+                case 1:
+                    DesiredRotation = Quaternion.Euler(0, 0, 90);
+
+                    break;
+                case 2:
+                    DesiredRotation = Quaternion.Euler(0, 0, 180);
+
+                    break;
+                case 3:
+                    DesiredRotation = Quaternion.Euler(0, 0, 270);
+
+                    break;
+                default:
+                    break;
+            }
+
             float a, b;
+
             a = DesiredRotation.eulerAngles.z;
             b = transform.rotation.eulerAngles.z;
             //Close Enough? w/ thresholdCheck
-            if (Mathf.Abs(a - b) <= 0.4f)
+            if (currentTime > f_RotDuration)
             {
-                // transform.rotation = DesiredRotation;
-                player.b_dirChosen = false;
-                b_Rotate = b_DirCh;
+                transform.rotation = DesiredRotation;
+                m_rotate = false;
                 currentTime = 0.0f;
-                player.m_rigidBody.simulated = true;
+                // player.m_rigidBody.simulated = true;
 
                 //how much force should be lost after Rotating 
                 if (player.m_rigidBody.velocity.y <= -0.5f)
@@ -54,7 +132,9 @@ public class RotationManager : MonoBehaviour
             }
             else
             {
-                transform.rotation = Quaternion.Lerp(transform.rotation, DesiredRotation, currentTime / f_RotDuration);
+                ///percent of lerp
+                float perc = currentTime / f_RotDuration;
+                transform.rotation = Quaternion.Lerp(transform.rotation, DesiredRotation, perc);
             }
         }
     }

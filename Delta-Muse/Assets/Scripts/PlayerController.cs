@@ -30,7 +30,6 @@ public class PlayerController : MonoBehaviour
 
 
     ///How long An object Rotates
-    public float f_rotationDelay = 0.62f;
 
     //Make a check on this on the Rotation manager
     public bool b_dirChosen;
@@ -95,7 +94,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-
         //MaxFallSpeed
         m_rigidBody.velocity = new Vector3(m_rigidBody.velocity.x, Mathf.Clamp(m_rigidBody.velocity.y, -maxfallSpeed, 9000.0f), 0);
 
@@ -108,7 +106,7 @@ public class PlayerController : MonoBehaviour
     //Should be called in fixed time
     public void Move(float _velocityX, bool _Jump, bool _Rot)
     {
-        if (!rotManager.b_Rotate)
+        if (!rotManager.m_rotate)
         {
             Vector3 v3_targetVel = new Vector2(_velocityX * 10f, m_rigidBody.velocity.y);
             m_rigidBody.velocity = Vector3.SmoothDamp(m_rigidBody.velocity, v3_targetVel, ref m_Velocity, m_faSmoothing);
@@ -158,11 +156,12 @@ public class PlayerController : MonoBehaviour
 
     private void OrientSelfUp()
     {
-        if (!b_dirChosen || !rotManager.b_Rotate)
+        if (!rotManager.m_rotate)
         {
             if (Mathf.Abs(qt_desiredRot.eulerAngles.z
-        - transform.localRotation.eulerAngles.z) <= 0.0001f)
+        - transform.localRotation.eulerAngles.z) <= 6.0f)
             {
+                m_rigidBody.simulated = true;
                 transform.localRotation = rotManager.transform.localRotation;
                 timeElapsed = 0.0f;
             }
@@ -176,30 +175,28 @@ public class PlayerController : MonoBehaviour
                 {
                     case 1:
                         qtDir = Quaternion.Euler(0, 0, 180 + 90);
-                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, timeElapsed / rotSpeed);
+                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, Time.fixedDeltaTime / rotSpeed);
 
                         break;
 
                     case 3:
                         qtDir = Quaternion.Euler(0, 0, 90);
-                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, timeElapsed / rotSpeed);
+                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, Time.fixedDeltaTime / rotSpeed);
 
                         break;
 
                     default:
                         qtDir = qt_desiredRot;
-                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, timeElapsed / rotSpeed);
+                        transform.localRotation = Quaternion.Lerp(transform.localRotation, qtDir, Time.fixedDeltaTime / rotSpeed);
                         break;
                 }
             }
         }
-        else
         {
             timeElapsed = 0;
         }
 
     }
-
 
     ///Flips Character
     private void Flip()
@@ -216,7 +213,7 @@ public class PlayerController : MonoBehaviour
     //Make conditional Versions of this for enabling bigger rotations
     public void RotationSelect()
     {
-        if (b_dirChosen == false)
+        if (rotManager.m_rotate == false)
         {
             switch (rotManager.rotationId)
             {

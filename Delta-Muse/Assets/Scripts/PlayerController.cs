@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour
     bool b_securityCheck;
 
     public bool b_ShouldSelfOrient = false;
+
     bool m_StoreRotation;
     Quaternion qtDir;
 
@@ -59,7 +60,6 @@ public class PlayerController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
         Cfilter2d1.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer));
         Cfilter2d1.useLayerMask = true;
         Cfilter2d1.useTriggers = true;
@@ -71,11 +71,10 @@ public class PlayerController : MonoBehaviour
     {
         m_rigidBody = GetComponent<Rigidbody2D>();
     }
+
     // Update is called once per frame
     void Update()
     {
-        RotationSelect();
-
         //Check if we are on the ground
         if (Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks"))
         || Physics2D.Raycast(transform.position, Vector2.down, GetComponent<CapsuleCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks")))
@@ -94,6 +93,13 @@ public class PlayerController : MonoBehaviour
             i_jumpCount = 0;
         }
 
+        //Check Left 
+
+
+        //Check Right
+
+
+
     }
 
     private void FixedUpdate()
@@ -108,26 +114,27 @@ public class PlayerController : MonoBehaviour
     }
 
     //Should be called in fixed time
-    public void Move(float _velocityX, bool _Jump, bool _Rot)
+    public void Move(float _velocityX, bool _Jump)
     {
         if (!rotManager.m_rotate)
         {
             Vector3 v3_targetVel = new Vector2(_velocityX * 10f, m_rigidBody.velocity.y);
             m_rigidBody.velocity = Vector3.SmoothDamp(m_rigidBody.velocity, v3_targetVel, ref m_Velocity, m_faSmoothing);
 
-            // If the input is moving the player right and the player is facing left...
-            if (_velocityX > 0 && !m_FacingRight)
+            // If the input is moving the player Left and the player is facing left...
+            if (_velocityX > 0 && m_FacingRight)
             {
                 // ... flip the player.
                 Flip();
             }
-            // Otherwise if the input is moving the player left and the player is facing right...
-            else if (_velocityX < 0 && m_FacingRight)
+            // Otherwise if the input is moving the player Right and the player is facing right...
+            else if (_velocityX < 0 && !m_FacingRight)
             {
                 // ... flip the player.
                 Flip();
             }
 
+            //jumpLogic
             if (_Jump && i_jumpCount < 2)
             {
                 // Add a vertical force to the player.
@@ -154,6 +161,8 @@ public class PlayerController : MonoBehaviour
                 }
                 b_isGrounded = false;
             }
+
+            RotationSelect();
         }
     }
 

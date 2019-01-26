@@ -266,7 +266,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 2.6
+  orthographic size: 1.4
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -13494,11 +13494,12 @@ GameObject:
   m_Component:
   - component: {fileID: 888954303}
   - component: {fileID: 888954304}
+  - component: {fileID: 888954308}
   - component: {fileID: 888954306}
   - component: {fileID: 888954302}
-  - component: {fileID: 888954305}
   - component: {fileID: 888954307}
-  - component: {fileID: 888954308}
+  - component: {fileID: 888954305}
+  - component: {fileID: 888954309}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -13610,13 +13611,12 @@ MonoBehaviour:
   rotManager: {fileID: 0}
   f_speedScalar: 16.15
   i_jumpScalar: 2
-  f_jumpForce: 300
+  f_jumpForce: 240
   maxfallSpeed: 17
   m_PrevRot: {x: 0, y: 0, z: 0, w: 0}
   m_faSmoothing: 0.05
   f_rotDuration: 0.3
   b_ShouldSelfOrient: 0
-  m_doOnceCatchOriginalRot: 0
   b_dirChosen: 0
   b_DeathRequest: 0
 --- !u!50 &888954306
@@ -13631,7 +13631,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1.5
+  m_Mass: 20
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 3
@@ -13675,6 +13675,21 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.13, y: 0.15}
   m_Direction: 0
+--- !u!114 &888954309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888954301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 323708cb48d6cf149927adaa76dd4c59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 888954305}
+  animator: {fileID: 888954307}
+  runSpeed: 40
 --- !u!1 &1361738994
 GameObject:
   m_ObjectHideFlags: 0

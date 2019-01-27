@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 m_Velocity = Vector3.zero;
 
     /// How much to smooth out the movement
-    [Range(0, .3f)] [SerializeField] private float m_faSmoothing = .05f;
+    [Range(0, .3f)] [SerializeField] private float m_faSmoothing = .08f;
 
     ///Determines how fast the player rotates
     public float f_rotDuration = 0.3f;
@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
     //obj References
 
     private bool b_isGrounded;
-    bool b_jumpL, b_HorizL = false;
+    bool b_jumpL, b_horizL, b_horizR = false;
 
     public bool b_DeathRequest = false;
     private bool m_FacingRight;
@@ -79,26 +79,26 @@ public class PlayerController : MonoBehaviour
         if (Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks"))
         || Physics2D.Raycast(transform.position, Vector2.down, GetComponent<CapsuleCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks")))
         {
+            GetComponent<Animator>().SetBool("IsJumping", false);
+
             b_isGrounded = true;
+            b_horizL = false;
+            b_horizR = false;
+            i_jumpCount = 0;
+
             // GetComponent<Animator>().SetBool("isGrounded", true);
         }
         else
         {
-            b_isGrounded = false;
+            // b_isGrounded = false;
             // GetComponent<Animator>().SetBool("isGrounded", false)
         }
+
         //No Need to check every Tick.
-        if (b_isGrounded)
+        if (!b_isGrounded)
         {
-            i_jumpCount = 0;
+            leftrightRayChk();
         }
-
-        //Check Left 
-
-
-        //Check Right
-
-
 
     }
 
@@ -119,7 +119,23 @@ public class PlayerController : MonoBehaviour
         if (!rotManager.m_rotate)
         {
             Vector3 v3_targetVel = new Vector2(_velocityX * 10f, m_rigidBody.velocity.y);
-            m_rigidBody.velocity = Vector3.SmoothDamp(m_rigidBody.velocity, v3_targetVel, ref m_Velocity, m_faSmoothing);
+
+
+            if (b_horizL && _velocityX > 0 || b_horizR && _velocityX < 0)
+            {
+                m_rigidBody.velocity = Vector3.SmoothDamp(m_rigidBody.velocity, v3_targetVel, ref m_Velocity, m_faSmoothing);
+            }
+
+            else if (b_horizL && b_horizR)
+            {
+                //trapped
+            }
+
+            else if (!b_horizL && !b_horizR)
+            {
+                m_rigidBody.velocity = Vector3.SmoothDamp(m_rigidBody.velocity, v3_targetVel, ref m_Velocity, m_faSmoothing);
+            }
+
 
             // If the input is moving the player Left and the player is facing left...
             if (_velocityX > 0 && m_FacingRight)
@@ -211,14 +227,64 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void leftrightRayChk()
+    {
+        //Check Left 
+        if (Physics2D.Raycast(transform.position, Vector2.left, GetComponent<BoxCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks"))
+        || Physics2D.Raycast(transform.position, Vector2.left, GetComponent<CapsuleCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks")))
+        {
+
+            if (!b_horizL)
+            {
+                Debug.Log("hitting wallL");
+            }
+
+            b_horizL = true;
+            // GetComponent<Animator>().SetBool("isGrounded", true);
+        }
+        else
+        {
+            b_horizL = false;
+            // GetComponent<Animator>().SetBool("isGrounded", false)
+        }
+
+
+        //Check Right
+
+        if (Physics2D.Raycast(transform.position, Vector2.right, GetComponent<BoxCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks"))
+        || Physics2D.Raycast(transform.position, Vector2.right, GetComponent<CapsuleCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks")))
+        {
+            if (!b_horizR)
+            {
+                Debug.Log("hitting wallR");
+            }
+            b_horizR = true;
+
+
+            // GetComponent<Animator>().SetBool("isGrounded", true);
+        }
+        else
+        {
+            b_horizR = false;
+            // GetComponent<Animator>().SetBool("isGrounded", false)
+        }
+    }
+
+
     ///Flips Character
     private void Flip()
     {
         // Switch the way the player is labelled as facing.
         m_FacingRight = !m_FacingRight;
 
-        // Multiply the player's x local scale by -1.
+
+        // Spin Renderer 
+        // SpriteRenderer MyImage = gameObject.GetComponent<SpriteRenderer>();
+        // MyImage.flipX = !MyImage.flipX;
+
         Vector3 theScale = transform.localScale;
+
+        // Multiply the player's x local scale by -1. In case I attach more things to the player
         theScale.x *= -1;
         transform.localScale = theScale;
     }

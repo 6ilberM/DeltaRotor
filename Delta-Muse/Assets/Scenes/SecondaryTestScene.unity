@@ -13464,7 +13464,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 2
-  m_Size: {x: 10.349688, y: 6.615587}
+  m_Size: {x: 45.971195, y: 39.28529}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -13478,8 +13478,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 716416543}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.49, y: 2.11, z: 0}
-  m_LocalScale: {x: 2.5, y: 2.5, z: 1}
+  m_LocalPosition: {x: -0.734, y: -3.498, z: 0}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -13614,7 +13614,7 @@ MonoBehaviour:
   f_jumpForce: 240
   maxfallSpeed: 17
   m_PrevRot: {x: 0, y: 0, z: 0, w: 0}
-  m_faSmoothing: 0.05
+  m_faSmoothing: 0.08
   f_rotDuration: 0.3
   b_ShouldSelfOrient: 0
   b_dirChosen: 0

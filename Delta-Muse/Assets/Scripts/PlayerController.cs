@@ -270,7 +270,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
     ///Flips Character
     private void Flip()
     {

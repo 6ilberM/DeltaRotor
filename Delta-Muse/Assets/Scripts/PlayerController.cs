@@ -26,17 +26,16 @@ public class PlayerController : MonoBehaviour
     [Range(0, .3f)] [SerializeField] private float m_faSmoothing = .08f;
 
     ///Determines how fast the player rotates
-    public float f_rotDuration = 0.3f;
+    [SerializeField] private float m_RotationDelay = 0.3f;
 
+    public float m_durationScalar = 1;
     bool b_securityCheck;
 
     public bool b_ShouldSelfOrient = false;
 
     bool m_StoreRotation;
+
     Quaternion qtDir;
-
-
-    ///How long An object Rotates
 
     //Make a check on this on the Rotation manager
     public bool b_dirChosen;
@@ -76,28 +75,15 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         //Check if we are on the ground
-        if (Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks"))
-        || Physics2D.Raycast(transform.position, Vector2.down, GetComponent<CapsuleCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks")))
+        if (!rotManager.m_rotate)
         {
-            GetComponent<Animator>().SetBool("IsJumping", false);
-
-            b_isGrounded = true;
-            b_horizL = false;
-            b_horizR = false;
-            i_jumpCount = 0;
-
-            // GetComponent<Animator>().SetBool("isGrounded", true);
-        }
-        else
-        {
-            // b_isGrounded = false;
-            // GetComponent<Animator>().SetBool("isGrounded", false)
+            groundRayCheck();
         }
 
         //No Need to check every Tick.
         if (!b_isGrounded)
         {
-            leftrightRayChk();
+            wallRayCheck();
         }
 
     }
@@ -114,6 +100,8 @@ public class PlayerController : MonoBehaviour
     }
 
     //Should be called in fixed time
+    int tempint;
+
     public void Move(float _velocityX, bool _Jump)
     {
         if (!rotManager.m_rotate)
@@ -157,24 +145,33 @@ public class PlayerController : MonoBehaviour
                 if (m_rigidBody.velocity.y < 0)
                 {
                     m_rigidBody.velocity = new Vector2(m_rigidBody.velocity.x, 0);
+
                 }
 
                 if (i_jumpCount == 0)
                 {
                     m_rigidBody.AddForce(new Vector2(0f, f_jumpForce), ForceMode2D.Impulse);
                     i_jumpCount++;
+                    tempint++;
+
                 }
 
                 else if (i_jumpCount == 1)
                 {
                     m_rigidBody.AddForce(new Vector2(0f, f_jumpForce * 0.7f), ForceMode2D.Impulse);
                     i_jumpCount++;
-                }
+                    tempint++;
 
+                }
                 else
                 {
                     //do nothing
                 }
+                string str_temp = "how many times have i ran: ";
+
+                str_temp += tempint;
+                Debug.Log(str_temp);
+
                 b_isGrounded = false;
             }
 
@@ -196,7 +193,7 @@ public class PlayerController : MonoBehaviour
 
             m_curentTime += Time.fixedDeltaTime;
             //Close Enough? w/ thresholdCheck
-            if (m_curentTime > f_rotDuration)
+            if (m_curentTime > m_RotationDelay * m_durationScalar)
             {
                 transform.localRotation = qtDir;
 
@@ -207,7 +204,8 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                float t = m_curentTime / f_rotDuration;
+                float t = m_curentTime / (m_RotationDelay * m_durationScalar);
+
 
                 t = t * t * t * (t * (6f * t - 15f) + 10f);
 
@@ -222,12 +220,32 @@ public class PlayerController : MonoBehaviour
                 {
                 }
                 transform.localRotation = Quaternion.Slerp(m_PrevRot, qtDir, t);
-
             }
         }
     }
 
-    void leftrightRayChk()
+    void groundRayCheck()
+    {
+        if ((Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>().bounds.extents.y
+        + 0.1f, LayerMask.GetMask("Blocks")) || Physics2D.Raycast(transform.position, Vector2.down,
+        GetComponent<CapsuleCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks"))) && m_rigidBody.velocity.y < 0)
+        {
+            GetComponent<Animator>().SetBool("IsJumping", false);
+
+            b_isGrounded = true;
+            b_horizL = false;
+            b_horizR = false;
+            i_jumpCount = 0;
+            // GetComponent<Animator>().SetBool("isGrounded", true);
+        }
+        else
+        {
+            // b_isGrounded = false;
+            // GetComponent<Animator>().SetBool("isGrounded", false)
+        }
+    }
+
+    void wallRayCheck()
     {
         //Check Left 
         if (Physics2D.Raycast(transform.position, Vector2.left, GetComponent<BoxCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks"))

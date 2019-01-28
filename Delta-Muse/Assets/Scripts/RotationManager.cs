@@ -40,6 +40,7 @@ public class RotationManager : MonoBehaviour
         {
             m_rotate = true;
             currentTime += Time.fixedDeltaTime;
+            bool wasOrienting = player.b_ShouldSelfOrient;
 
             //Close Enough? w/ thresholdCheck
             if (currentTime >= f_RotDuration)
@@ -48,6 +49,16 @@ public class RotationManager : MonoBehaviour
                 player.b_dirChosen = false;
                 m_rotate = false;
                 player.b_ShouldSelfOrient = true;
+
+                if (wasOrienting == player.b_ShouldSelfOrient)
+                {
+                    player.m_durationScalar = 1.5f;
+                }
+                else
+                {
+                    player.m_durationScalar = 1;
+
+                }
                 currentTime = 0.0f;
                 //Or you could set do once back off and it can once again go through
                 prev = _desiredrotation;

@@ -11,7 +11,7 @@ public class InputManager : MonoBehaviour
     public float runSpeed = 40f;
 
     float f_hrzMove = 0f;
-    bool b_jump, b_rot = false;
+    bool b_jump = false;
 
 
     // Update is called once per frame
@@ -27,6 +27,7 @@ public class InputManager : MonoBehaviour
             b_jump = true;
             animator.SetBool("IsJumping", true);
         }
+
     }
 
     public void OnLanding()

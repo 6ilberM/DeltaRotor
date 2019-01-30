@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour
 
     //Overlap methods 
     ContactFilter2D Cfilter2d1;
-    Collider2D[] overlapResults = null;
+    Collider2D[] overlapResults;
 
     //obj References
 
@@ -100,8 +100,8 @@ public class PlayerController : MonoBehaviour
         //No Need to check every Tick.
         if (!b_isGrounded)
         {
-            // wallRayCheck();
-            wallcheck();
+            wallRayCheck();
+            // wallcheck();
         }
 
     }
@@ -110,10 +110,10 @@ public class PlayerController : MonoBehaviour
     {
 
         //Landing
-        LandingFeel();
+        // LandingFeel();
 
         //MaxFallSpeed
-        m_rigidBody.velocity = new Vector3(m_rigidBody.velocity.x, Mathf.Clamp(m_rigidBody.velocity.y, -maxfallSpeed, 9000.0f), 0);
+        // m_rigidBody.velocity = new Vector3(m_rigidBody.velocity.x, Mathf.Clamp(m_rigidBody.velocity.y, -maxfallSpeed, 9000.0f), 0);
 
         //Rotate!
         rotManager.Rotate(b_dirChosen, qt_desiredRot);
@@ -287,7 +287,7 @@ public class PlayerController : MonoBehaviour
         //Landed
         if (/*(Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>().bounds.extents.y
         + 0.1f, LayerMask.GetMask("Blocks")) || */ (Physics2D.Raycast(transform.position, Vector2.down,
-        GetComponent<CapsuleCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks"))) && m_rigidBody.velocity.y < 0)
+        GetComponent<CapsuleCollider2D>().bounds.extents.y + 0.09f, LayerMask.GetMask("Blocks"))) && (m_rigidBody.velocity.normalized.y <= 0))
         {
             b_isGrounded = true;
 
@@ -354,54 +354,6 @@ public class PlayerController : MonoBehaviour
             // GetComponent<Animator>().SetBool("isGrounded", false)
         }
     }
-
-    public Transform tr_left, tr_right;
-
-    void wallcheck()
-    {
-        Vector2 size = new Vector2(0.001f, .135f);
-        Collider2D[] colLeft = Physics2D.OverlapBoxAll(tr_left.position, size, LayerMask.GetMask("Blocks"));
-        for (int i = 0; i < colLeft.Length; i++)
-        {
-            if (colLeft[i].gameObject != gameObject)
-            {
-                if (!b_horizL)
-                {
-                    Debug.Log("hitting wallR");
-                }
-                b_horizL = true;
-            }
-
-            else
-            {
-                b_horizL = false;
-                // GetComponent<Animator>().SetBool("isGrounded", false)
-            }
-
-        }
-
-        Collider2D[] colRight = Physics2D.OverlapBoxAll(tr_right.position, size, LayerMask.GetMask("Blocks"));
-        for (int i = 0; i < colRight.Length; i++)
-        {
-            if (colRight[i].gameObject != gameObject)
-            {
-                if (!b_horizR)
-                {
-                    Debug.Log("hitting wallR");
-                }
-                b_horizR = true;
-            }
-
-            else
-            {
-                b_horizR = false;
-                // GetComponent<Animator>().SetBool("isGrounded", false)
-            }
-        }
-
-    }
-
-
     ///Flips Character
     private void Flip()
     {

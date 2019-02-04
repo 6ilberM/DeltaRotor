@@ -10,6 +10,16 @@ TextureImporter:
     21300010: anger
     21300012: player_6
     21300014: Jump
+    21300016: player_4
+    21300018: player_5
+    21300020: TempDawg_0
+    21300022: TempDawg_1
+    21300024: TempDawg_2
+    21300026: TempDawg_3
+    21300028: TempDawg_4
+    21300030: TempDawg_5
+    21300032: TempDawg_6
+    21300034: juump
   externalObjects: {}
   serializedVersion: 7
   mipmaps:
@@ -103,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: player_0
+      name: TempDawg_0
       rect:
         serializedVersion: 2
         x: 1
@@ -117,13 +127,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f1b14727d39963649805f15f8a96612c
+      spriteID: 208fb4593c9782544823b15668b74fc3
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: player_1
+      name: TempDawg_1
       rect:
         serializedVersion: 2
         x: 20
@@ -137,13 +147,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6202b968b5b1b5c499fd9e0c598823b0
+      spriteID: 6be5e4a3d16558a48b1bb3a347e0ffe6
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: player_2
+      name: TempDawg_2
       rect:
         serializedVersion: 2
         x: 33
@@ -157,13 +167,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b8261a8301e43cf42a869c27c27a1619
+      spriteID: 31e48033ea81f1b4c85fc283a14948d1
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: player_3
+      name: TempDawg_3
       rect:
         serializedVersion: 2
         x: 50
@@ -177,13 +187,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1c32be203b116a54986ebd7d77da8a0f
+      spriteID: 8ae9d78e92f026349bc8db6cd35fed07
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Idle
+      name: TempDawg_4
       rect:
         serializedVersion: 2
         x: 19
@@ -197,13 +207,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: efc9ee57a529c40419bb3801eb0f7343
+      spriteID: d43c4a4e2d4895d43983b98a0e97076c
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: anger
+      name: TempDawg_5
       rect:
         serializedVersion: 2
         x: 33
@@ -217,13 +227,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4af9e32eca2d6114da4699b6b65d3f08
+      spriteID: 99fe873b60c253741ba05f5775f88da1
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: player_6
+      name: TempDawg_6
       rect:
         serializedVersion: 2
         x: 49
@@ -237,18 +247,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bab3c083ba8e1194492398cc10163f77
+      spriteID: 3766e38d63b8ab94098ef6a0478d442d
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Jump
+      name: juump
       rect:
         serializedVersion: 2
-        x: 1
+        x: 2
         y: 2
-        width: 14
+        width: 12
         height: 14
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -257,7 +267,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5f9fc8766bb4b7247a19d5cdebe6ec62
+      spriteID: fbb54a81d5d4fab4ba37c41c25355daa
       vertices: []
       indices: 
       edges: []

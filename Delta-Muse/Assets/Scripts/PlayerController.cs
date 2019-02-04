@@ -95,6 +95,14 @@ public class PlayerController : MonoBehaviour
         if (!rotManager.m_rotate)
         {
             groundRayCheck();
+            if (gameObject.GetComponent<Animator>().speed != 1)
+            {
+                gameObject.GetComponent<Animator>().speed = 1;
+            }
+        }
+        else
+        {
+            gameObject.GetComponent<Animator>().speed = 0;
         }
 
         //No Need to check every Tick.

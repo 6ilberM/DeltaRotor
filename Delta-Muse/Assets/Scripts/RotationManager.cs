@@ -9,7 +9,7 @@ public class RotationManager : MonoBehaviour
     public PlayerController player;
 
     public bool m_rotate, m_doOnce;
-    public float f_RotDuration = 0.39f;
+    private float m_rDelay = 0.39f;
     public int rotationId = 0;
 
     Quaternion prev;
@@ -43,7 +43,7 @@ public class RotationManager : MonoBehaviour
             bool wasOrienting = player.b_ShouldSelfOrient;
 
             //Close Enough? w/ thresholdCheck
-            if (currentTime >= f_RotDuration)
+            if (currentTime >= m_rDelay)
             {
                 transform.rotation = _desiredrotation;
                 player.b_dirChosen = false;
@@ -70,7 +70,7 @@ public class RotationManager : MonoBehaviour
             }
             else
             {
-                float t = currentTime / f_RotDuration;
+                float t = currentTime / m_rDelay;
                 // easeout cubic
                 // t = (1 + (--t) * t * t);
                 // easeoutquart
@@ -117,7 +117,7 @@ public class RotationManager : MonoBehaviour
             }
 
             //Close Enough? w/ thresholdCheck
-            if (currentTime > f_RotDuration)
+            if (currentTime > m_rDelay)
             {
                 transform.rotation = DesiredRotation;
                 player.b_ShouldSelfOrient = true;
@@ -135,7 +135,7 @@ public class RotationManager : MonoBehaviour
             else
             {
                 //percent of lerp
-                float t = currentTime / f_RotDuration;
+                float t = currentTime / m_rDelay;
 
                 //easeOutQuad
                 t = (t * (2 - t));

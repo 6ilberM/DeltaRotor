@@ -295,7 +295,7 @@ public class PlayerController : MonoBehaviour
         //Landed
         if (/*(Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>().bounds.extents.y
         + 0.1f, LayerMask.GetMask("Blocks")) || */ (Physics2D.Raycast(transform.position, Vector2.down,
-        GetComponent<CapsuleCollider2D>().bounds.extents.y + 0.09f, LayerMask.GetMask("Blocks"))) && (m_rigidBody.velocity.normalized.y <= 0))
+        GetComponent<CapsuleCollider2D>().bounds.extents.y + .5f, LayerMask.GetMask("Blocks"))) && (m_rigidBody.velocity.normalized.y <= 0))
         {
             b_isGrounded = true;
 

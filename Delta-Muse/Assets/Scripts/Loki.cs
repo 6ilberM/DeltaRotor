@@ -9,7 +9,7 @@ public class Loki : MonoBehaviour
 
     private void Awake()
     {
-        m_target = FindObjectOfType<PlayerController>().gameObject.transform;
+        // m_target = FindObjectOfType<PlayerController>().gameObject.transform;
     }
 
     private void Start()

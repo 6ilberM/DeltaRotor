@@ -210,6 +210,8 @@ public class PlayerController : MonoBehaviour
 
             //jumpLogic soon to be changed
 
+            // OldJump(_Jump);
+
             if (_Jump && i_jumpCount < 2)
             {
                 // Add a vertical force to the player.
@@ -221,7 +223,12 @@ public class PlayerController : MonoBehaviour
 
                 if (i_jumpCount == 0)
                 {
-                    m_rigidBody.AddForce(new Vector2(0f, f_jumpForce), ForceMode2D.Impulse);
+                    // m_rigidBody.AddForce(new Vector2(0f, f_jumpForce), ForceMode2D.Impulse);
+                    float jforce;
+                    jforce = (2 * 2) / 1.5f;
+                    m_rigidBody.AddForce(new Vector2(0f, -jforce), ForceMode2D.Impulse);
+
+                    Debug.Log(jforce);
                     i_jumpCount++;
 
                 }
@@ -239,8 +246,40 @@ public class PlayerController : MonoBehaviour
 
                 b_isGrounded = false;
             }
-
             RotationSelect();
+        }
+    }
+
+    private void OldJump(bool _Jump)
+    {
+        if (_Jump && i_jumpCount < 2)
+        {
+            // Add a vertical force to the player.
+            if (m_rigidBody.velocity.y < 0)
+            {
+                m_rigidBody.velocity = new Vector2(m_rigidBody.velocity.x, 0);
+
+            }
+
+            if (i_jumpCount == 0)
+            {
+                m_rigidBody.AddForce(new Vector2(0f, f_jumpForce), ForceMode2D.Impulse);
+                i_jumpCount++;
+
+            }
+
+            else if (i_jumpCount == 1)
+            {
+                m_rigidBody.AddForce(new Vector2(0f, f_jumpForce * 0.7f), ForceMode2D.Impulse);
+                i_jumpCount++;
+
+            }
+            else
+            {
+                //do nothing
+            }
+
+            b_isGrounded = false;
         }
     }
 

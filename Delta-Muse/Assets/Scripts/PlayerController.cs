@@ -208,7 +208,8 @@ public class PlayerController : MonoBehaviour
                 Flip();
             }
 
-            //jumpLogic
+            //jumpLogic soon to be changed
+
             if (_Jump && i_jumpCount < 2)
             {
                 // Add a vertical force to the player.

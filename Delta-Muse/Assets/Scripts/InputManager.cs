@@ -11,7 +11,8 @@ public class InputManager : MonoBehaviour
     public float runSpeed = 40f;
 
     float f_hrzMove = 0f;
-    bool b_jump, b_rot = false;
+    bool b_jump = false;
+    public bool m_jumpEnabled;
 
     // Update is called once per frame
     void Update()
@@ -21,11 +22,12 @@ public class InputManager : MonoBehaviour
 
         animator.SetFloat("Speed", Mathf.Abs(f_hrzMove));
 
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && m_jumpEnabled)
         {
             b_jump = true;
             animator.SetBool("IsJumping", true);
         }
+
     }
 
     public void OnLanding()
@@ -33,15 +35,10 @@ public class InputManager : MonoBehaviour
         animator.SetBool("IsJumping", false);
     }
 
-    public void OnCrouching(bool isCrouching)
-    {
-        animator.SetBool("IsCrouching", isCrouching);
-    }
-
     void FixedUpdate()
     {
         // Move our character
-        controller.Move(f_hrzMove * Time.fixedDeltaTime, b_jump, b_rot);
+        controller.Move(f_hrzMove * Time.fixedDeltaTime, b_jump);
         b_jump = false;
     }
 

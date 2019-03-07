@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
@@ -23,19 +24,19 @@ public class PlayerController : MonoBehaviour
     private Vector3 m_Velocity = Vector3.zero;
 
     /// How much to smooth out the movement
-    [Range(0, .3f)] [SerializeField] private float m_faSmoothing = .05f;
+    [Range(0, .3f)] [SerializeField] private float m_faSmoothing = .08f;
 
     ///Determines how fast the player rotates
-    public float f_rotDuration = 0.3f;
+    [SerializeField] private float m_RotationDelay = 0.3f;
 
+    public float m_durationScalar = 1;
     bool b_securityCheck;
 
     public bool b_ShouldSelfOrient = false;
+
     bool m_StoreRotation;
+
     Quaternion qtDir;
-
-
-    ///How long An object Rotates
 
     //Make a check on this on the Rotation manager
     public bool b_dirChosen;
@@ -46,12 +47,19 @@ public class PlayerController : MonoBehaviour
 
     //Overlap methods 
     ContactFilter2D Cfilter2d1;
-    Collider2D[] overlapResults = null;
+    Collider2D[] overlapResults;
 
     //obj References
 
+    //Events
+
+    [Header("Events")]
+    [Space]
+
+    public UnityEvent OnLandEvent;
+
     private bool b_isGrounded;
-    bool b_jumpL, b_HorizL = false;
+    bool b_jumpL, b_horizL, b_horizR = false;
 
     public bool b_DeathRequest = false;
     private bool m_FacingRight;
@@ -59,7 +67,6 @@ public class PlayerController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
         Cfilter2d1.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer));
         Cfilter2d1.useLayerMask = true;
         Cfilter2d1.useTriggers = true;
@@ -70,36 +77,51 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         m_rigidBody = GetComponent<Rigidbody2D>();
+        if (OnLandEvent == null)
+        {
+            OnLandEvent = new UnityEvent();
+        }
     }
+
+    Vector3 oldscale;
+    float dt;
+
+    bool m_StandUp;
+
     // Update is called once per frame
     void Update()
     {
-        RotationSelect();
-
         //Check if we are on the ground
-        if (Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks"))
-        || Physics2D.Raycast(transform.position, Vector2.down, GetComponent<CapsuleCollider2D>().bounds.extents.y + 0.1f, LayerMask.GetMask("Blocks")))
+        if (!rotManager.m_rotate)
         {
-            b_isGrounded = true;
-            // GetComponent<Animator>().SetBool("isGrounded", true);
+            groundRayCheck();
+            if (gameObject.GetComponent<Animator>().speed != 1)
+            {
+                gameObject.GetComponent<Animator>().speed = 1;
+            }
         }
         else
         {
-            b_isGrounded = false;
-            // GetComponent<Animator>().SetBool("isGrounded", false)
+            gameObject.GetComponent<Animator>().speed = 0;
         }
+
         //No Need to check every Tick.
-        if (b_isGrounded)
+        if (!b_isGrounded)
         {
-            i_jumpCount = 0;
+            wallRayCheck();
+            // wallcheck();
         }
 
     }
 
     private void FixedUpdate()
     {
+
+        //Landing
+        // LandingFeel();
+
         //MaxFallSpeed
-        m_rigidBody.velocity = new Vector3(m_rigidBody.velocity.x, Mathf.Clamp(m_rigidBody.velocity.y, -maxfallSpeed, 9000.0f), 0);
+        // m_rigidBody.velocity = new Vector3(m_rigidBody.velocity.x, Mathf.Clamp(m_rigidBody.velocity.y, -maxfallSpeed, 9000.0f), 0);
 
         //Rotate!
         rotManager.Rotate(b_dirChosen, qt_desiredRot);
@@ -107,26 +129,86 @@ public class PlayerController : MonoBehaviour
         OrientSelfUp();
     }
 
+    ///Scales down and then back up quickly to improve the game feel
+    private void LandingFeel()
+    {
+        if (m_StandUp)
+        {
+
+            Vector3 targetscale = new Vector3(oldscale.x * 1.5f, oldscale.y * .35f, transform.localScale.z);
+            dt += Time.fixedDeltaTime;
+
+            float f_Delay = 0.3f;
+            if (dt > f_Delay * 2)
+            {
+                // transform.localScale = targetscale;
+                // transform.localScale = oldscale;
+                dt = 0;
+                m_StandUp = false;
+            }
+
+            // t = t / .20f*2;
+            if (dt < f_Delay)
+            {
+                float t = dt;
+                t = t / f_Delay;
+                t = (1 + (--t) * t * t);
+                transform.localScale = Vector3.Lerp(oldscale, targetscale, t);
+            }
+            else
+            {
+                float t = dt - f_Delay;
+                t = t / f_Delay;
+                t = (1 + (--t) * t * t);
+                transform.localScale = Vector3.Lerp(targetscale, oldscale, t);
+            }
+        }
+        else
+        {
+            GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Vertical;
+            GetComponent<CapsuleCollider2D>().size = new Vector2(.13f, .15f);
+        }
+    }
+
     //Should be called in fixed time
-    public void Move(float _velocityX, bool _Jump, bool _Rot)
+
+    public void Move(float _velocityX, bool _Jump)
     {
         if (!rotManager.m_rotate)
         {
             Vector3 v3_targetVel = new Vector2(_velocityX * 10f, m_rigidBody.velocity.y);
-            m_rigidBody.velocity = Vector3.SmoothDamp(m_rigidBody.velocity, v3_targetVel, ref m_Velocity, m_faSmoothing);
 
-            // If the input is moving the player right and the player is facing left...
-            if (_velocityX > 0 && !m_FacingRight)
+
+            if (b_horizL && _velocityX > 0 || b_horizR && _velocityX < 0)
+            {
+                m_rigidBody.velocity = Vector3.SmoothDamp(m_rigidBody.velocity, v3_targetVel, ref m_Velocity, m_faSmoothing);
+            }
+
+            else if (b_horizL && b_horizR)
+            {
+                //trapped
+            }
+
+            else if (!b_horizL && !b_horizR)
+            {
+                m_rigidBody.velocity = Vector3.SmoothDamp(m_rigidBody.velocity, v3_targetVel, ref m_Velocity, m_faSmoothing);
+            }
+
+
+            // If the input is moving the player Left and the player is facing left...
+            if (_velocityX > 0 && m_FacingRight)
             {
                 // ... flip the player.
                 Flip();
             }
-            // Otherwise if the input is moving the player left and the player is facing right...
-            else if (_velocityX < 0 && m_FacingRight)
+            // Otherwise if the input is moving the player Right and the player is facing right...
+            else if (_velocityX < 0 && !m_FacingRight)
             {
                 // ... flip the player.
                 Flip();
             }
+
+            //jumpLogic soon to be changed
 
             if (_Jump && i_jumpCount < 2)
             {
@@ -134,26 +216,31 @@ public class PlayerController : MonoBehaviour
                 if (m_rigidBody.velocity.y < 0)
                 {
                     m_rigidBody.velocity = new Vector2(m_rigidBody.velocity.x, 0);
+
                 }
 
                 if (i_jumpCount == 0)
                 {
                     m_rigidBody.AddForce(new Vector2(0f, f_jumpForce), ForceMode2D.Impulse);
                     i_jumpCount++;
+
                 }
 
                 else if (i_jumpCount == 1)
                 {
                     m_rigidBody.AddForce(new Vector2(0f, f_jumpForce * 0.7f), ForceMode2D.Impulse);
                     i_jumpCount++;
-                }
 
+                }
                 else
                 {
                     //do nothing
                 }
+
                 b_isGrounded = false;
             }
+
+            RotationSelect();
         }
     }
 
@@ -168,10 +255,9 @@ public class PlayerController : MonoBehaviour
         //If It no longer is rotating and should OrientSelf
         if (!rotManager.m_rotate && b_ShouldSelfOrient)
         {
-
             m_curentTime += Time.fixedDeltaTime;
             //Close Enough? w/ thresholdCheck
-            if (m_curentTime > f_rotDuration)
+            if (m_curentTime > m_RotationDelay * m_durationScalar)
             {
                 transform.localRotation = qtDir;
 
@@ -182,7 +268,8 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                float t = m_curentTime / f_rotDuration;
+                float t = m_curentTime / (m_RotationDelay * m_durationScalar);
+
 
                 t = t * t * t * (t * (6f * t - 15f) + 10f);
 
@@ -197,21 +284,102 @@ public class PlayerController : MonoBehaviour
                 {
                 }
                 transform.localRotation = Quaternion.Slerp(m_PrevRot, qtDir, t);
+            }
+        }
+    }
+
+    void groundRayCheck()
+    {
+        bool wasgrounded = b_isGrounded;
+        b_isGrounded = false;
+
+        //Landed
+        if (/*(Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>().bounds.extents.y
+        + 0.1f, LayerMask.GetMask("Blocks")) || */ (Physics2D.Raycast(transform.position, Vector2.down,
+        GetComponent<CapsuleCollider2D>().bounds.extents.y + .5f, LayerMask.GetMask("Blocks"))) && (m_rigidBody.velocity.normalized.y <= 0))
+        {
+            b_isGrounded = true;
+
+            b_horizL = false;
+            b_horizR = false;
+            i_jumpCount = 0;
+            if (!wasgrounded)
+            {
+                OnLandEvent.Invoke();
+                if (!m_StandUp)
+                {
+                    //Set Size of Collider to y .13 or lower just so it will look less ugh...
+                    GetComponent<CapsuleCollider2D>().size = new Vector2(.13f, 0.09f);
+
+                    GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Horizontal;
+
+                    m_StandUp = true;
+                    oldscale = transform.localScale;
+                }
 
             }
         }
     }
 
+    void wallRayCheck()
+    {
+        //Check Left 
+        if (Physics2D.Raycast(transform.position, Vector2.left, GetComponent<BoxCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks"))
+        || Physics2D.Raycast(transform.position, Vector2.left, GetComponent<CapsuleCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks")))
+        {
+
+            if (!b_horizL)
+            {
+                Debug.Log("hitting wallL");
+            }
+
+            b_horizL = true;
+            // GetComponent<Animator>().SetBool("isGrounded", true);
+        }
+        else
+        {
+            b_horizL = false;
+            // GetComponent<Animator>().SetBool("isGrounded", false)
+        }
+
+
+        //Check Right
+
+        if (Physics2D.Raycast(transform.position, Vector2.right, GetComponent<BoxCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks"))
+        || Physics2D.Raycast(transform.position, Vector2.right, GetComponent<CapsuleCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks")))
+        {
+            if (!b_horizR)
+            {
+                Debug.Log("hitting wallR");
+            }
+            b_horizR = true;
+
+
+            // GetComponent<Animator>().SetBool("isGrounded", true);
+        }
+        else
+        {
+            b_horizR = false;
+            // GetComponent<Animator>().SetBool("isGrounded", false)
+        }
+    }
     ///Flips Character
     private void Flip()
     {
         // Switch the way the player is labelled as facing.
         m_FacingRight = !m_FacingRight;
 
-        // Multiply the player's x local scale by -1.
-        Vector3 theScale = transform.localScale;
-        theScale.x *= -1;
-        transform.localScale = theScale;
+
+        // Spin Renderer 
+        SpriteRenderer MyImage = gameObject.GetComponent<SpriteRenderer>();
+        MyImage.flipX = !MyImage.flipX;
+
+        // //Spin the scale
+        //         Vector3 theScale = transform.localScale;
+
+        //         // Multiply the player's x local scale by -1. In case I attach more things to the player
+        //         theScale.x *= -1;
+        //         transform.localScale = theScale;
     }
 
     //Make conditional Versions of this for enabling bigger rotations

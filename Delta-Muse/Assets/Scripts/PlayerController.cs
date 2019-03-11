@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
 
     [Range(1, 80)] public float f_speedScalar = 16.15f;
     [Range(2, 14)] public int i_jumpScalar = 2;
-    public float f_jumpForce = 300.0f;
+    [Range(50, 300)] public float f_jumpForce = 300.0f;
     [Range(15, 30)] public float maxfallSpeed = 17.0f;
 
     //Temp
@@ -210,42 +210,8 @@ public class PlayerController : MonoBehaviour
 
             //jumpLogic soon to be changed
 
-            // OldJump(_Jump);
+            OldJump(_Jump);
 
-            if (_Jump && i_jumpCount < 2)
-            {
-                // Add a vertical force to the player.
-                if (m_rigidBody.velocity.y < 0)
-                {
-                    m_rigidBody.velocity = new Vector2(m_rigidBody.velocity.x, 0);
-
-                }
-
-                if (i_jumpCount == 0)
-                {
-                    // m_rigidBody.AddForce(new Vector2(0f, f_jumpForce), ForceMode2D.Impulse);
-                    float jforce;
-                    jforce = (2 * 2) / 1.5f;
-                    m_rigidBody.AddForce(new Vector2(0f, -jforce), ForceMode2D.Impulse);
-
-                    Debug.Log(jforce);
-                    i_jumpCount++;
-
-                }
-
-                else if (i_jumpCount == 1)
-                {
-                    m_rigidBody.AddForce(new Vector2(0f, f_jumpForce * 0.7f), ForceMode2D.Impulse);
-                    i_jumpCount++;
-
-                }
-                else
-                {
-                    //do nothing
-                }
-
-                b_isGrounded = false;
-            }
             RotationSelect();
         }
     }
@@ -263,7 +229,11 @@ public class PlayerController : MonoBehaviour
 
             if (i_jumpCount == 0)
             {
+                // float _jumpGravity = 9.81f * 3 * -2 / Mathf.Pow(2, 2);
+                // int _jumpVelocity = (int)Mathf.Abs(_jumpGravity) * 2;
+
                 m_rigidBody.AddForce(new Vector2(0f, f_jumpForce), ForceMode2D.Impulse);
+                // m_rigidBody.AddForce(new Vector2(0f, _jumpVelocity), ForceMode2D.Impulse);
                 i_jumpCount++;
 
             }

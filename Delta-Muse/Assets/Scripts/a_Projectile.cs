@@ -5,10 +5,12 @@ public class a_Projectile : MonoBehaviour
     //Variables
     Rigidbody2D m_rigidBody;
     Collider2D m_collider;
+
+    public RotationManager m_rotationRef;
+
     [Range(1, 20)] [SerializeField] float f_speed = 1;
-    /// <summary>
-    /// Awake is called when the script instance is being loaded.
-    /// </summary>
+
+
     void Awake()
     {
         m_collider = gameObject.GetComponent<Collider2D>();
@@ -18,12 +20,28 @@ public class a_Projectile : MonoBehaviour
 
     private void Start()
     {
-        m_rigidBody.velocity = Vector2.right * f_speed;
+        m_rigidBody.velocity = m_rigidBody.transform.right * f_speed;
+        m_rotationRef = transform.parent.GetComponent<RotationManager>();
 
     }
+
     private void Update()
     {
+        m_rigidBody.velocity = m_rigidBody.transform.right * f_speed;
+        if (m_rotationRef!=null)
+        {
+            if (m_rotationRef.m_rotate)
+            {
+                m_rigidBody.velocity = new Vector3(0, 0, 0);
+            }
 
+        }
+
+
+    }
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        Destroy(gameObject);
     }
 
 }

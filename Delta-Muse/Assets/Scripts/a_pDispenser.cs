@@ -2,7 +2,12 @@ using UnityEngine;
 
 public class a_pDispenser : MonoBehaviour
 {
-    [Range(.1f, 5)] [SerializeField] float m_Delay = 0.1f;
+    ///Represents How long it will take to fire again
+    [Range(.1f, 5)] [SerializeField] float deltaFire = 0.5f;
+
+    ///The time Difference that it should take to begin the Process
+    [Range(.1f, 10)] [SerializeField] float m_Delay = 0.0f;
+
     bool inactive = false;
 
     public GameObject go_pref;
@@ -12,7 +17,7 @@ public class a_pDispenser : MonoBehaviour
     void Start()
     {
         // Call the Spawn function after a delay of the spawnTime and then continue to call after the same amount of time.
-        InvokeRepeating("Spawn", m_Delay, m_Delay);
+        // InvokeRepeating("Spawn", m_Delay, m_Delay);
     }
     public void changeActiveStatus()
     {
@@ -20,6 +25,27 @@ public class a_pDispenser : MonoBehaviour
         return;
     }
 
+    bool LemmeOut;
+    float DeltaTime;
+    private void Update()
+    {
+        if (m_Delay > Time.time)
+        {
+            LemmeOut = true;
+        }
+
+        if (LemmeOut && !m_rotationRef.m_rotate)
+        {
+            DeltaTime += Time.deltaTime;
+
+            if (DeltaTime >= deltaFire)
+            {
+                Spawn();
+                DeltaTime = 0;
+            }
+        }
+
+    }
     void Spawn()
     {
         if (inactive || m_rotationRef.m_rotate)
@@ -28,7 +54,6 @@ public class a_pDispenser : MonoBehaviour
             return;
         }
 
-        // Find a random index between zero and one less than the number of spawn points.
         for (int i = 0; i < spawnPoints.Length; i++)
         {
             GameObject myobj = Instantiate(go_pref, spawnPoints[i].position, spawnPoints[i].rotation);

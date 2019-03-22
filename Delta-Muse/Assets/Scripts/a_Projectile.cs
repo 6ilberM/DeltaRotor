@@ -27,8 +27,13 @@ public class a_Projectile : MonoBehaviour
 
     private void Update()
     {
-        m_rigidBody.velocity = m_rigidBody.transform.right * f_speed;
-        if (m_rotationRef!=null)
+        if (m_rigidBody.velocity.magnitude <= 0)
+        {
+            m_rigidBody.velocity = m_rigidBody.transform.right * f_speed;
+
+        }
+
+        if (m_rotationRef != null)
         {
             if (m_rotationRef.m_rotate)
             {

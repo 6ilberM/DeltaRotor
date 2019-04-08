@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2709120800240400705}
   - component: {fileID: 2709120800240400708}
   - component: {fileID: 2709120800240400709}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: ProtoArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}

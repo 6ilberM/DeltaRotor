@@ -1,7 +1,4 @@
 using UnityEngine;
-
-
-
 [RequireComponent(typeof(BoxCollider2D))]
 
 public class a_ProjBounce : MonoBehaviour
@@ -29,9 +26,10 @@ public class a_ProjBounce : MonoBehaviour
     private void Start()
     {
         projectileCfilter = new ContactFilter2D();
-        projectileCfilter.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer));
+        projectileCfilter.SetLayerMask(LayerMask.GetMask("Interactable"));
     }
 
+    Collider2D[] colliderstemp = new Collider2D[10];
     private void Update()
 
     {
@@ -41,9 +39,24 @@ public class a_ProjBounce : MonoBehaviour
         int colliderCount = myCollider.OverlapCollider(projectileCfilter, colliders);
         for (int i = 0; i < colliderCount; i++)
         {
-//continue here
-// Do bounce angles next then PLEASE COMPLETE A LEVEL GOD DAMN HAHA...
 
+            // Do bounce angles next then PLEASE COMPLETE A LEVEL GOD DAMN HAHA...
+            if (colliderstemp[i] != colliders[i])
+            {
+                Debug.Log(colliders[i].gameObject.transform.rotation);
+
+
+                Vector3 holder = colliders[i].gameObject.transform.rotation.eulerAngles;
+                float f_holder = holder.z;
+
+                colliders[i].gameObject.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
+                colliderstemp = colliders;
+
+            }
+            if (false == colliderstemp[i].IsTouching(myCollider))
+            {
+                colliderstemp[i] = null;
+            }
         }
 
         if (colliderCount > 0)
@@ -52,8 +65,4 @@ public class a_ProjBounce : MonoBehaviour
         }
     }
 
-    private void LateUpdate()
-    {
-
-    }
 }

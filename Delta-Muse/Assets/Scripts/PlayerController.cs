@@ -339,7 +339,7 @@ public class PlayerController : MonoBehaviour
 
             if (!b_horizL)
             {
-                Debug.Log("hitting wallL");
+                // Debug.Log("hitting wallL");
             }
 
             b_horizL = true;
@@ -359,7 +359,7 @@ public class PlayerController : MonoBehaviour
         {
             if (!b_horizR)
             {
-                Debug.Log("hitting wallR");
+                // Debug.Log("hitting wallR");
             }
             b_horizR = true;
 

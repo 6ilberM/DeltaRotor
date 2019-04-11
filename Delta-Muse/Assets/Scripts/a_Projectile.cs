@@ -42,8 +42,8 @@ public class a_Projectile : MonoBehaviour
 
         }
 
-
     }
+
     private void OnCollisionEnter2D(Collision2D other)
     {
         Destroy(gameObject);

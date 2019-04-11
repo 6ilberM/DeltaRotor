@@ -69,11 +69,10 @@ public class a_ProjBounce : MonoBehaviour
 
     //Remembers which Objects have gone through recently so they remain unaffected until they pass the next object should pass this unto The actor rather than the other way around.
     Collider2D[] colliderTemp = new Collider2D[10];
-    GameObject myobj2;
 
     private void Update()
     {
-         
+
         int numColliders = 1;
         //Colliders of the reflected Gameobjs
         Collider2D[] reflectedGO = new Collider2D[numColliders];
@@ -81,48 +80,28 @@ public class a_ProjBounce : MonoBehaviour
         int colliderCount = m_myCollider.OverlapCollider(co_projectileFilter, reflectedGO);
         for (int i = 0; i < colliderCount; i++)
         {
-
             // Do bounce angles next then PLEASE COMPLETE A LEVEL GOD DAMN HAHA...
             if (colliderTemp[i] != reflectedGO[i])
             {
-                // ; Debug.Log(reflectedGO[i].gameObject.transform.rotation);
-
-                Vector3 temp = reflectedGO[i].gameObject.GetComponent<Rigidbody2D>().velocity.normalized;
-
-                Vector3 normalVector = PlaceHolder.position - gameObject.transform.position;
-
-
-                temp = Vector3.Reflect(temp, normalVector);
-
-                // var temp2 = Quaternion.LookRotation(temp, reflectedGO[i].gameObject.transform.root.up);
-                Quaternion temp2 = Quaternion.LookRotation(temp, reflectedGO[i].gameObject.transform.root.up);
-
-
-                if (myobj2 == null)
+                Vector3 MyDist = (reflectedGO[i].transform.position - gameObject.transform.position);
+                if (MyDist.magnitude <= 0.2f)
                 {
-                    myobj2 = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    Vector3 vec1 = reflectedGO[i].gameObject.GetComponent<Rigidbody2D>().velocity;
+
+                    Vector3 normalVector = PlaceHolder.position - gameObject.transform.position;
+
+                    vec1 = Vector3.Reflect(vec1.normalized, normalVector);
+
+                    float desiredAngle = Mathf.Atan2(vec1.y, vec1.x) * Mathf.Rad2Deg;
+
+                    reflectedGO[i].gameObject.transform.position = gameObject.transform.position;
+
+                    reflectedGO[i].gameObject.transform.rotation = Quaternion.Euler(0, 0, desiredAngle);
+
+                    reflectedGO[i].gameObject.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
+                    colliderTemp = reflectedGO;
                 }
-                Debug.DrawRay(transform.position, temp2 * temp * 3, Color.red, .4f, true);
-
-                // myobj2.transform.rotation = Quaternion.RotateTowards(myobj2.transform.rotation, temp2, 10.0f);
-
-
-                myobj2.transform.position = temp;
-
-                // reflectedGO[i].gameObject.transform.rotation = temp2;
-                reflectedGO[i].gameObject.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
-                colliderTemp = reflectedGO;
-
             }
-            if (false == colliderTemp[i].IsTouching(m_myCollider))
-            {
-                colliderTemp[i] = null;
-            }
-        }
-
-        if (colliderCount > 0)
-        {
         }
     }
-
 }

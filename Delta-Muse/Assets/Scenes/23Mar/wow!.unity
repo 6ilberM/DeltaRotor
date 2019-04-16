@@ -1724,7 +1724,7 @@ Tilemap:
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Origin: {x: -19, y: -7, z: 0}
-  m_Size: {x: 32, y: 14, z: 1}
+  m_Size: {x: 47, y: 14, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
@@ -3019,8 +3019,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b63324806b6572941bc5878c32239696, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deltaFire: 3.8
-  m_Delay: 0.1
+  deltaFire: 1
+  m_Delay: 1
   go_pref: {fileID: 2709120800240400734, guid: 23c6ac3bf87ad054ca957c7a45c22e0c, type: 3}
   spawnPoints:
   - {fileID: 1867673878}

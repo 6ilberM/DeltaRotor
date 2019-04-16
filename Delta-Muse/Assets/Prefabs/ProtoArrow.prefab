@@ -116,6 +116,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_rotationRef: {fileID: 0}
   f_speed: 5.3
+  f_ImpulseForce: 10.8
 --- !u!50 &2709120800240400708
 Rigidbody2D:
   serializedVersion: 4

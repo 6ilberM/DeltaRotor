@@ -9,7 +9,7 @@ public class a_Projectile : MonoBehaviour
     public RotationManager m_rotationRef;
 
     [Range(1, 20)] [SerializeField] float f_speed = 1;
-
+    [Range(1, 50)] [SerializeField] float f_ImpulseForce = 1;
 
     void Awake()
     {
@@ -39,14 +39,21 @@ public class a_Projectile : MonoBehaviour
             {
                 m_rigidBody.velocity = new Vector3(0, 0, 0);
             }
-
         }
-
     }
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        Destroy(gameObject);
+        if (other.gameObject.name == "Player")
+        {
+            other.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector3.Normalize(other.gameObject.transform.position - gameObject.transform.position) * 150, ForceMode2D.Impulse);
+            Destroy(gameObject);
+        }
+
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
 }

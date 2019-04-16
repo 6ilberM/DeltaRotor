@@ -74,69 +74,44 @@ public class a_ProjBounce : MonoBehaviour
     private void Update()
     {
 
-        // int numColliders = 1;
-        // //Colliders of the reflected Gameobjs
-        // Collider2D[] reflectedGO = new Collider2D[numColliders];
-        // // Set you filters here according to https://docs.unity3d.com/ScriptReference/ContactFilter2D.html
-        // int colliderCount = m_myCollider.OverlapCollider(co_projectileFilter, reflectedGO);
-        // for (int i = 0; i < colliderCount; i++)
-        // {
-        //     // Do bounce angles next then PLEASE COMPLETE A LEVEL GOD DAMN HAHA...
-        //     if (colliderTemp[i] != reflectedGO[i])
-        //     {
-        //         Vector3 MyDist = (reflectedGO[i].transform.position - gameObject.transform.position);
-        //         if (MyDist.magnitude <= 0.2f)
-        //         {
-        //             Vector3 vec1 = reflectedGO[i].gameObject.GetComponent<Rigidbody2D>().velocity;
-
-        //             Vector3 normalVector = PlaceHolder.position - gameObject.transform.position;
-
-        //             vec1 = Vector3.Reflect(vec1.normalized, normalVector);
-        //             Debug.Log(vec1.magnitude);
-        //             Debug.DrawRay(gameObject.transform.position, vec1 * 5, Color.red, 0.2f, true);
-        //             float desiredAngle = Mathf.Round((Mathf.Atan2(vec1.y, vec1.x) * Mathf.Rad2Deg));
-
-        //             Vector3 test = (Vector3)reflectedGO[i].gameObject.GetComponent<Rigidbody2D>().velocity + normalVector;
-
-        //             reflectedGO[i].gameObject.transform.position = gameObject.transform.position;
-
-        //             reflectedGO[i].gameObject.transform.rotation = Quaternion.Euler(0, 0, desiredAngle);
-
-        //             reflectedGO[i].gameObject.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
-        //             colliderTemp[i] = reflectedGO[i];
-        //         }
-        //     }
-        // }
-        // Debug.Log(colliderTemp.Length);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (other.gameObject.GetComponent<a_Projectile>()!=null)
+        {
+            // Vector3 MyDist = (other.transform.position - gameObject.transform.position);
 
-        Vector3 MyDist = (other.transform.position - gameObject.transform.position);
+            Vector3 vec1 = other.gameObject.GetComponent<Rigidbody2D>().velocity;
 
-        Vector3 vec1 = other.gameObject.GetComponent<Rigidbody2D>().velocity;
+            Vector3 normalVector = PlaceHolder.position - gameObject.transform.position;
 
-        Vector3 normalVector = PlaceHolder.position - gameObject.transform.position;
+            Vector3 v3temp = (vec1.normalized + normalVector);
 
-        vec1 = Vector3.Reflect(vec1.normalized, normalVector);
-        Debug.Log(vec1.magnitude);
-        Debug.DrawRay(gameObject.transform.position, vec1 * 5, Color.red, 0.2f, true);
-        float desiredAngle = Mathf.Round((Mathf.Atan2(vec1.y, vec1.x) * Mathf.Rad2Deg));
+            float f_magnitude = v3temp.magnitude;
 
-        Vector3 test = (Vector3)other.gameObject.GetComponent<Rigidbody2D>().velocity + normalVector;
+            if (f_magnitude < 1)
+            {
+                vec1 = Vector3.Reflect(vec1.normalized, normalVector);
+                float desiredAngle = Mathf.Round((Mathf.Atan2(vec1.y, vec1.x) * Mathf.Rad2Deg));
 
-        other.gameObject.transform.position = gameObject.transform.position;
+                Vector3 test = (Vector3)other.gameObject.GetComponent<Rigidbody2D>().velocity + normalVector;
 
-        other.gameObject.transform.rotation = Quaternion.Euler(0, 0, desiredAngle);
+                other.gameObject.transform.position = gameObject.transform.position;
 
-        other.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
+                other.gameObject.transform.rotation = Quaternion.Euler(0, 0, desiredAngle);
 
+                other.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
+            }
+            else
+            {
+                Destroy(other.gameObject);
+                Debug.Log("else triggered");
+            }
+        }
     }
     private void OnTriggerExit2D(Collider2D other)
     {
         Debug.Log("exit");
-
-
     }
 }

@@ -14,19 +14,31 @@ public class a_ProjBounce : MonoBehaviour
     ContactFilter2D co_projectileFilter;
     Collider2D[] overlapResults;
 
-    BoxCollider2D m_myCollider;
-
+    BoxCollider2D m_Collider;
 
     Transform PlaceHolder;
 
     public BounceOrientation SpriteFace;
+
+    public BoxCollider2D Collider
+    {
+        get
+        {
+            return m_Collider;
+        }
+
+        set
+        {
+            m_Collider = value;
+        }
+    }
 
     //What if i just define the normal
 
     private void Awake()
     {
         Vector3 normalVector;
-        m_myCollider = gameObject.GetComponent<BoxCollider2D>();
+        Collider = gameObject.GetComponent<BoxCollider2D>();
 
         switch (SpriteFace)
         {
@@ -68,9 +80,6 @@ public class a_ProjBounce : MonoBehaviour
         co_projectileFilter.SetLayerMask(LayerMask.GetMask("Interactable"));
     }
 
-    //Remembers which Objects have gone through recently so they remain unaffected until they pass the next object should pass this unto The actor rather than the other way around.
-    Collider2D[] colliderTemp = new Collider2D[10];
-
     private void Update()
     {
 
@@ -93,9 +102,8 @@ public class a_ProjBounce : MonoBehaviour
             if (f_magnitude < 1)
             {
                 vec1 = Vector3.Reflect(vec1.normalized, normalVector);
+               
                 float desiredAngle = Mathf.Round((Mathf.Atan2(vec1.y, vec1.x) * Mathf.Rad2Deg));
-
-                Vector3 test = (Vector3)other.gameObject.GetComponent<Rigidbody2D>().velocity + normalVector;
 
                 other.gameObject.transform.position = gameObject.transform.position;
 

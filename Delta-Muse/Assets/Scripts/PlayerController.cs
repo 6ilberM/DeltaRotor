@@ -118,7 +118,7 @@ public class PlayerController : MonoBehaviour
     {
 
         //Landing
-        // LandingFeel();
+        LandingFeel();
 
         //MaxFallSpeed
         // m_rigidBody.velocity = new Vector3(m_rigidBody.velocity.x, Mathf.Clamp(m_rigidBody.velocity.y, -maxfallSpeed, 9000.0f), 0);

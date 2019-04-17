@@ -4,16 +4,28 @@ public class a_Projectile : MonoBehaviour
 {
     //Variables
     Rigidbody2D m_rigidBody;
-    Collider2D m_collider;
+     Collider2D m_collider;
 
     public RotationManager m_rotationRef;
 
     [Range(1, 20)] [SerializeField] float f_speed = 1;
-    [Range(1, 50)] [SerializeField] float f_ImpulseForce = 1;
+
+    public Collider2D Collider
+    {
+        get
+        {
+            return m_collider;
+        }
+
+        set
+        {
+            m_collider = value;
+        }
+    }
 
     void Awake()
     {
-        m_collider = gameObject.GetComponent<Collider2D>();
+        Collider = gameObject.GetComponent<Collider2D>();
         m_rigidBody = gameObject.GetComponent<Rigidbody2D>();
         m_rigidBody.gravityScale = 0;
     }

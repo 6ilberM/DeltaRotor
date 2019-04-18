@@ -21,12 +21,6 @@ public class RotationManager : MonoBehaviour
         player = Object.FindObjectOfType<PlayerController>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     //Handles World Rotation
     public void Rotate(bool _dirchosen, Quaternion _desiredrotation)
     {

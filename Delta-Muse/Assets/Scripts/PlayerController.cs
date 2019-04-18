@@ -116,14 +116,16 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!rotManager.m_rotate)
+        {
+            //Landing
+            LandingFeel();
 
-        //Landing
-        LandingFeel();
+            //MaxFallSpeed
+            // m_rigidBody.velocity = new Vector3(m_rigidBody.velocity.x, Mathf.Clamp(m_rigidBody.velocity.y, -maxfallSpeed, 9000.0f), 0);
 
-        //MaxFallSpeed
-        // m_rigidBody.velocity = new Vector3(m_rigidBody.velocity.x, Mathf.Clamp(m_rigidBody.velocity.y, -maxfallSpeed, 9000.0f), 0);
-
-        //Rotate!
+            //Rotate!
+        }
         rotManager.Rotate(b_dirChosen, qt_desiredRot);
 
         OrientSelfUp();
@@ -392,9 +394,10 @@ public class PlayerController : MonoBehaviour
     }
 
     //Make conditional Versions of this for enabling bigger rotations
+    public bool canrotsingle;
     public void RotationSelect()
     {
-        if (rotManager.m_rotate == false)
+        if (rotManager.m_rotate == false && !canrotsingle)
         {
             // m_PrevRot = transform.localRotation;
             switch (rotManager.rotationId)
@@ -475,6 +478,23 @@ public class PlayerController : MonoBehaviour
                     //Unknown State
                     break;
             }
+        }
+        else if (canrotsingle)
+        {
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                Debug.Log("q");
+            }
+
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                Debug.Log("e");
+
+            }
+        }
+        else
+        {
+            //do nothing
         }
     }
 

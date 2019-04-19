@@ -13,19 +13,19 @@ TextureImporter:
     21300016: blacknwhite_8
     21300018: blacknwhite_9
     21300020: blacknwhite_10
-    21300022: blacknwhite_11
-    21300024: blacknwhite_12
-    21300026: blacknwhite_13
-    21300028: blacknwhite_14
-    21300030: blacknwhite_15
+    21300022: b&w_chest
+    21300024: b&w_Death
+    21300026: b&w_Key
+    21300028: b&w_Open
+    21300030: b&w_Closed
     21300032: blacknwhite_16
     21300034: blacknwhite_17
     21300036: blacknwhite_18
-    21300038: blacknwhite_19
-    21300040: blacknwhite_20
-    21300042: blacknwhite_21
-    21300044: blacknwhite_22
-    21300046: blacknwhite_23
+    21300038: b&w_Fire
+    21300040: b&w_Telep
+    21300042: b&w_quadCube
+    21300044: b&w_quadSquare
+    21300046: b&w_Chain
     21300048: blacknwhite_24
     21300050: blacknwhite_25
     21300052: blacknwhite_26
@@ -37,12 +37,12 @@ TextureImporter:
     21300064: blacknwhite_32
     21300066: blacknwhite_33
     21300068: blacknwhite_34
-    21300070: blacknwhite_35
-    21300072: blacknwhite_36
-    21300074: blacknwhite_37
-    21300076: blacknwhite_38
-    21300078: blacknwhite_39
-    21300080: blacknwhite_40
+    21300070: b&w_Coin1
+    21300072: b&w_Coin2
+    21300074: b&w_coin3
+    21300076: b&w_coin4
+    21300078: b&w_coin5
+    21300080: b&w_Coin6
     21300082: blacknwhite_41
     21300084: blacknwhite_42
     21300086: blacknwhite_43
@@ -365,7 +365,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blacknwhite_11
+      name: b&w_chest
       rect:
         serializedVersion: 2
         x: 36
@@ -385,7 +385,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blacknwhite_12
+      name: b&w_Death
       rect:
         serializedVersion: 2
         x: 48
@@ -405,7 +405,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blacknwhite_13
+      name: b&w_Key
       rect:
         serializedVersion: 2
         x: 60
@@ -425,7 +425,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blacknwhite_14
+      name: b&w_Open
       rect:
         serializedVersion: 2
         x: 72
@@ -445,7 +445,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blacknwhite_15
+      name: b&w_Closed
       rect:
         serializedVersion: 2
         x: 84
@@ -525,7 +525,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blacknwhite_19
+      name: b&w_Fire
       rect:
         serializedVersion: 2
         x: 36
@@ -545,7 +545,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blacknwhite_20
+      name: b&w_Telep
       rect:
         serializedVersion: 2
         x: 48
@@ -565,7 +565,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blacknwhite_21
+      name: b&w_quadCube
       rect:
         serializedVersion: 2
         x: 60
@@ -585,7 +585,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blacknwhite_22
+      name: b&w_quadSquare
       rect:
         serializedVersion: 2
         x: 72
@@ -605,7 +605,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blacknwhite_23
+      name: b&w_Chain
       rect:
         serializedVersion: 2
         x: 84
@@ -845,7 +845,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blacknwhite_35
+      name: b&w_Coin1
       rect:
         serializedVersion: 2
         x: 0
@@ -865,7 +865,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blacknwhite_36
+      name: b&w_Coin2
       rect:
         serializedVersion: 2
         x: 12
@@ -885,7 +885,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blacknwhite_37
+      name: b&w_coin3
       rect:
         serializedVersion: 2
         x: 24
@@ -905,7 +905,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blacknwhite_38
+      name: b&w_coin4
       rect:
         serializedVersion: 2
         x: 36
@@ -925,7 +925,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blacknwhite_39
+      name: b&w_coin5
       rect:
         serializedVersion: 2
         x: 48
@@ -945,7 +945,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blacknwhite_40
+      name: b&w_Coin6
       rect:
         serializedVersion: 2
         x: 60

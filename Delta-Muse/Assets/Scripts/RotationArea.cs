@@ -28,6 +28,8 @@ public class RotationArea : MonoBehaviour
         }
     }
     bool b_rotRight, b_rotLeft;
+    private float currentTime;
+    private float m_rDelay = .2f;
 
     private void Update()
     {
@@ -39,7 +41,7 @@ public class RotationArea : MonoBehaviour
                 {
                     a_QuatArry[i].OldRot = SingleRotObjs[i].transform.rotation;
 
-                    // a_QuatArry[i].DesiredRot = SingleRotObjs[i].transform.localRotation * Quaternion.Euler(0, 0, -90);
+                    a_QuatArry[i].DesiredRot = SingleRotObjs[i].transform.rotation * Quaternion.Euler(0, 0, 90);
                 }
                 m_canRot = true;
             }
@@ -50,7 +52,7 @@ public class RotationArea : MonoBehaviour
                 {
                     a_QuatArry[i].OldRot = SingleRotObjs[i].transform.rotation;
 
-                    // a_QuatArry[i].DesiredRot = SingleRotObjs[i].transform.rotation * Quaternion.Euler(0, 0, 90);
+                    a_QuatArry[i].DesiredRot = SingleRotObjs[i].transform.rotation * Quaternion.Euler(0, 0, -90);
                 }
                 m_canRot = true;
 
@@ -67,18 +69,40 @@ public class RotationArea : MonoBehaviour
             for (int i = 0; i < SingleRotObjs.Length; i++)
             {
                 // SingleRotObjs[i].transform.rotation = a_QuatArry[i].DesiredRot;
+                currentTime += Time.fixedDeltaTime;
+
+                //Close Enough? w/ thresholdCheck
+                if (currentTime >= m_rDelay)
+                {
+                    SingleRotObjs[i].transform.rotation = a_QuatArry[i].DesiredRot;
+
+                    m_canRot = false;
+
+                    currentTime = 0.0f;
+                }
+                else
+                {
+                    float t = currentTime / m_rDelay;
+                    // easeout cubic
+                    // t = (1 + (--t) * t * t);
+                    // easeoutquart
+                    // t = (--t) * t;
+                    // t =( 1 - t * t);
+
+                    // easeoutquad
+                    t = (t * (2 - t));
+                    SingleRotObjs[i].transform.rotation = Quaternion.Slerp(a_QuatArry[i].OldRot, a_QuatArry[i].DesiredRot, t);
+                }
             }
-            m_canRot = false;
         }
     }
-
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (Player == other.gameObject)
         {
             Player.GetComponent<PlayerController>().canrotsingle = true;
-            Debug.Log("dis be triggered");
+            // Debug.Log("dis be triggered");
         }
     }
 
@@ -87,9 +111,7 @@ public class RotationArea : MonoBehaviour
         if (Player == other.gameObject)
         {
             Player.GetComponent<PlayerController>().canrotsingle = false;
-            Debug.Log("wtf");
+            // Debug.Log("wtf");
         }
     }
-
-
 }

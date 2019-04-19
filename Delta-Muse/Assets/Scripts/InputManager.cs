@@ -6,12 +6,17 @@ public class InputManager : MonoBehaviour
 {
     public PlayerController controller;
 
+    [SerializeField] KeyCode m_rotRight = KeyCode.E;
+    [SerializeField] KeyCode m_rotLeft = KeyCode.Q;
+
+
+
     public Animator animator;
 
     public float runSpeed = 40f;
 
     float f_hrzMove = 0f;
-    bool b_jump = false;
+    bool b_jump, b_right, b_left = false;
     public bool m_jumpEnabled;
 
     // Update is called once per frame
@@ -28,6 +33,8 @@ public class InputManager : MonoBehaviour
             animator.SetBool("IsJumping", true);
         }
 
+        b_right = Input.GetKeyDown(m_rotRight);
+        b_left = Input.GetKeyDown(m_rotLeft);
     }
 
     public void OnLanding()
@@ -38,7 +45,7 @@ public class InputManager : MonoBehaviour
     void FixedUpdate()
     {
         // Move our character
-        controller.Move(f_hrzMove * Time.fixedDeltaTime, b_jump);
+        controller.Move(f_hrzMove * Time.fixedDeltaTime, b_jump, b_left, b_right);
         b_jump = false;
     }
 

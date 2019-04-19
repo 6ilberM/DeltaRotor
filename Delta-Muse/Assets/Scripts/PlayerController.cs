@@ -174,7 +174,7 @@ public class PlayerController : MonoBehaviour
 
     //Should be called in fixed time
 
-    public void Move(float _velocityX, bool _Jump)
+    public void Move(float _velocityX, bool _Jump, bool _left, bool _right)
     {
         if (!rotManager.m_rotate)
         {
@@ -214,7 +214,7 @@ public class PlayerController : MonoBehaviour
 
             OldJump(_Jump);
 
-            RotationSelect();
+            RotationSelect(_left, _right);
         }
     }
 
@@ -395,7 +395,7 @@ public class PlayerController : MonoBehaviour
 
     //Make conditional Versions of this for enabling bigger rotations
     public bool canrotsingle;
-    public void RotationSelect()
+    public void RotationSelect(bool _left, bool _right)
     {
         if (rotManager.m_rotate == false && !canrotsingle)
         {
@@ -403,7 +403,7 @@ public class PlayerController : MonoBehaviour
             switch (rotManager.rotationId)
             {
                 case 0:
-                    if (Input.GetKeyDown(KeyCode.Q))
+                    if (_right)
                     {
                         qt_desiredRot = Quaternion.Euler(0, 0, 180 + 90);
                         b_dirChosen = true;
@@ -411,7 +411,7 @@ public class PlayerController : MonoBehaviour
                         rotManager.rotationId = 3;
                     }
 
-                    if (Input.GetKeyDown(KeyCode.E))
+                    if (_left)
                     {
                         qt_desiredRot = Quaternion.Euler(0, 0, 90);
                         b_dirChosen = true;
@@ -421,7 +421,7 @@ public class PlayerController : MonoBehaviour
 
                     break;
                 case 1:
-                    if (Input.GetKeyDown(KeyCode.Q))
+                    if (_right)
                     {
                         qt_desiredRot = Quaternion.Euler(0, 0, 0);
                         b_dirChosen = true;
@@ -429,7 +429,7 @@ public class PlayerController : MonoBehaviour
                         rotManager.rotationId = 0;
                     }
 
-                    if (Input.GetKeyDown(KeyCode.E))
+                    if (_left)
                     {
                         qt_desiredRot = Quaternion.Euler(0, 0, 180);
                         b_dirChosen = true;
@@ -439,7 +439,7 @@ public class PlayerController : MonoBehaviour
                     break;
 
                 case 2:
-                    if (Input.GetKeyDown(KeyCode.Q))
+                    if (_right)
                     {
                         qt_desiredRot = Quaternion.Euler(0, 0, 90);
                         b_dirChosen = true;
@@ -447,7 +447,7 @@ public class PlayerController : MonoBehaviour
                         rotManager.rotationId--;
                     }
 
-                    if (Input.GetKeyDown(KeyCode.E))
+                    if (_left)
                     {
                         qt_desiredRot = Quaternion.Euler(0, 0, 180 + 90);
                         b_dirChosen = true;
@@ -457,7 +457,7 @@ public class PlayerController : MonoBehaviour
                     break;
 
                 case 3:
-                    if (Input.GetKeyDown(KeyCode.Q))
+                    if (_right)
                     {
                         qt_desiredRot = Quaternion.Euler(0, 0, 180);
                         b_dirChosen = true;
@@ -465,7 +465,7 @@ public class PlayerController : MonoBehaviour
                         rotManager.rotationId--;
                     }
 
-                    if (Input.GetKeyDown(KeyCode.E))
+                    if (_left)
                     {
                         qt_desiredRot = Quaternion.Euler(0, 0, 0);
                         b_dirChosen = true;
@@ -481,14 +481,13 @@ public class PlayerController : MonoBehaviour
         }
         else if (canrotsingle)
         {
-            if (Input.GetKeyDown(KeyCode.Q))
+            if (_left)
             {
-                Debug.Log("q");
+
             }
 
-            if (Input.GetKeyDown(KeyCode.E))
+            if (_right)
             {
-                Debug.Log("e");
 
             }
         }

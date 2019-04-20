@@ -18,6 +18,7 @@ public class RotationArea : MonoBehaviour
     {
         Player = GameObject.FindGameObjectWithTag("Player");
         a_QuatArry = new QuatOldDesired[SingleRotObjs.Length];
+        currentTime = new float[SingleRotObjs.Length];
 
     }
     private void Start()
@@ -28,7 +29,7 @@ public class RotationArea : MonoBehaviour
         }
     }
     bool b_rotRight, b_rotLeft;
-    private float currentTime;
+    private float[] currentTime;
     private float m_rDelay = .2f;
 
     private void Update()
@@ -69,20 +70,21 @@ public class RotationArea : MonoBehaviour
             for (int i = 0; i < SingleRotObjs.Length; i++)
             {
                 // SingleRotObjs[i].transform.rotation = a_QuatArry[i].DesiredRot;
-                currentTime += Time.fixedDeltaTime;
+                currentTime[i] += Time.fixedDeltaTime;
 
                 //Close Enough? w/ thresholdCheck
-                if (currentTime >= m_rDelay)
+                if (currentTime[i] >= m_rDelay && i == currentTime.Length)
                 {
+
                     SingleRotObjs[i].transform.rotation = a_QuatArry[i].DesiredRot;
+                    currentTime[i] = 0.0f;
 
                     m_canRot = false;
-
-                    currentTime = 0.0f;
+                    Debug.Log(i == currentTime.Length);
                 }
                 else
                 {
-                    float t = currentTime / m_rDelay;
+                    float t = currentTime[i] / m_rDelay;
                     // easeout cubic
                     // t = (1 + (--t) * t * t);
                     // easeoutquart

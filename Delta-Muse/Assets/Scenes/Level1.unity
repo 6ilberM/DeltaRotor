@@ -130,7 +130,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &69574874
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2931,7 +2931,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2131044362
 Transform:
   m_ObjectHideFlags: 0
@@ -3007,8 +3007,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SingleRotObjs:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 210995297}
+  - {fileID: 350985432}
   m_canRot: 0
 --- !u!61 &2131044365
 BoxCollider2D:

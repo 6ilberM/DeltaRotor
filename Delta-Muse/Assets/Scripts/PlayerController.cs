@@ -483,7 +483,7 @@ public class PlayerController : MonoBehaviour
         {
             if (_left)
             {
-
+                RotSelect(0);
             }
 
             if (_right)

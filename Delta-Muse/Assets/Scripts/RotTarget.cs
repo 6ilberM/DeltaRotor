@@ -31,9 +31,10 @@ public class RotTarget : MonoBehaviour
             m_initRot = gameObject.transform.rotation;
 
             m_desiredRot = gameObject.transform.rotation * Quaternion.Euler(0, 0, 90);
-            b_shouldRot = true;
-        }
 
+            b_shouldRot = true;
+
+        }
     }
 
     private void FixedUpdate()

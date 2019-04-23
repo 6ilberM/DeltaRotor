@@ -6,7 +6,7 @@ public class RotationManager : MonoBehaviour
 {
     private Rigidbody2D rb_Body;
     private float currentTime;
-    public PlayerController player;
+    PlayerController player;
 
     public bool m_rotate, m_doOnce;
     private float m_rDelay = 0.39f;
@@ -22,7 +22,7 @@ public class RotationManager : MonoBehaviour
     }
 
     //Handles World Rotation
-    public void Rotate(bool _dirchosen, Quaternion _desiredrotation)
+    public void Rotate(bool _dirChosen, Quaternion _desiredRotation)
     {
         if (!m_doOnce)
         {
@@ -30,7 +30,7 @@ public class RotationManager : MonoBehaviour
             m_doOnce = true;
         }
 
-        if (_dirchosen == true)
+        if (_dirChosen == true)
         {
             m_rotate = true;
             currentTime += Time.fixedDeltaTime;
@@ -39,23 +39,23 @@ public class RotationManager : MonoBehaviour
             //Close Enough? w/ thresholdCheck
             if (currentTime >= m_rDelay)
             {
-                transform.rotation = _desiredrotation;
+                transform.rotation = _desiredRotation;
                 player.b_dirChosen = false;
                 m_rotate = false;
                 player.b_ShouldSelfOrient = true;
 
                 if (wasOrienting == player.b_ShouldSelfOrient)
                 {
-                    player.m_durationScalar = 1.5f;
+                    player.DurationScalar = 1.5f;
                 }
                 else
                 {
-                    player.m_durationScalar = 1;
+                    player.DurationScalar = 1;
 
                 }
                 currentTime = 0.0f;
                 //Or you could set do once back off and it can once again go through
-                prev = _desiredrotation;
+                prev = _desiredRotation;
                 //how much force should be lost after Rotating 
                 if (player.m_rigidBody.velocity.y <= -0.5f)
                 {
@@ -73,7 +73,7 @@ public class RotationManager : MonoBehaviour
 
                 // easeoutquad
                 t = (t * (2 - t));
-                transform.rotation = Quaternion.Slerp(prev, _desiredrotation, t);
+                transform.rotation = Quaternion.Slerp(prev, _desiredRotation, t);
             }
         }
     }

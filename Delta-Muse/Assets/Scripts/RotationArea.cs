@@ -58,9 +58,9 @@ public class RotationArea : MonoBehaviour
         if (Player == other.gameObject)
         {
             m_pController.canrotsingle = true;
-            if (!m_pController.RotAreas.Contains(this))
+            if (!m_pController.li_rotationAreas.Contains(this))
             {
-                m_pController.RotAreas.Add(this);
+                m_pController.li_rotationAreas.Add(this);
             }
 
         }
@@ -71,9 +71,9 @@ public class RotationArea : MonoBehaviour
         if (Player == other.gameObject)
         {
             m_pController.canrotsingle = false;
-            if (m_pController.RotAreas.Contains(this))
+            if (m_pController.li_rotationAreas.Contains(this))
             {
-                m_pController.RotAreas.Remove(this);
+                m_pController.li_rotationAreas.Remove(this);
             }
         }
     }

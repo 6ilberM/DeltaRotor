@@ -12,17 +12,17 @@ public class PlayerController : MonoBehaviour
     //Variables
     public RotationManager rotManager;
 
-    public List<RotationArea> RotAreas = new List<RotationArea>();
+    List<RotationArea> li_rotAreas = new List<RotationArea>();
+    [SerializeField] float JumpHeight = 5;
 
     [Range(1, 80)] public float f_speedScalar = 16.15f;
-    [Range(2, 14)] public int i_jumpScalar = 2;
-    [Range(50, 300)] public float f_jumpForce = 300.0f;
+
     [Range(15, 30)] public float maxfallSpeed = 17.0f;
 
     //Temp
     float m_curentTime;
 
-    public Quaternion m_PrevRot;
+    Quaternion m_PrevRot;
     private Vector3 m_Velocity = Vector3.zero;
 
     /// How much to smooth out the movement
@@ -31,7 +31,8 @@ public class PlayerController : MonoBehaviour
     ///Determines how fast the player rotates
     [SerializeField] private float m_RotationDelay = 0.3f;
 
-    public float m_durationScalar = 1;
+    float m_durationScalar = 1;
+
     bool b_securityCheck;
 
     public bool b_ShouldSelfOrient = false;
@@ -75,10 +76,11 @@ public class PlayerController : MonoBehaviour
 
         rotManager = Object.FindObjectOfType<RotationManager>();
     }
-
+    Animator m_animator;
     private void Awake()
     {
         m_rigidBody = GetComponent<Rigidbody2D>();
+        m_animator = gameObject.GetComponent<Animator>();
         if (OnLandEvent == null)
         {
             OnLandEvent = new UnityEvent();
@@ -97,14 +99,14 @@ public class PlayerController : MonoBehaviour
         if (!rotManager.m_rotate)
         {
             groundRayCheck();
-            if (gameObject.GetComponent<Animator>().speed != 1)
+            if (m_animator.speed != 1)
             {
-                gameObject.GetComponent<Animator>().speed = 1;
+                m_animator.speed = 1;
             }
         }
         else
         {
-            gameObject.GetComponent<Animator>().speed = 0;
+            m_animator.speed = 0;
         }
 
         //No Need to check every Tick.
@@ -134,6 +136,8 @@ public class PlayerController : MonoBehaviour
     }
 
     ///Scales down and then back up quickly to improve the game feel
+
+
     private void LandingFeel()
     {
         if (m_StandUp)
@@ -145,8 +149,6 @@ public class PlayerController : MonoBehaviour
             float f_Delay = 0.3f;
             if (dt > f_Delay * 2)
             {
-                // transform.localScale = targetscale;
-                // transform.localScale = oldscale;
                 dt = 0;
                 m_StandUp = false;
             }
@@ -169,8 +171,8 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Vertical;
-            GetComponent<CapsuleCollider2D>().size = new Vector2(.13f, .15f);
+            // GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Vertical;
+            // GetComponent<CapsuleCollider2D>().size = new Vector2(.13f*6, .15f*6);
         }
     }
 
@@ -214,13 +216,13 @@ public class PlayerController : MonoBehaviour
 
             //jumpLogic soon to be changed
 
-            OldJump(_Jump);
+            newJump(_Jump);
 
             RotationSelect(_left, _right);
         }
     }
 
-    private void OldJump(bool _Jump)
+    private void newJump(bool _Jump)
     {
         if (_Jump && i_jumpCount < 2)
         {
@@ -233,18 +235,26 @@ public class PlayerController : MonoBehaviour
 
             if (i_jumpCount == 0)
             {
-                // float _jumpGravity = 9.81f * 3 * -2 / Mathf.Pow(2, 2);
-                // int _jumpVelocity = (int)Mathf.Abs(_jumpGravity) * 2;
+                float mygrav = m_rigidBody.gravityScale * Physics2D.gravity.y;
 
-                m_rigidBody.AddForce(new Vector2(0f, f_jumpForce), ForceMode2D.Impulse);
-                // m_rigidBody.AddForce(new Vector2(0f, _jumpVelocity), ForceMode2D.Impulse);
+
+                var _jumpVelocity = (Mathf.Sqrt(Mathf.Abs(mygrav) * JumpHeight * 2.0f));
+
+                m_rigidBody.AddForce(m_rigidBody.transform.up * _jumpVelocity * m_rigidBody.mass, ForceMode2D.Impulse);
+
                 i_jumpCount++;
 
             }
 
             else if (i_jumpCount == 1)
             {
-                m_rigidBody.AddForce(new Vector2(0f, f_jumpForce * 0.7f), ForceMode2D.Impulse);
+                float mygrav = m_rigidBody.gravityScale * Physics2D.gravity.y;
+
+
+                var _jumpVelocity = (Mathf.Sqrt(Mathf.Abs(mygrav) * JumpHeight * 2.0f));
+
+                m_rigidBody.AddForce(m_rigidBody.transform.up * _jumpVelocity * .5f * m_rigidBody.mass, ForceMode2D.Impulse);
+
                 i_jumpCount++;
 
             }
@@ -270,7 +280,7 @@ public class PlayerController : MonoBehaviour
         {
             m_curentTime += Time.fixedDeltaTime;
             //Close Enough? w/ thresholdCheck
-            if (m_curentTime > m_RotationDelay * m_durationScalar)
+            if (m_curentTime > m_RotationDelay * DurationScalar)
             {
                 transform.localRotation = qtDir;
 
@@ -281,7 +291,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                float t = m_curentTime / (m_RotationDelay * m_durationScalar);
+                float t = m_curentTime / (m_RotationDelay * DurationScalar);
 
 
                 t = t * t * t * (t * (6f * t - 15f) + 10f);
@@ -322,9 +332,9 @@ public class PlayerController : MonoBehaviour
                 if (!m_StandUp)
                 {
                     //Set Size of Collider to y .13 or lower just so it will look less ugh...
-                    GetComponent<CapsuleCollider2D>().size = new Vector2(.13f, 0.09f);
+                    // GetComponent<CapsuleCollider2D>().size = new Vector2(.13f*6, 0.09f*6);
 
-                    GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Horizontal;
+                    // GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Horizontal;
 
                     m_StandUp = true;
                     oldscale = transform.localScale;
@@ -397,6 +407,33 @@ public class PlayerController : MonoBehaviour
 
     //Make conditional Versions of this for enabling bigger rotations
     public bool canrotsingle;
+
+    public float DurationScalar
+    {
+        get
+        {
+            return m_durationScalar;
+        }
+
+        set
+        {
+            m_durationScalar = value;
+        }
+    }
+
+    public List<RotationArea> li_rotationAreas
+    {
+        get
+        {
+            return li_rotAreas;
+        }
+
+        set
+        {
+            li_rotAreas = value;
+        }
+    }
+
     public void RotationSelect(bool _left, bool _right)
     {
         if (rotManager.m_rotate == false && !canrotsingle)
@@ -485,17 +522,17 @@ public class PlayerController : MonoBehaviour
         {
             if (_left)
             {
-                for (int i = 0; i < RotAreas.Count; i++)
+                for (int i = 0; i < li_rotationAreas.Count; i++)
                 {
-                    RotAreas[i].RotSelect(0);
+                    li_rotationAreas[i].RotSelect(0);
                 }
             }
 
             if (_right)
             {
-                for (int i = 0; i < RotAreas.Count; i++)
+                for (int i = 0; i < li_rotationAreas.Count; i++)
                 {
-                    RotAreas[i].RotSelect(1);
+                    li_rotationAreas[i].RotSelect(1);
                 }
             }
         }

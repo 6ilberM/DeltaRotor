@@ -130,7 +130,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &69574874
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -191,8 +191,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 991507a80389f024091f41ec6febf139, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SingleRotObjs:
-  - {fileID: 350985432}
+  rotatingObjects:
+  - {fileID: 210995302}
   m_canRot: 0
 --- !u!61 &69574876
 BoxCollider2D:
@@ -228,7 +228,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 69574873}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -3.42, z: 0}
+  m_LocalPosition: {x: -2.8, y: -3.42, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1361738995}
@@ -246,6 +246,7 @@ GameObject:
   - component: {fileID: 210995300}
   - component: {fileID: 210995301}
   - component: {fileID: 210995299}
+  - component: {fileID: 210995302}
   m_Layer: 8
   m_Name: OneWayPlat
   m_TagString: Untagged
@@ -261,7 +262,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 210995297}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.5, y: -2.5, z: 0}
+  m_LocalPosition: {x: -3.5, y: -1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1032761208}
@@ -327,6 +328,18 @@ PlatformEffector2D:
   m_UseSideFriction: 0
   m_UseSideBounce: 0
   m_SideArc: 1
+--- !u!114 &210995302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 210995297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e2f0adcd76979d48b8a41f061941c25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &316390730
 GameObject:
   m_ObjectHideFlags: 0
@@ -457,6 +470,7 @@ GameObject:
   - component: {fileID: 350985433}
   - component: {fileID: 350985434}
   - component: {fileID: 350985435}
+  - component: {fileID: 350985436}
   m_Layer: 8
   m_Name: GroundPlfContainer
   m_TagString: Untagged
@@ -517,6 +531,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7546a8cfddbd84048a91eac5116717bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &350985436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 350985432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e2f0adcd76979d48b8a41f061941c25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &519420028
@@ -1430,6 +1456,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_rigidBody: {fileID: 0}
   rotManager: {fileID: 0}
+  RotAreas: []
   f_speedScalar: 16.15
   i_jumpScalar: 2
   f_jumpForce: 240
@@ -2939,13 +2966,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2131044361}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0, y: 0.0033475247, z: -0, w: 0.9999944}
   m_LocalPosition: {x: 3.46, y: -3.42, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1361738995}
   m_RootOrder: 10
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0.384, z: 0}
 --- !u!212 &2131044363
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3006,9 +3033,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 991507a80389f024091f41ec6febf139, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SingleRotObjs:
-  - {fileID: 210995297}
-  - {fileID: 350985432}
+  rotatingObjects:
+  - {fileID: 210995302}
+  - {fileID: 350985436}
   m_canRot: 0
 --- !u!61 &2131044365
 BoxCollider2D:

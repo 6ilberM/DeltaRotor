@@ -12,6 +12,8 @@ public class PlayerController : MonoBehaviour
     //Variables
     public RotationManager rotManager;
 
+    public List<RotationArea> RotAreas = new List<RotationArea>();
+
     [Range(1, 80)] public float f_speedScalar = 16.15f;
     [Range(2, 14)] public int i_jumpScalar = 2;
     [Range(50, 300)] public float f_jumpForce = 300.0f;
@@ -483,12 +485,18 @@ public class PlayerController : MonoBehaviour
         {
             if (_left)
             {
-                RotSelect(0);
+                for (int i = 0; i < RotAreas.Count; i++)
+                {
+                    RotAreas[i].RotSelect(0);
+                }
             }
 
             if (_right)
             {
-
+                for (int i = 0; i < RotAreas.Count; i++)
+                {
+                    RotAreas[i].RotSelect(1);
+                }
             }
         }
         else

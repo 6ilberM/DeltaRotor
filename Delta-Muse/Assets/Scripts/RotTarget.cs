@@ -6,87 +6,54 @@ public class RotTarget : MonoBehaviour
 
     bool b_shouldRot;
     Transform myTransform;
+    Quaternion m_initRot, m_desiredRot;
+
     float deltaTime;
     private float totalTime = .2f;
 
-    public bool B_shouldRot
-
+    public void RotarDerecha()
     {
-        get
+        if (!b_shouldRot)
         {
-            return b_shouldRot;
+
+            m_initRot = gameObject.transform.rotation;
+
+            m_desiredRot = gameObject.transform.rotation * Quaternion.Euler(0, 0, -90);
+            b_shouldRot = true;
         }
 
-        set
+    }
+
+    public void RotarIzquierda()
+    {
+        if (!b_shouldRot)
         {
-            b_shouldRot = value;
+            m_initRot = gameObject.transform.rotation;
+
+            m_desiredRot = gameObject.transform.rotation * Quaternion.Euler(0, 0, 90);
+            b_shouldRot = true;
         }
-    }
-
-    private void Awake()
-    {
 
     }
-    private void Start()
-    {
-        myTransform = gameObject.transform;
-    }
 
-    private void Update()
-    {
-        // if ()
-        // {
-        //     for (int i = 0; i < SingleRotObjs.Length; i++)
-        //     {
-        //         a_QuatArry[i].OldRot = SingleRotObjs[i].transform.rotation;
-
-        //         a_QuatArry[i].DesiredRot = SingleRotObjs[i].transform.rotation * Quaternion.Euler(0, 0, 90);
-        //     }
-        //     m_canRot = true;
-        // }
-
-        // if ()
-        // {
-        //     for (int i = 0; i < SingleRotObjs.Length; i++)
-        //     {
-        //         a_QuatArry[i].OldRot = SingleRotObjs[i].transform.rotation;
-
-        //         a_QuatArry[i].DesiredRot = SingleRotObjs[i].transform.rotation * Quaternion.Euler(0, 0, -90);
-        //     }
-        //     m_canRot = true;
-
-        // }
-
-    }
-    
     private void FixedUpdate()
     {
-        // if (m_canRot)
-        // {
-        //     for (int i = 0; i < SingleRotObjs.Length; i++)
-        //     {
-        //         // SingleRotObjs[i].transform.rotation = a_QuatArry[i].DesiredRot;
-        //         currentTime[i] += Time.fixedDeltaTime;
+        if (b_shouldRot)
+        {
+            deltaTime += Time.fixedDeltaTime;
+            if (deltaTime >= totalTime)
+            {
+                transform.rotation = m_desiredRot;
+                b_shouldRot = false;
+                deltaTime = 0;
+            }
+            else
+            {
+                float t = deltaTime / totalTime;
+                t = (t * (2 - t));
+                transform.rotation = Quaternion.Slerp(m_initRot, m_desiredRot, t);
+            }
 
-        //         //Close Enough? w/ thresholdCheck
-        //         if (currentTime[i] >= m_rDelay && i == currentTime.Length)
-        //         {
-
-        //             SingleRotObjs[i].transform.rotation = a_QuatArry[i].DesiredRot;
-        //             currentTime[i] = 0.0f;
-
-        //             m_canRot = false;
-        //             Debug.Log(i == currentTime.Length);
-        //         }
-        //         else
-        //         {
-        //             float t = currentTime[i] / m_rDelay;
-
-        //             t = (t * (2 - t));
-        //             SingleRotObjs[i].transform.rotation = Quaternion.Slerp(a_QuatArry[i].OldRot, a_QuatArry[i].DesiredRot, t);
-        //         }
-        //     }
-        // }
-
+        }
     }
 }

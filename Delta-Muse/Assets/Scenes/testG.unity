@@ -1314,7 +1314,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a43cb9c91d65ac64290c70a05af752e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
   m_rotate: 0
   m_doOnce: 0
   rotationId: 0

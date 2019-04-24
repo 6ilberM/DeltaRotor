@@ -147,9 +147,10 @@ public class PlayerController : MonoBehaviour
         {
 
             Vector3 targetscale = new Vector3(oldscale.x * 2, oldscale.y * .5f, transform.localScale.z);
+            Vector2 NutargetScale = new Vector2(.55f, .86f);
             dt += Time.fixedDeltaTime;
 
-            float f_Delay = 0.3f;
+            float f_Delay = 0.6f;
             if (dt > f_Delay * 2)
             {
                 dt = 0;
@@ -175,7 +176,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Vertical;
-            // GetComponent<CapsuleCollider2D>().size = new Vector2(7,1);
+            GetComponent<CapsuleCollider2D>().size = new Vector2(.55f, .86f);
         }
     }
 
@@ -340,7 +341,7 @@ public class PlayerController : MonoBehaviour
                     GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Horizontal;
 
                     m_StandUp = true;
-                    oldscale = transform.localScale;
+                    oldscale = new Vector2(1, 1);
                 }
 
             }

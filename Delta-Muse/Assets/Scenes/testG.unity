@@ -1896,6 +1896,11 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6620014901843702443, guid: 5dc8483fae498a54bb5f055dcb441e42,
+        type: 3}
+      propertyPath: m_Direction
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6620014901843702441, guid: 5dc8483fae498a54bb5f055dcb441e42,
         type: 3}
       propertyPath: m_IsTrigger

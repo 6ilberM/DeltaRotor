@@ -44,23 +44,8 @@ public class Jumper : MonoBehaviour
             var _jumpVelocity = (Mathf.Sqrt(Mathf.Abs(mygrav) * JumpHeight * 2.0f));
 
             m_RigidBody.AddForce(transform.up * _jumpVelocity * m_RigidBody.mass, ForceMode2D.Impulse);
-            Debug.Log(_jumpVelocity);
+
             b_jump = false;
         }
-
-
-        // _jumpGravity = -(2 * JumpHeight) / Mathf.Pow(TimeToJumpHeight , 2);
-        // _jumpVelocity = Mathf.Abs(_jumpGravity) * TimeToJumpHeight ;
-
-        // // Step update
-        // stepMovement = (_velocity + Vector3.up * _gravity * Time.deltaTime * 0.5f) * Time.deltaTime;
-        // transform.Translate(stepMovement);
-        // _velocity.y += _gravity * Time.deltaTime;
-
-        // // When jump button pressed,
-        // _velocity.y = _jumpVelocity;
-
     }
-
-
 }

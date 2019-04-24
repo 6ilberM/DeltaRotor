@@ -81,6 +81,7 @@ public class PlayerController : MonoBehaviour
     {
         m_rigidBody = GetComponent<Rigidbody2D>();
         m_animator = gameObject.GetComponent<Animator>();
+        v2_capsScale = GetComponent<CapsuleCollider2D>().size;
         if (OnLandEvent == null)
         {
             OnLandEvent = new UnityEvent();
@@ -88,6 +89,8 @@ public class PlayerController : MonoBehaviour
     }
 
     Vector3 oldscale;
+    Vector2 v2_capsScale;
+
     float dt;
 
     bool m_StandUp;
@@ -143,7 +146,7 @@ public class PlayerController : MonoBehaviour
         if (m_StandUp)
         {
 
-            Vector3 targetscale = new Vector3(oldscale.x * 1.5f, oldscale.y * .35f, transform.localScale.z);
+            Vector3 targetscale = new Vector3(oldscale.x * 2, oldscale.y * .5f, transform.localScale.z);
             dt += Time.fixedDeltaTime;
 
             float f_Delay = 0.3f;
@@ -171,8 +174,8 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            // GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Vertical;
-            // GetComponent<CapsuleCollider2D>().size = new Vector2(.13f*6, .15f*6);
+            GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Vertical;
+            // GetComponent<CapsuleCollider2D>().size = new Vector2(7,1);
         }
     }
 
@@ -317,7 +320,7 @@ public class PlayerController : MonoBehaviour
         b_isGrounded = false;
 
         //Landed
-        if (/*(Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>().bounds.extents.y
+        if (/*(Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>() GetComponent<CapsuleCollider2D>().size.bounds.extents.y
         + 0.1f, LayerMask.GetMask("Blocks")) || */ (Physics2D.Raycast(transform.position, Vector2.down,
         GetComponent<CapsuleCollider2D>().bounds.extents.y + .5f, LayerMask.GetMask("Blocks"))) && (m_rigidBody.velocity.normalized.y <= 0))
         {
@@ -332,9 +335,9 @@ public class PlayerController : MonoBehaviour
                 if (!m_StandUp)
                 {
                     //Set Size of Collider to y .13 or lower just so it will look less ugh...
-                    // GetComponent<CapsuleCollider2D>().size = new Vector2(.13f*6, 0.09f*6);
+                    GetComponent<CapsuleCollider2D>().size = new Vector2(.9f, .6f);
 
-                    // GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Horizontal;
+                    GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Horizontal;
 
                     m_StandUp = true;
                     oldscale = transform.localScale;

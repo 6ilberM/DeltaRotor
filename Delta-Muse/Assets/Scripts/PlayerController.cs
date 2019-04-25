@@ -150,7 +150,7 @@ public class PlayerController : MonoBehaviour
             Vector2 NutargetScale = new Vector2(.55f, .86f);
             dt += Time.fixedDeltaTime;
 
-            float f_Delay = 0.6f;
+            float f_Delay = 0.2f;
             if (dt > f_Delay * 2)
             {
                 dt = 0;
@@ -170,6 +170,8 @@ public class PlayerController : MonoBehaviour
                 float t = dt - f_Delay;
                 t = t / f_Delay;
                 t = (1 + (--t) * t * t);
+                GetComponent<CapsuleCollider2D>().size = Vector2.Lerp(GetComponent<CapsuleCollider2D>().size, new Vector2(.55f, .86f), 6.0f * Time.deltaTime);
+
                 transform.localScale = Vector3.Lerp(targetscale, oldscale, t);
             }
         }

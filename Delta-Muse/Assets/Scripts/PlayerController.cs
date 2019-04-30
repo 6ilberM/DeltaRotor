@@ -75,13 +75,16 @@ public class PlayerController : MonoBehaviour
         Cfilter2d1.useTriggers = true;
 
         rotManager = Object.FindObjectOfType<RotationManager>();
+        if (rotManager != transform.parent)
+        {
+            transform.SetParent(rotManager.transform);
+        }
     }
     Animator m_animator;
     private void Awake()
     {
         m_rigidBody = GetComponent<Rigidbody2D>();
         m_animator = gameObject.GetComponent<Animator>();
-        v2_capsScale = GetComponent<CapsuleCollider2D>().size;
         if (OnLandEvent == null)
         {
             OnLandEvent = new UnityEvent();
@@ -89,7 +92,7 @@ public class PlayerController : MonoBehaviour
     }
 
     Vector3 oldscale;
-    Vector2 v2_capsScale;
+
 
     float dt;
 
@@ -126,7 +129,7 @@ public class PlayerController : MonoBehaviour
         if (!rotManager.m_rotate)
         {
             //Landing
-            LandingFeel();
+            // LandingFeel();
 
             //MaxFallSpeed
             // m_rigidBody.velocity = new Vector3(m_rigidBody.velocity.x, Mathf.Clamp(m_rigidBody.velocity.y, -maxfallSpeed, 9000.0f), 0);
@@ -338,12 +341,12 @@ public class PlayerController : MonoBehaviour
                 if (!m_StandUp)
                 {
                     //Comment out if  no landfeel
-                    GetComponent<CapsuleCollider2D>().size = new Vector2(.9f, .6f);
+                    // GetComponent<CapsuleCollider2D>().size = new Vector2(.9f, .6f);
 
-                    GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Horizontal;
+                    // GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Horizontal;
 
                     m_StandUp = true;
-                    oldscale = new Vector2(1, 1);
+                    // oldscale = new Vector2(1, 1);
                 }
 
             }

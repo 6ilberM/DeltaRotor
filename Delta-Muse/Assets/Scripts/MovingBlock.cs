@@ -10,14 +10,13 @@ public class MovingBlock : MonoBehaviour
 
     RotationManager m_myrotMgr;
     Rigidbody2D myrigidBody;
-    BoxCollider2D myCollider;
+
     // bool b_groundHit, b_doOnce;
 
     private void Awake()
     {
         m_myrotMgr = transform.parent.GetComponent<RotationManager>();
         myrigidBody = GetComponent<Rigidbody2D>();
-        myCollider = GetComponent<BoxCollider2D>();
     }
 
 

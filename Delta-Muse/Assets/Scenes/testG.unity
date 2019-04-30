@@ -140,7 +140,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 210987608}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.76, y: -2.86, z: 0}
+  m_LocalPosition: {x: 0.32, y: -4.14, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1315,6 +1315,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_rotate: 0
   m_doOnce: 0
+  m_rDelay: 0.39
   rotationId: 0
 --- !u!1 &1633781597
 GameObject:
@@ -1487,7 +1488,7 @@ MonoBehaviour:
   go_pref: {fileID: 2709120800240400734, guid: 23c6ac3bf87ad054ca957c7a45c22e0c, type: 3}
   spawnPoints:
   - {fileID: 1867673878}
-  m_rotationRef: {fileID: 1361738996}
+  m_rotationRef: {fileID: 0}
 --- !u!1 &1726975620
 GameObject:
   m_ObjectHideFlags: 0
@@ -1876,39 +1877,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6620014901843702443, guid: 5dc8483fae498a54bb5f055dcb441e42,
+    - target: {fileID: 6620014901843702445, guid: 5dc8483fae498a54bb5f055dcb441e42,
         type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6620014901843702443, guid: 5dc8483fae498a54bb5f055dcb441e42,
-        type: 3}
-      propertyPath: m_Size.x
-      value: 0.55
-      objectReference: {fileID: 0}
-    - target: {fileID: 6620014901843702443, guid: 5dc8483fae498a54bb5f055dcb441e42,
-        type: 3}
-      propertyPath: m_Size.y
-      value: 0.86
-      objectReference: {fileID: 0}
-    - target: {fileID: 6620014901843702443, guid: 5dc8483fae498a54bb5f055dcb441e42,
-        type: 3}
-      propertyPath: m_IsTrigger
+      propertyPath: m_UseAutoMass
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6620014901843702443, guid: 5dc8483fae498a54bb5f055dcb441e42,
+    - target: {fileID: 6620014901843702445, guid: 5dc8483fae498a54bb5f055dcb441e42,
         type: 3}
-      propertyPath: m_Direction
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6620014901843702441, guid: 5dc8483fae498a54bb5f055dcb441e42,
-        type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6620014901843702441, guid: 5dc8483fae498a54bb5f055dcb441e42,
-        type: 3}
-      propertyPath: m_Enabled
+      propertyPath: m_Mass
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

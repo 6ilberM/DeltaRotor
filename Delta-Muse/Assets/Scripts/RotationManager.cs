@@ -9,7 +9,7 @@ public class RotationManager : MonoBehaviour
     PlayerController player;
 
     public bool m_rotate, m_doOnce;
-    private float m_rDelay = 0.39f;
+    [SerializeField] float m_rDelay = 0.39f;
     public int rotationId = 0;
 
     Quaternion prev;

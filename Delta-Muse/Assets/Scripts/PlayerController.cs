@@ -147,7 +147,7 @@ public class PlayerController : MonoBehaviour
         {
 
             Vector3 targetscale = new Vector3(oldscale.x * 2, oldscale.y * .5f, transform.localScale.z);
-            Vector2 NutargetScale = new Vector2(.55f, .86f);
+            // Vector2 NutargetScale = new Vector2(.55f, .86f);
             dt += Time.fixedDeltaTime;
 
             float f_Delay = 0.2f;
@@ -325,7 +325,7 @@ public class PlayerController : MonoBehaviour
         //Landed
         if (/*(Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>() GetComponent<CapsuleCollider2D>().size.bounds.extents.y
         + 0.1f, LayerMask.GetMask("Blocks")) || */ (Physics2D.Raycast(transform.position, Vector2.down,
-        GetComponent<CapsuleCollider2D>().bounds.extents.y + .5f, LayerMask.GetMask("Blocks"))) && (m_rigidBody.velocity.normalized.y <= 0))
+        GetComponent<CapsuleCollider2D>().bounds.extents.y + .6f, LayerMask.GetMask("Blocks"))) && (m_rigidBody.velocity.normalized.y <= 0))
         {
             b_isGrounded = true;
 
@@ -337,7 +337,7 @@ public class PlayerController : MonoBehaviour
                 OnLandEvent.Invoke();
                 if (!m_StandUp)
                 {
-                    //Set Size of Collider to y .13 or lower just so it will look less ugh...
+                    //Comment out if  no landfeel
                     GetComponent<CapsuleCollider2D>().size = new Vector2(.9f, .6f);
 
                     GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Horizontal;
@@ -352,9 +352,10 @@ public class PlayerController : MonoBehaviour
 
     void wallRayCheck()
     {
+        Vector3 pos2 = new Vector3(0, -.3f);
         //Check Left 
         if (Physics2D.Raycast(transform.position, Vector2.left, GetComponent<BoxCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks"))
-        || Physics2D.Raycast(transform.position, Vector2.left, GetComponent<CapsuleCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks")))
+        || Physics2D.Raycast(transform.position + pos2, Vector2.left, GetComponent<CapsuleCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks")))
         {
 
             if (!b_horizL)
@@ -375,7 +376,7 @@ public class PlayerController : MonoBehaviour
         //Check Right
 
         if (Physics2D.Raycast(transform.position, Vector2.right, GetComponent<BoxCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks"))
-        || Physics2D.Raycast(transform.position, Vector2.right, GetComponent<CapsuleCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks")))
+        || Physics2D.Raycast(transform.position + pos2, Vector2.right, GetComponent<CapsuleCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks")))
         {
             if (!b_horizR)
             {

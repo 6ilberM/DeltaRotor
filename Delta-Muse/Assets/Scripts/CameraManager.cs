@@ -8,19 +8,7 @@ public class CameraManager : MonoBehaviour
 
 
     public Transform myplayer;
-    Vector2 Myposition; 
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
+    Vector2 Myposition;
     private void FixedUpdate()
     {
         Myposition = transform.position;

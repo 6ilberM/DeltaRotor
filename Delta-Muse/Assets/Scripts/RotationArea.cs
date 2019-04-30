@@ -25,12 +25,6 @@ public class RotationArea : MonoBehaviour
         }
     }
 
-
-    private void Update()
-    {
-
-        float they = rotatingObjects.Length;
-    }
     public void RotSelect(int _dir)
     {
         switch (_dir)

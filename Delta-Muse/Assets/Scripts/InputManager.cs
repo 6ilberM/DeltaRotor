@@ -9,8 +9,6 @@ public class InputManager : MonoBehaviour
     [SerializeField] KeyCode m_rotRight = KeyCode.E;
     [SerializeField] KeyCode m_rotLeft = KeyCode.Q;
 
-
-
     public Animator animator;
 
     public float runSpeed = 40f;
@@ -48,5 +46,4 @@ public class InputManager : MonoBehaviour
         controller.Move(f_hrzMove * Time.fixedDeltaTime, b_jump, b_left, b_right);
         b_jump = false;
     }
-
 }

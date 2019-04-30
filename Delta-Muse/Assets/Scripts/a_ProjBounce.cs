@@ -9,8 +9,6 @@ public class a_ProjBounce : MonoBehaviour
         uLeft, uRight, dLeft, dRight
     }
 
-    //this actor will move some things
-    //Overlap methods 
     ContactFilter2D co_projectileFilter;
     Collider2D[] overlapResults;
 
@@ -20,18 +18,8 @@ public class a_ProjBounce : MonoBehaviour
 
     public BounceOrientation SpriteFace;
 
-    public BoxCollider2D Collider
-    {
-        get
-        {
-            return m_Collider;
-        }
-
-        set
-        {
-            m_Collider = value;
-        }
-    }
+    //Accesor
+    public BoxCollider2D Collider { get { return m_Collider; } set { m_Collider = value; } }
 
     //What if i just define the normal
 
@@ -80,14 +68,9 @@ public class a_ProjBounce : MonoBehaviour
         co_projectileFilter.SetLayerMask(LayerMask.GetMask("Interactable"));
     }
 
-    private void Update()
-    {
-
-    }
-
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.GetComponent<a_Projectile>()!=null)
+        if (other.gameObject.GetComponent<a_Projectile>() != null)
         {
             // Vector3 MyDist = (other.transform.position - gameObject.transform.position);
 
@@ -102,7 +85,7 @@ public class a_ProjBounce : MonoBehaviour
             if (f_magnitude < 1)
             {
                 vec1 = Vector3.Reflect(vec1.normalized, normalVector);
-               
+
                 float desiredAngle = Mathf.Round((Mathf.Atan2(vec1.y, vec1.x) * Mathf.Rad2Deg));
 
                 other.gameObject.transform.position = gameObject.transform.position;

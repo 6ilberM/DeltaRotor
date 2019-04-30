@@ -13,7 +13,6 @@ public class RotationManager : MonoBehaviour
     public int rotationId = 0;
 
     Quaternion prev;
-
     // Use this for initialization
 
     void Start()

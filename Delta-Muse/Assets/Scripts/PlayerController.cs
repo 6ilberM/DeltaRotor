@@ -32,27 +32,23 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float m_RotationDelay = 0.3f;
 
     float m_durationScalar = 1;
-
-    bool b_securityCheck;
-
+    bool b_securityCheck, m_StoreRotation;
     public bool b_ShouldSelfOrient = false;
-
-    bool m_StoreRotation;
-
     Quaternion qtDir;
-
     //Make a check on this on the Rotation manager
     public bool b_dirChosen;
-
     int i_jumpCount;
-
     Quaternion qt_desiredRot;
-
     //Overlap methods 
     ContactFilter2D Cfilter2d1;
     Collider2D[] overlapResults;
+    Vector3 oldscale;
 
+    float dt;
+
+    bool m_StandUp;
     //obj References
+    Animator m_animator;
 
     //Events
 
@@ -80,7 +76,6 @@ public class PlayerController : MonoBehaviour
             transform.SetParent(rotManager.transform);
         }
     }
-    Animator m_animator;
     private void Awake()
     {
         m_rigidBody = GetComponent<Rigidbody2D>();
@@ -90,13 +85,6 @@ public class PlayerController : MonoBehaviour
             OnLandEvent = new UnityEvent();
         }
     }
-
-    Vector3 oldscale;
-
-
-    float dt;
-
-    bool m_StandUp;
 
     // Update is called once per frame
     void Update()

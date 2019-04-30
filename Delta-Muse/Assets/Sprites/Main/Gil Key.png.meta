@@ -1,22 +1,31 @@
 fileFormatVersion: 2
-guid: 8573fb6d98b3ff344ba3888a9b98c096
+guid: 57ae1e3dbe764494f88f3a2d7fe0fdfe
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: 21300000
-    second: terraintrans_0
+    second: Gil Key_0
   - first:
       213: 21300002
-    second: terraintrans_1
+    second: Gil Key_1
   - first:
       213: 21300004
-    second: terraintrans_2
+    second: Gil Key_2
   - first:
       213: 21300006
-    second: terraintrans_3
+    second: Gil Key_3
   - first:
       213: 21300008
-    second: terraintrans_4
+    second: Gil Key_4
+  - first:
+      213: 21300010
+    second: Gil Key_5
+  - first:
+      213: 21300012
+    second: Gil Key_6
+  - first:
+      213: 21300014
+    second: Gil Key_7
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -46,7 +55,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: -1
+    filterMode: 0
     aniso: -1
     mipBias: -100
     wrapU: 1
@@ -60,7 +69,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 19
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -113,110 +122,169 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: terraintrans_0
+      name: Gil Key_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 288
-        width: 40
-        height: 18
+        x: 47
+        y: 117
+        width: 10
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 38998580b938b15408fb487da1bf215d
+      spriteID: 847b24bfa35082149a397089a4987920
       internalID: 21300000
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: terraintrans_1
+      name: Gil Key_1
       rect:
         serializedVersion: 2
-        x: 118
-        y: 288
-        width: 170
-        height: 20
+        x: 70
+        y: 117
+        width: 11
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 10f6735bc82926546ad656ceafd67877
+      spriteID: d466511565020284ea50f84973ebe0a6
       internalID: 21300002
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: terraintrans_2
+      name: Gil Key_2
       rect:
         serializedVersion: 2
-        x: 0
-        y: 160
-        width: 288
-        height: 103
+        x: 94
+        y: 117
+        width: 4
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -144, y: 32.5}
-        - {x: -144, y: 51.5}
-        - {x: -112, y: 51.5}
-        - {x: -112, y: 32.5}
+      outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4dc9693f719f00641bce2b01687d4be3
+      spriteID: d8cd746daad3fbe4485d96e1a29d7f5d
       internalID: 21300004
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: terraintrans_3
+      name: Gil Key_3
       rect:
         serializedVersion: 2
-        x: 0
-        y: 64
-        width: 192
-        height: 70
+        x: 111
+        y: 117
+        width: 11
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a600512098e186b4f8e6a02847512da2
+      spriteID: 007078a059f511e4d9a7fb91487d51ea
       internalID: 21300006
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: terraintrans_4
+      name: Gil Key_4
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 256
-        height: 54
+        x: 133
+        y: 117
+        width: 10
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 131def85de6c32446a23d0fdb50c4d29
+      spriteID: ad7e0b3c09a8b84468d27b3b3ec26fa9
       internalID: 21300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gil Key_5
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 117
+        width: 11
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f9981b9dc0faafe40be1dbf6dfb389ae
+      internalID: 21300010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gil Key_6
+      rect:
+        serializedVersion: 2
+        x: 180
+        y: 117
+        width: 4
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3114c1b1732f1ec40ac466d429dbe264
+      internalID: 21300012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gil Key_7
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 117
+        width: 11
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea476f1d405e1ae448af33e280667fb4
+      internalID: 21300014
       vertices: []
       indices: 
       edges: []
@@ -224,7 +292,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 2d4f48b51a6d8c94dadc4cbebe3140eb
+    spriteID: ccb722443e887594db63f516c840fcfb
     internalID: 0
     vertices: []
     indices: 

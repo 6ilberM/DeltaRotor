@@ -9,7 +9,7 @@ public class a_spin : MonoBehaviour
 
     float dt = -Mathf.PI;
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         dt += Time.deltaTime;
         if (dt >= Mathf.PI)
@@ -21,8 +21,4 @@ public class a_spin : MonoBehaviour
 
     }
 
-    private void FixedUpdate()
-    {
-
-    }
 }

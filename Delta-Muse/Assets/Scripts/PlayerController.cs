@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     //Variables
     public RotationManager rotManager;
 
-    List<RotationArea> li_rotAreas = new List<RotationArea>();
+    List<RotationArea> RotationAreaList = new List<RotationArea>();
     [SerializeField] float JumpHeight = 5;
 
     [Range(1, 80)] public float f_speedScalar = 16.15f;
@@ -57,14 +57,28 @@ public class PlayerController : MonoBehaviour
 
     public UnityEvent OnLandEvent;
 
+    //Make conditional Versions of this for enabling bigger rotations
+    public bool canrotsingle;
     private bool b_isGrounded;
     bool b_jumpL, b_horizL, b_horizR = false;
-
     public bool b_DeathRequest = false;
     private bool m_FacingRight;
 
+    public List<RotationArea> li_rotationAreas
+    {
+        get
+        {
+            return RotationAreaList;
+        }
+
+        set
+        {
+            RotationAreaList = value;
+        }
+    }
+
     // Use this for initialization
-    void Start()
+    private void Start()
     {
         Cfilter2d1.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer));
         Cfilter2d1.useLayerMask = true;
@@ -76,6 +90,7 @@ public class PlayerController : MonoBehaviour
             transform.SetParent(rotManager.transform);
         }
     }
+
     private void Awake()
     {
         m_rigidBody = GetComponent<Rigidbody2D>();
@@ -92,7 +107,7 @@ public class PlayerController : MonoBehaviour
         //Check if we are on the ground
         if (!rotManager.m_rotate)
         {
-            groundRayCheck();
+            GroundRayCheck();
             if (m_animator.speed != 1)
             {
                 m_animator.speed = 1;
@@ -106,7 +121,7 @@ public class PlayerController : MonoBehaviour
         //No Need to check every Tick.
         if (!b_isGrounded)
         {
-            wallRayCheck();
+            WallRayCheck();
             // wallcheck();
         }
 
@@ -130,8 +145,6 @@ public class PlayerController : MonoBehaviour
     }
 
     ///Scales down and then back up quickly to improve the game feel
-
-
     private void LandingFeel()
     {
         if (m_StandUp)
@@ -197,7 +210,6 @@ public class PlayerController : MonoBehaviour
                 m_rigidBody.velocity = Vector3.SmoothDamp(m_rigidBody.velocity, v3_targetVel, ref m_Velocity, m_faSmoothing);
             }
 
-
             // If the input is moving the player Left and the player is facing left...
             if (_velocityX > 0 && m_FacingRight)
             {
@@ -213,13 +225,13 @@ public class PlayerController : MonoBehaviour
 
             //jumpLogic soon to be changed
 
-            newJump(_Jump);
+            NewJump(_Jump);
 
             RotationSelect(_left, _right);
         }
     }
 
-    private void newJump(bool _Jump)
+    private void NewJump(bool _Jump)
     {
         if (_Jump && i_jumpCount < 2)
         {
@@ -308,7 +320,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void groundRayCheck()
+    void GroundRayCheck()
     {
         bool wasgrounded = b_isGrounded;
         b_isGrounded = false;
@@ -341,7 +353,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void wallRayCheck()
+    void WallRayCheck()
     {
         Vector3 pos2 = new Vector3(0, -.3f);
         //Check Left 
@@ -384,6 +396,7 @@ public class PlayerController : MonoBehaviour
             // GetComponent<Animator>().SetBool("isGrounded", false)
         }
     }
+
     ///Flips Character
     private void Flip()
     {
@@ -403,9 +416,6 @@ public class PlayerController : MonoBehaviour
         //         transform.localScale = theScale;
     }
 
-    //Make conditional Versions of this for enabling bigger rotations
-    public bool canrotsingle;
-
     public float DurationScalar
     {
         get
@@ -416,19 +426,6 @@ public class PlayerController : MonoBehaviour
         set
         {
             m_durationScalar = value;
-        }
-    }
-
-    public List<RotationArea> li_rotationAreas
-    {
-        get
-        {
-            return li_rotAreas;
-        }
-
-        set
-        {
-            li_rotAreas = value;
         }
     }
 

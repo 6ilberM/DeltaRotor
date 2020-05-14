@@ -70,7 +70,7 @@ public class a_ProjBounce : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.GetComponent<a_Projectile>() != null)
+        if (other.gameObject.GetComponent<A_Projectile>() != null)
         {
             // Vector3 MyDist = (other.transform.position - gameObject.transform.position);
 

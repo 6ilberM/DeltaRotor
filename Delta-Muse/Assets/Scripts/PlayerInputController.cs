@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine;
+using System;
 
 public class PlayerInputController : MonoBehaviour
 {
@@ -9,61 +10,59 @@ public class PlayerInputController : MonoBehaviour
     [SerializeField] PlayerController controller;
 #pragma warning restore 0649
 
-    //[SerializeField] Key m_rotRight = Key.E;
-    //[SerializeField] Key m_rotLeft = Key.Q;
-
     public InputAction JumpAction;
     public InputAction MoveAction;
-
     public InputActionMap gameplayActions;
 
+    public Action onJump;
+    public Action<bool> onRotate;
     public Animator animator;
     public float runSpeed = 40f;
-
     private float f_Horizontal = 0f;
-    private bool b_jump, b_right, b_left = false;
-    public bool m_jumpEnabled;
+
+    public bool m_jumpEnabled = true;
 
     [SerializeField] PlayerInput m_input;
     //DefaultplayerControls actions;
 
     private void Awake()
     {
-        JumpAction.performed += JumpAction_performed;
+        JumpAction.performed += (InputAction.CallbackContext ctx) =>
+        {
+            onJump?.Invoke();
+            animator.SetBool("IsJumping", true);
+        };
         gameplayActions.actions[0].performed += RotLeft;
         gameplayActions.actions[1].performed += RotRight;
     }
 
-    private void RotLeft(InputAction.CallbackContext obj) { b_left = true; }
+    private void RotLeft(InputAction.CallbackContext obj) { onRotate?.Invoke(false); }
 
-    private void RotRight(InputAction.CallbackContext obj) { b_right = true; }
+    private void RotRight(InputAction.CallbackContext obj) { onRotate?.Invoke(true); }
 
     private void OnEnable()
     {
-             JumpAction.Enable();
-             MoveAction.Enable();
+        JumpAction.Enable();
+        MoveAction.Enable();
         gameplayActions.Enable();
-
     }
 
     private void OnDisable()
     {
-             JumpAction.Disable();
-             MoveAction.Disable();
+        JumpAction.Disable();
+        MoveAction.Disable();
         gameplayActions.Disable();
-
     }
 
-    private void JumpAction_performed(InputAction.CallbackContext obj)
+    private void JumpInputAction(InputAction.CallbackContext obj)
     {
         if (m_jumpEnabled)
         {
-            b_jump = true;
+            onJump?.Invoke();
             animator.SetBool("IsJumping", true);
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         f_Horizontal = MoveAction.ReadValue<float>() * runSpeed;
@@ -74,10 +73,6 @@ public class PlayerInputController : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Move our character
-        controller.Move(f_Horizontal * Time.fixedDeltaTime, b_jump, b_left, b_right);
-        b_jump = false;
-        b_left = false;
-        b_right = false;
+        controller.Move(f_Horizontal * Time.fixedDeltaTime);
     }
 }

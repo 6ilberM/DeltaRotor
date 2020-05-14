@@ -32,7 +32,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6620014901843702482}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11.31, y: -14.4, z: 0}
+  m_LocalPosition: {x: -4.88, y: -3.369691, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
@@ -94,7 +94,7 @@ Rigidbody2D:
   m_UseAutoMass: 1
   m_Mass: 0.513383
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_GravityScale: 3
   m_Material: {fileID: 0}
   m_Interpolate: 0
@@ -115,6 +115,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -126,6 +127,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -180,14 +182,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ef7544f2f8853b409ff77910b8c18fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_rigidBody: {fileID: 0}
+  m_rigidBody: {fileID: 6620014901843702445}
   rotManager: {fileID: 0}
-  JumpHeight: 2
-  f_speedScalar: 16.15
-  maxfallSpeed: 27.7
+  RotAreaList: []
+  JumpHeight: 4
   m_faSmoothing: 0.08
   m_RotationDelay: 0.3
-  b_ShouldSelfOrient: 0
   b_dirChosen: 0
   OnLandEvent:
     m_PersistentCalls:
@@ -203,10 +203,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
+  b_SelfOrient: 0
+  b_CanRotateSingle: 0
   b_DeathRequest: 0
-  canrotsingle: 0
+  m_DurationScalar: 0
 --- !u!114 &6620014901843702442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,11 +220,142 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 6620014901843702446}
-  m_rotRight: 101
-  m_rotLeft: 113
+  JumpAction:
+    m_Name: Jump
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: cd2783a4-06e5-4763-a102-5fd4aca95361
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 3b487073-f473-4fab-9959-688eab187e6b
+      m_Path: <DualShockGamepad>/buttonSouth
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Jump
+      m_Flags: 0
+    - m_Name: 
+      m_Id: a55919dc-a7e6-4fc7-bdc4-277008ddbda2
+      m_Path: <Keyboard>/space
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Jump
+      m_Flags: 0
+    - m_Name: 
+      m_Id: e62810ba-494c-48f5-b25d-4d56984a245c
+      m_Path: <Keyboard>/w
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Jump
+      m_Flags: 0
+  MoveAction:
+    m_Name: Move
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: e233a96d-46a6-431a-bfc4-046aff571f80
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 1D Axis
+      m_Id: 6dafd201-5ef4-474f-b1af-c8f091c70e9d
+      m_Path: 1DAxis
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move
+      m_Flags: 4
+    - m_Name: negative
+      m_Id: 24606bc0-9894-417a-b11c-07e825985819
+      m_Path: <Gamepad>/leftStick/left
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move
+      m_Flags: 8
+    - m_Name: negative
+      m_Id: 04e41c1d-a31d-4f79-b565-6b5e6412fbc6
+      m_Path: <Keyboard>/a
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move
+      m_Flags: 8
+    - m_Name: positive
+      m_Id: b524cbe7-a293-4f8f-9fc5-e721036aac33
+      m_Path: <Gamepad>/leftStick/right
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move
+      m_Flags: 8
+    - m_Name: positive
+      m_Id: f93a4e8f-db44-4390-9aba-8d9e6e78a788
+      m_Path: <Keyboard>/d
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move
+      m_Flags: 8
+  gameplayActions:
+    m_Name: Gameplay Actions
+    m_Id: afbdc6bf-8a92-4ef8-b815-c9fc6bb91015
+    m_Asset: {fileID: 0}
+    m_Actions:
+    - m_Name: RotationL
+      m_Type: 1
+      m_ExpectedControlType: Button
+      m_Id: fb1a6631-dda5-4d8a-b06b-ad79ae5de809
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+    - m_Name: RotationR
+      m_Type: 1
+      m_ExpectedControlType: Button
+      m_Id: cc61344b-e112-4a3c-b65c-6b9cafd7bda6
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+    m_Bindings:
+    - m_Name: 
+      m_Id: b512f8b9-7b1f-43f2-9d08-131707f9a885
+      m_Path: <Gamepad>/leftShoulder
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: RotationL
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 489234f9-b4c6-4fc3-af92-e277e96d7145
+      m_Path: <Keyboard>/q
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: RotationL
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 7c632458-a71b-4a2c-9829-90134ff87003
+      m_Path: <Gamepad>/rightShoulder
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: RotationR
+      m_Flags: 0
+    - m_Name: 
+      m_Id: c6c5b253-2f40-43c1-8161-43f81bda91a7
+      m_Path: <Keyboard>/e
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: RotationR
+      m_Flags: 0
   animator: {fileID: 6620014901843702444}
   runSpeed: 40
   m_jumpEnabled: 1
+  m_input: {fileID: 0}
 --- !u!58 &6620014901843702441
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -234,7 +365,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 6620014901843702482}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: c297241b8954f734f88ffffd18497d37, type: 2}
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0

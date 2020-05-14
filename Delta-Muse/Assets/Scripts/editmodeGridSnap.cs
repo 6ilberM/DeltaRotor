@@ -7,7 +7,6 @@ public class editmodeGridSnap : MonoBehaviour
     {
         if (Application.isPlaying)
         {
-            // code executed in play mode
         }
         else
         {

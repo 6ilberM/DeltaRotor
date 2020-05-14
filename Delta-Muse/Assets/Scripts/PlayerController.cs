@@ -1,28 +1,27 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(PlayerInputController))]
+
 public class PlayerController : MonoBehaviour
 {
     //Components
     public Rigidbody2D m_rigidBody;
 
-    //Variables
+    //References
     public RotationManager rotManager;
+    private PlayerInputController m_inputController;
 
-    List<RotationArea> RotationAreaList = new List<RotationArea>();
-    [SerializeField] float JumpHeight = 5;
+    //Variables
+    public List<RotationArea> RotAreaList;
 
-    [Range(1, 80)] public float f_speedScalar = 16.15f;
-
-    [Range(15, 30)] public float maxfallSpeed = 17.0f;
-
-    //Temp
-    float m_curentTime;
-
-    Quaternion m_PrevRot;
+    [SerializeField] private float JumpHeight = 5;
+    private float m_curentTime;
+    private Quaternion m_PrevRot;
     private Vector3 m_Velocity = Vector3.zero;
 
     /// How much to smooth out the movement
@@ -31,99 +30,79 @@ public class PlayerController : MonoBehaviour
     ///Determines how fast the player rotates
     [SerializeField] private float m_RotationDelay = 0.3f;
 
-    float m_durationScalar = 1;
-    bool b_securityCheck, m_StoreRotation;
-    public bool b_ShouldSelfOrient = false;
-    Quaternion qtDir;
-    //Make a check on this on the Rotation manager
+    private bool m_StoreRotation;
+
+    Quaternion m_QuatDirection;
+
+    //Make a check on this on the Rotation manager (Should be a Callback)
     public bool b_dirChosen;
-    int i_jumpCount;
-    Quaternion qt_desiredRot;
-    //Overlap methods 
-    ContactFilter2D Cfilter2d1;
-    Collider2D[] overlapResults;
-    Vector3 oldscale;
+    private int m_JumpCount;
+    private Quaternion m_desiredRotation;
+    private ContactFilter2D m_contactFilter;
+    private Collider2D[] overlapResults;
 
-    float dt;
+    private Vector3 oldscale;
 
-    bool m_StandUp;
+    private float dt;
+    private bool m_StandUp;
     //obj References
-    Animator m_animator;
-
-    //Events
+    private Animator m_animator;
 
     [Header("Events")]
-    [Space]
-
+    [Space(10)]
     public UnityEvent OnLandEvent;
+    public bool b_SelfOrient = false;
 
     //Make conditional Versions of this for enabling bigger rotations
-    public bool canrotsingle;
+    public bool b_CanRotateSingle;
+
     private bool b_isGrounded;
-    bool b_jumpL, b_horizL, b_horizR = false;
+    private bool b_horizL, b_horizR = false;
     public bool b_DeathRequest = false;
-    private bool m_FacingRight;
+    private bool m_faceRight;
+    public float m_DurationScalar;
 
-    public List<RotationArea> li_rotationAreas
-    {
-        get
-        {
-            return RotationAreaList;
-        }
-
-        set
-        {
-            RotationAreaList = value;
-        }
-    }
-
-    // Use this for initialization
     private void Start()
     {
-        Cfilter2d1.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer));
-        Cfilter2d1.useLayerMask = true;
-        Cfilter2d1.useTriggers = true;
+        m_contactFilter.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer));
+        m_contactFilter.useLayerMask = true;
+        m_contactFilter.useTriggers = true;
 
-        rotManager = Object.FindObjectOfType<RotationManager>();
-        if (rotManager != transform.parent)
-        {
-            transform.SetParent(rotManager.transform);
-        }
+        rotManager = UnityEngine.Object.FindObjectOfType<RotationManager>();
+        if (rotManager != transform.parent) { transform.SetParent(rotManager.transform); }
     }
 
     private void Awake()
     {
+        m_inputController = GetComponent<PlayerInputController>();
+        m_inputController.onJump += OnJump;
+        m_inputController.onRotate += OnRotate;
+        oldscale = transform.localScale;
         m_rigidBody = GetComponent<Rigidbody2D>();
         m_animator = gameObject.GetComponent<Animator>();
-        if (OnLandEvent == null)
-        {
-            OnLandEvent = new UnityEvent();
-        }
+
+        if (OnLandEvent == null) { OnLandEvent = new UnityEvent(); }
     }
 
-    // Update is called once per frame
+    private void OnDestroy()
+    {
+        m_inputController.onJump -= OnJump;
+        m_inputController.onRotate -= OnRotate;
+    }
+    private void OnRotate(bool _L0OrR1) { ProcessRotation(_L0OrR1); }
+
+    private void OnJump() { NewJump(); }
+
     void Update()
     {
-        //Check if we are on the ground
         if (!rotManager.m_rotate)
         {
             GroundRayCheck();
-            if (m_animator.speed != 1)
-            {
-                m_animator.speed = 1;
-            }
+            if (m_animator.speed != 1) { m_animator.speed = 1; }
         }
-        else
-        {
-            m_animator.speed = 0;
-        }
+        else { m_animator.speed = 0; }
 
-        //No Need to check every Tick.
-        if (!b_isGrounded)
-        {
-            WallRayCheck();
-            // wallcheck();
-        }
+        if (!b_isGrounded) { WallRayCheck(); }
 
     }
 
@@ -139,13 +118,12 @@ public class PlayerController : MonoBehaviour
 
             //Rotate!
         }
-        rotManager.Rotate(b_dirChosen, qt_desiredRot);
+        rotManager.Rotate(b_dirChosen, m_desiredRotation);
 
         OrientSelfUp();
     }
 
-    ///Scales down and then back up quickly to improve the game feel
-    private void LandingFeel()
+    private void OnLandingCustom()
     {
         if (m_StandUp)
         {
@@ -186,95 +164,42 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    //Should be called in fixed time
-
-    public void Move(float _velocityX, bool _Jump, bool _left, bool _right)
+    public void Move(float _velocityHorz)
     {
         if (!rotManager.m_rotate)
         {
-            Vector3 v3_targetVel = new Vector2(_velocityX * 10f, m_rigidBody.velocity.y);
+            Vector3 v3_targetVel = new Vector2(_velocityHorz * 10f, m_rigidBody.velocity.y);
 
-
-            if (b_horizL && _velocityX > 0 || b_horizR && _velocityX < 0)
+            if (b_horizL && _velocityHorz > 0 || b_horizR && _velocityHorz < 0)
             {
                 m_rigidBody.velocity = Vector3.SmoothDamp(m_rigidBody.velocity, v3_targetVel, ref m_Velocity, m_faSmoothing);
             }
 
-            else if (b_horizL && b_horizR)
-            {
-                //trapped
-            }
+            else if (!b_horizL && !b_horizR) { m_rigidBody.velocity = Vector3.SmoothDamp(m_rigidBody.velocity, v3_targetVel, ref m_Velocity, m_faSmoothing); }
 
-            else if (!b_horizL && !b_horizR)
-            {
-                m_rigidBody.velocity = Vector3.SmoothDamp(m_rigidBody.velocity, v3_targetVel, ref m_Velocity, m_faSmoothing);
-            }
-
-            // If the input is moving the player Left and the player is facing left...
-            if (_velocityX > 0 && m_FacingRight)
-            {
-                // ... flip the player.
-                Flip();
-            }
-            // Otherwise if the input is moving the player Right and the player is facing right...
-            else if (_velocityX < 0 && !m_FacingRight)
-            {
-                // ... flip the player.
-                Flip();
-            }
-
-            //jumpLogic soon to be changed
-
-            NewJump(_Jump);
-
-            RotationSelect(_left, _right);
+            if (_velocityHorz > 0 && m_faceRight) { FlipSpriteDirection(); }
+            else if (_velocityHorz < 0 && !m_faceRight) { FlipSpriteDirection(); }
         }
     }
 
-    private void NewJump(bool _Jump)
+    //ToDo: Improve The New Jump  so that you can do the Mario-Esque Held Button Jump!
+    private void NewJump()
     {
-        if (_Jump && i_jumpCount < 2)
+        if (m_JumpCount < 2)
         {
-            // Add a vertical force to the player.
-            if (m_rigidBody.velocity.y < 0)
-            {
-                m_rigidBody.velocity = new Vector2(m_rigidBody.velocity.x, 0);
+            float _JumpForce = GetJumpForceAtHeight();
 
-            }
+            if (m_rigidBody.velocity.y < 0) { m_rigidBody.velocity = new Vector2(m_rigidBody.velocity.x, 0); }
 
-            if (i_jumpCount == 0)
-            {
-                float mygrav = m_rigidBody.gravityScale * Physics2D.gravity.y;
+            if (m_JumpCount == 0) { m_rigidBody.AddForce(m_rigidBody.transform.up * _JumpForce * m_rigidBody.mass, ForceMode2D.Impulse); }
+            else { m_rigidBody.AddForce(m_rigidBody.transform.up * _JumpForce * .5f * m_rigidBody.mass, ForceMode2D.Impulse); }
 
-
-                var _jumpVelocity = (Mathf.Sqrt(Mathf.Abs(mygrav) * JumpHeight * 2.0f));
-
-                m_rigidBody.AddForce(m_rigidBody.transform.up * _jumpVelocity * m_rigidBody.mass, ForceMode2D.Impulse);
-
-                i_jumpCount++;
-
-            }
-
-            else if (i_jumpCount == 1)
-            {
-                float mygrav = m_rigidBody.gravityScale * Physics2D.gravity.y;
-
-
-                var _jumpVelocity = (Mathf.Sqrt(Mathf.Abs(mygrav) * JumpHeight * 2.0f));
-
-                m_rigidBody.AddForce(m_rigidBody.transform.up * _jumpVelocity * .5f * m_rigidBody.mass, ForceMode2D.Impulse);
-
-                i_jumpCount++;
-
-            }
-            else
-            {
-                //do nothing
-            }
-
+            m_JumpCount++;
             b_isGrounded = false;
         }
     }
+
+    private float GetJumpForceAtHeight() { return Mathf.Sqrt(Mathf.Abs(m_rigidBody.gravityScale * Physics2D.gravity.y) * JumpHeight * 2.0f); }
 
     private void OrientSelfUp()
     {
@@ -284,38 +209,30 @@ public class PlayerController : MonoBehaviour
             m_StoreRotation = true;
         }
 
-        //If It no longer is rotating and should OrientSelf
-        if (!rotManager.m_rotate && b_ShouldSelfOrient)
+        if (!rotManager.m_rotate && b_SelfOrient)
         {
             m_curentTime += Time.fixedDeltaTime;
-            //Close Enough? w/ thresholdCheck
-            if (m_curentTime > m_RotationDelay * DurationScalar)
+
+            if (m_curentTime > m_RotationDelay * m_DurationScalar)
             {
-                transform.localRotation = qtDir;
+                transform.localRotation = m_QuatDirection;
 
                 m_rigidBody.simulated = true;
-                b_ShouldSelfOrient = false;
+                b_SelfOrient = false;
                 m_StoreRotation = false;
                 m_curentTime = 0.0f;
             }
             else
             {
-                float t = m_curentTime / (m_RotationDelay * DurationScalar);
-
+                float t = m_curentTime / (m_RotationDelay * m_DurationScalar);
 
                 t = t * t * t * (t * (6f * t - 15f) + 10f);
 
-                qtDir = rotManager.transform.localRotation;
+                m_QuatDirection = rotManager.transform.localRotation;
 
-                if (rotManager.rotationId == 1 || rotManager.rotationId == 3)
-                {
-                    qtDir = Quaternion.Inverse(qtDir);
+                if (rotManager.rotationId == 1 || rotManager.rotationId == 3) { m_QuatDirection = Quaternion.Inverse(m_QuatDirection); }
 
-                }
-                else
-                {
-                }
-                transform.localRotation = Quaternion.Slerp(m_PrevRot, qtDir, t);
+                transform.localRotation = Quaternion.Slerp(m_PrevRot, m_QuatDirection, t);
             }
         }
     }
@@ -334,7 +251,7 @@ public class PlayerController : MonoBehaviour
 
             b_horizL = false;
             b_horizR = false;
-            i_jumpCount = 0;
+            m_JumpCount = 0;
             if (!wasgrounded)
             {
                 OnLandEvent.Invoke();
@@ -377,7 +294,6 @@ public class PlayerController : MonoBehaviour
 
 
         //Check Right
-
         if (Physics2D.Raycast(transform.position, Vector2.right, GetComponent<BoxCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks"))
         || Physics2D.Raycast(transform.position + pos2, Vector2.right, GetComponent<CapsuleCollider2D>().bounds.extents.x + 0.2f, LayerMask.GetMask("Blocks")))
         {
@@ -397,57 +313,33 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    ///Flips Character
-    private void Flip()
+    private void FlipSpriteDirection()
     {
-        // Switch the way the player is labelled as facing.
-        m_FacingRight = !m_FacingRight;
+        m_faceRight = !m_faceRight;
 
-
-        // Spin Renderer 
         SpriteRenderer MyImage = gameObject.GetComponent<SpriteRenderer>();
         MyImage.flipX = !MyImage.flipX;
-
-        // //Spin the scale
-        //         Vector3 theScale = transform.localScale;
-
-        //         // Multiply the player's x local scale by -1. In case I attach more things to the player
-        //         theScale.x *= -1;
-        //         transform.localScale = theScale;
     }
 
-    public float DurationScalar
+    public void ProcessRotation(bool b_direction)
     {
-        get
-        {
-            return m_durationScalar;
-        }
-
-        set
-        {
-            m_durationScalar = value;
-        }
-    }
-
-    public void RotationSelect(bool _left, bool _right)
-    {
-        if (rotManager.m_rotate == false && !canrotsingle)
+        if (rotManager.m_rotate == false && !b_CanRotateSingle)
         {
             // m_PrevRot = transform.localRotation;
             switch (rotManager.rotationId)
             {
                 case 0:
-                    if (_right)
+                    if (b_direction)
                     {
-                        qt_desiredRot = Quaternion.Euler(0, 0, 180 + 90);
+                        m_desiredRotation = Quaternion.Euler(0, 0, 180 + 90);
                         b_dirChosen = true;
                         m_rigidBody.simulated = false;
                         rotManager.rotationId = 3;
                     }
 
-                    if (_left)
+                    else
                     {
-                        qt_desiredRot = Quaternion.Euler(0, 0, 90);
+                        m_desiredRotation = Quaternion.Euler(0, 0, 90);
                         b_dirChosen = true;
                         m_rigidBody.simulated = false;
                         rotManager.rotationId++;
@@ -455,17 +347,16 @@ public class PlayerController : MonoBehaviour
 
                     break;
                 case 1:
-                    if (_right)
+                    if (b_direction)
                     {
-                        qt_desiredRot = Quaternion.Euler(0, 0, 0);
+                        m_desiredRotation = Quaternion.Euler(0, 0, 0);
                         b_dirChosen = true;
                         m_rigidBody.simulated = false;
                         rotManager.rotationId = 0;
                     }
-
-                    if (_left)
+                    else
                     {
-                        qt_desiredRot = Quaternion.Euler(0, 0, 180);
+                        m_desiredRotation = Quaternion.Euler(0, 0, 180);
                         b_dirChosen = true;
                         m_rigidBody.simulated = false;
                         rotManager.rotationId++;
@@ -473,17 +364,17 @@ public class PlayerController : MonoBehaviour
                     break;
 
                 case 2:
-                    if (_right)
+                    if (b_direction)
                     {
-                        qt_desiredRot = Quaternion.Euler(0, 0, 90);
+                        m_desiredRotation = Quaternion.Euler(0, 0, 90);
                         b_dirChosen = true;
                         m_rigidBody.simulated = false;
                         rotManager.rotationId--;
                     }
 
-                    if (_left)
+                    else
                     {
-                        qt_desiredRot = Quaternion.Euler(0, 0, 180 + 90);
+                        m_desiredRotation = Quaternion.Euler(0, 0, 180 + 90);
                         b_dirChosen = true;
                         m_rigidBody.simulated = false;
                         rotManager.rotationId++;
@@ -491,17 +382,17 @@ public class PlayerController : MonoBehaviour
                     break;
 
                 case 3:
-                    if (_right)
+                    if (b_direction)
                     {
-                        qt_desiredRot = Quaternion.Euler(0, 0, 180);
+                        m_desiredRotation = Quaternion.Euler(0, 0, 180);
                         b_dirChosen = true;
                         m_rigidBody.simulated = false;
                         rotManager.rotationId--;
                     }
 
-                    if (_left)
+                    else
                     {
-                        qt_desiredRot = Quaternion.Euler(0, 0, 0);
+                        m_desiredRotation = Quaternion.Euler(0, 0, 0);
                         b_dirChosen = true;
                         m_rigidBody.simulated = false;
                         rotManager.rotationId = 0;
@@ -513,27 +404,11 @@ public class PlayerController : MonoBehaviour
                     break;
             }
         }
-        else if (canrotsingle)
+        else if (b_CanRotateSingle)
         {
-            if (_left)
-            {
-                for (int i = 0; i < li_rotationAreas.Count; i++)
-                {
-                    li_rotationAreas[i].RotSelect(0);
-                }
-            }
+            if (b_direction) { for (int i = 0; i < RotAreaList.Count; i++) { RotAreaList[i].RotSelect(1); } }
 
-            if (_right)
-            {
-                for (int i = 0; i < li_rotationAreas.Count; i++)
-                {
-                    li_rotationAreas[i].RotSelect(1);
-                }
-            }
-        }
-        else
-        {
-            //do nothing
+            else { for (int i = 0; i < RotAreaList.Count; i++) { RotAreaList[i].RotSelect(0); } }
         }
     }
 

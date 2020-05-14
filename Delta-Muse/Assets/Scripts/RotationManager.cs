@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class RotationManager : MonoBehaviour
 {
+    private static RotationManager instance;
+
     private Rigidbody2D rb_Body;
     private float currentTime;
     PlayerController player;
@@ -13,14 +15,29 @@ public class RotationManager : MonoBehaviour
     public int rotationId = 0;
 
     Quaternion prev;
-    // Use this for initialization
 
-    void Start()
+    public static RotationManager Instance
     {
-        player = Object.FindObjectOfType<PlayerController>();
+        get
+        {
+            if (null == instance)
+            {
+                instance = FindObjectOfType<RotationManager>();
+                if (null == instance)
+                {
+                    GameObject obj = new GameObject();
+                    obj.name = typeof(RotationManager).Name;
+                    instance = obj.AddComponent<RotationManager>();
+                }
+            }
+            return instance;
+        }
     }
 
-    //Handles World Rotation
+    private void Awake() { if (Instance && Instance != this) { Destroy(this); } }
+
+    private void Start() { player = Object.FindObjectOfType<PlayerController>(); }
+
     public void Rotate(bool _dirChosen, Quaternion _desiredRotation)
     {
         if (!m_doOnce)
@@ -33,7 +50,7 @@ public class RotationManager : MonoBehaviour
         {
             m_rotate = true;
             currentTime += Time.fixedDeltaTime;
-            bool wasOrienting = player.b_ShouldSelfOrient;
+            bool wasOrienting = player.b_SelfOrient;
 
             //Close Enough? w/ thresholdCheck
             if (currentTime >= m_rDelay)
@@ -41,17 +58,11 @@ public class RotationManager : MonoBehaviour
                 transform.rotation = _desiredRotation;
                 player.b_dirChosen = false;
                 m_rotate = false;
-                player.b_ShouldSelfOrient = true;
+                player.b_SelfOrient = true;
 
-                if (wasOrienting == player.b_ShouldSelfOrient)
-                {
-                    player.DurationScalar = 1.5f;
-                }
-                else
-                {
-                    player.DurationScalar = 1;
+                if (wasOrienting == player.b_SelfOrient) { player.m_DurationScalar = 1.5f; }
+                else { player.m_DurationScalar = 1; }
 
-                }
                 currentTime = 0.0f;
                 //Or you could set do once back off and it can once again go through
                 prev = _desiredRotation;
@@ -113,7 +124,7 @@ public class RotationManager : MonoBehaviour
             if (currentTime > m_rDelay)
             {
                 transform.rotation = DesiredRotation;
-                player.b_ShouldSelfOrient = true;
+                player.b_SelfOrient = true;
                 m_rotate = false;
                 currentTime = 0.0f;
                 // // player.b_lock1 = false;

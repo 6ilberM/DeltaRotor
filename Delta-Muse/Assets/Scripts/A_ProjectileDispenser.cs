@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class a_pDispenser : MonoBehaviour
+public class A_ProjectileDispenser : MonoBehaviour
 {
     ///Represents How long it will take to fire again
     [Range(.1f, 5)] [SerializeField] float deltaFire = 0.5f;
@@ -13,26 +13,18 @@ public class a_pDispenser : MonoBehaviour
     public GameObject go_pref;
     public Transform[] spawnPoints;         // An array of the spawn points this enemy can spawn from.
     public RotationManager m_rotationRef;
+    bool LemmeOut;
+    float DeltaTime;
 
-    void Start()
-    {
-        // Call the Spawn function after a delay of the spawnTime and then continue to call after the same amount of time.
-        // InvokeRepeating("Spawn", m_Delay, m_Delay);
-    }
     public void changeActiveStatus()
     {
         inactive = !inactive;
         return;
     }
 
-    bool LemmeOut;
-    float DeltaTime;
     private void Update()
     {
-        if (m_Delay > Time.time)
-        {
-            LemmeOut = true;
-        }
+        if (m_Delay > Time.time) { LemmeOut = true; }
 
         if (LemmeOut && !m_rotationRef.m_rotate)
         {
@@ -48,11 +40,7 @@ public class a_pDispenser : MonoBehaviour
     }
     void Spawn()
     {
-        if (inactive || m_rotationRef.m_rotate)
-        {
-            // ... exit the function.
-            return;
-        }
+        if (inactive || m_rotationRef.m_rotate) { return; }
 
         for (int i = 0; i < spawnPoints.Length; i++)
         {
@@ -60,5 +48,4 @@ public class a_pDispenser : MonoBehaviour
             myobj.transform.parent = transform.parent;
         }
     }
-
 }

@@ -3,12 +3,12 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider2D))]
 public class RotationArea : MonoBehaviour
 {
-
     GameObject Player;
-
-    [SerializeField] RotTarget[] rotatingObjects;
-
     PlayerController m_pController;
+#pragma warning disable 0649
+    [SerializeField] RotTarget[] rotatingObjects;
+#pragma warning restore 0649
+
     public bool m_canRot;
 
     private void Awake()
@@ -51,12 +51,8 @@ public class RotationArea : MonoBehaviour
     {
         if (Player == other.gameObject)
         {
-            m_pController.canrotsingle = true;
-            if (!m_pController.li_rotationAreas.Contains(this))
-            {
-                m_pController.li_rotationAreas.Add(this);
-            }
-
+            m_pController.b_CanRotateSingle = true;
+            if (!m_pController.RotAreaList.Contains(this)) { m_pController.RotAreaList.Add(this); }
         }
     }
 
@@ -64,11 +60,8 @@ public class RotationArea : MonoBehaviour
     {
         if (Player == other.gameObject)
         {
-            m_pController.canrotsingle = false;
-            if (m_pController.li_rotationAreas.Contains(this))
-            {
-                m_pController.li_rotationAreas.Remove(this);
-            }
+            m_pController.b_CanRotateSingle = false;
+            if (m_pController.RotAreaList.Contains(this)) { m_pController.RotAreaList.Remove(this); }
         }
     }
 }

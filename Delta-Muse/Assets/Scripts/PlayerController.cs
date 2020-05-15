@@ -118,7 +118,8 @@ public class PlayerController : MonoBehaviour
 
             //Rotate!
         }
-        rotManager.Rotate(b_dirChosen, m_desiredRotation);
+        // This Should be an Event!
+        RotationManager.Instance.Rotate(b_dirChosen, m_desiredRotation);
 
         OrientSelfUp();
     }

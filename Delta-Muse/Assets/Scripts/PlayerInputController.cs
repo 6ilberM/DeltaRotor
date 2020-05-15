@@ -27,6 +27,7 @@ public class PlayerInputController : MonoBehaviour
 
     private void Awake()
     {
+        controller = GetComponent<PlayerController>();
         JumpAction.performed += (InputAction.CallbackContext ctx) =>
         {
             onJump?.Invoke();
@@ -71,8 +72,5 @@ public class PlayerInputController : MonoBehaviour
 
     public void OnLanding() { animator.SetBool("IsJumping", false); }
 
-    void FixedUpdate()
-    {
-        controller.Move(f_Horizontal * Time.fixedDeltaTime);
-    }
+    void FixedUpdate() { controller.Move(f_Horizontal * Time.fixedDeltaTime); }
 }

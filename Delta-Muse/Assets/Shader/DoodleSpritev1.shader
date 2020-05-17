@@ -1,5 +1,7 @@
-﻿Shader "Sprites/Bumped Diffuse with Shadows"
+﻿Shader "Custom/Sprites/DoodleVert"
 {
+    //Author of Idea Alann Zucc
+    
     Properties
     {
         [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" { }
@@ -9,7 +11,9 @@
         [HideInInspector] _Flip ("Flip", Vector) = (1, 1, 1, 1)
         [PerRendererData] _AlphaTex ("External Alpha", 2D) = "white" { }
         [PerRendererData] _EnableExternalAlpha ("Enable External Alpha", Float) = 0
-        _NoiseScale ("Scale of displacement", Float) = 0
+        _Seed ("Seed", Float) = 43758.5453
+        _NoiseScale ("Scale of displacement", Float) = 0.0876
+        _NoiseSnap ("Time per Second", Range(0, 1)) = 0.5
     }
     
     SubShader
@@ -29,11 +33,12 @@
         #include "UnitySprites.cginc"
         
         float _NoiseScale;
+        float _NoiseSnap;
+        float _Seed;
         
-        float rand(float2 co)
+        float2 rand(float2 co)
         {
-            //ToDo: finish Shader
-            // return fract(sin(dot(co.xy, float2(12.9898, 78.233))) * 43758.5453);
+            return frac(sin(dot(co.xy, float2(12.9898, 78.233))) * _Seed);
         }
         
         struct Input
@@ -42,12 +47,17 @@
             fixed4 color;
         };
         
+        inline float snap(float x, float snap)
+        {
+            return snap * round(x / snap);
+        }
+        
         void vert(inout appdata_full v, out Input o)
         {
             v.vertex = UnityFlipSprite(v.vertex, _Flip);
             
-            float time = float3(_Time.y, 0, 0);
-            float2 noise = random3(v.vertex.xyz + time).xy * _NoiseScale;
+            float3 time = snap(_Time.y, _NoiseSnap);
+            float2 noise = rand(v.vertex.xyz + time).xy * _SinTime * _NoiseScale;
             v.vertex.xy += noise;
             
             #if defined(PIXELSNAP_ON)

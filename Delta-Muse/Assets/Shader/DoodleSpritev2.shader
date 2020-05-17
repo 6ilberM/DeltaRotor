@@ -80,12 +80,11 @@
         void surf(Input IN, inout SurfaceOutput o)
         {
             float2 time = snap(_Time.y, _NoiseSnap);
-            float2 scrolledUV = IN.uv_MainTex;;
+            float2 scrolledUV = IN.uv_MainTex;
             //Create variables that store the individual x and y
             //components for the uv's scaled by time
-            fixed xScrollValue = rand(IN.uv_MainTex + time * 4) / 100 * _NoiseScale * sin(time) ;
-            fixed yScrollValue = rand(IN.uv_MainTex + time * 4) / 100 * _NoiseScale * sin(time) ;
-            
+            fixed xScrollValue = rand(IN.uv_MainTex + time * 4) / 100 * _NoiseScale * sin(time) * _SinTime ;
+            fixed yScrollValue = rand(IN.uv_MainTex + time * 4) / 100 * _NoiseScale * sin(time) * _SinTime ;
             
             scrolledUV += fixed2(xScrollValue, yScrollValue);
             fixed4 c = SampleSpriteTexture(scrolledUV) * IN.color;

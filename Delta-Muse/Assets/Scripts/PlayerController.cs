@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
 {
     //Components
     public Rigidbody2D m_rigidBody;
+    private CapsuleCollider2D m_capsuleCollider;
 
     //References
     public RotationManager rotManager;
@@ -34,19 +35,18 @@ public class PlayerController : MonoBehaviour
 
     Quaternion m_QuatDirection;
 
-    //Make a check on this on the Rotation manager (Should be a Callback)
     public bool b_dirChosen;
     private int m_JumpCount;
+
     private Quaternion m_desiredRotation;
     private ContactFilter2D m_contactFilter;
     private Collider2D[] overlapResults;
-
-    private Vector3 oldscale;
-
-    private float dt;
-    private bool m_StandUp;
-    //obj References
+    private SpriteRenderer m_SpriteRenderer;
     private Animator m_animator;
+    private Vector3 m_InitialScale;
+    private CapsuleCollider2D m_collider2D;
+    private float m_dt;
+    private bool m_StandUp;
 
     [Header("Events")]
     [Space(10)]
@@ -55,12 +55,11 @@ public class PlayerController : MonoBehaviour
 
     //Make conditional Versions of this for enabling bigger rotations
     public bool b_CanRotateSingle;
-
     private bool b_isGrounded;
     private bool b_horizL, b_horizR = false;
     public bool b_DeathRequest = false;
     private bool m_faceRight;
-    public float m_DurationScalar;
+    public float m_rotationDuration;
 
     private void Start()
     {
@@ -74,12 +73,19 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        //Other
         m_inputController = GetComponent<PlayerInputController>();
         m_inputController.onJump += OnJump;
         m_inputController.onRotate += OnRotate;
-        oldscale = transform.localScale;
+        m_InitialScale = transform.localScale;
+
+        //Physics
         m_rigidBody = GetComponent<Rigidbody2D>();
+        m_capsuleCollider = GetComponent<CapsuleCollider2D>();
+
+        //Anims
         m_animator = gameObject.GetComponent<Animator>();
+        m_SpriteRenderer = gameObject.GetComponent<SpriteRenderer>();
 
         if (OnLandEvent == null) { OnLandEvent = new UnityEvent(); }
     }
@@ -89,9 +95,10 @@ public class PlayerController : MonoBehaviour
         m_inputController.onJump -= OnJump;
         m_inputController.onRotate -= OnRotate;
     }
-    private void OnRotate(bool _L0OrR1) { ProcessRotation(_L0OrR1); }
 
-    private void OnJump() { NewJump(); }
+    private void OnRotate(bool _LeftOrRight) { ProcessRotation(_LeftOrRight); }
+
+    private void OnJump() { JumpMethod(); }
 
     void Update()
     {
@@ -129,39 +136,39 @@ public class PlayerController : MonoBehaviour
         if (m_StandUp)
         {
 
-            Vector3 targetscale = new Vector3(oldscale.x * 2, oldscale.y * .5f, transform.localScale.z);
+            Vector3 targetscale = new Vector3(m_InitialScale.x * 2, m_InitialScale.y * .5f, transform.localScale.z);
             // Vector2 NutargetScale = new Vector2(.55f, .86f);
-            dt += Time.fixedDeltaTime;
+            m_dt += Time.fixedDeltaTime;
 
             float f_Delay = 0.2f;
-            if (dt > f_Delay * 2)
+            if (m_dt > f_Delay * 2)
             {
-                dt = 0;
+                m_dt = 0;
                 m_StandUp = false;
             }
 
             // t = t / .20f*2;
-            if (dt < f_Delay)
+            if (m_dt < f_Delay)
             {
-                float t = dt;
+                float t = m_dt;
                 t = t / f_Delay;
                 t = (1 + (--t) * t * t);
-                transform.localScale = Vector3.Lerp(oldscale, targetscale, t);
+                transform.localScale = Vector3.Lerp(m_InitialScale, targetscale, t);
             }
             else
             {
-                float t = dt - f_Delay;
+                float t = m_dt - f_Delay;
                 t = t / f_Delay;
                 t = (1 + (--t) * t * t);
-                GetComponent<CapsuleCollider2D>().size = Vector2.Lerp(GetComponent<CapsuleCollider2D>().size, new Vector2(.55f, .86f), 6.0f * Time.deltaTime);
+                m_capsuleCollider.size = Vector2.Lerp(m_capsuleCollider.size, new Vector2(.55f, .86f), 6.0f * Time.deltaTime);
 
-                transform.localScale = Vector3.Lerp(targetscale, oldscale, t);
+                transform.localScale = Vector3.Lerp(targetscale, m_InitialScale, t);
             }
         }
         else
         {
-            GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Vertical;
-            GetComponent<CapsuleCollider2D>().size = new Vector2(.55f, .86f);
+            m_capsuleCollider.direction = CapsuleDirection2D.Vertical;
+            m_capsuleCollider.size = new Vector2(.55f, .86f);
         }
     }
 
@@ -184,23 +191,21 @@ public class PlayerController : MonoBehaviour
     }
 
     //ToDo: Improve The New Jump  so that you can do the Mario-Esque Held Button Jump!
-    private void NewJump()
+    private void JumpMethod()
     {
-        if (m_JumpCount < 2)
-        {
-            float _JumpForce = GetJumpForceAtHeight();
+        float _JumpForce = GetJumpForceAtHeight();
 
-            if (m_rigidBody.velocity.y < 0) { m_rigidBody.velocity = new Vector2(m_rigidBody.velocity.x, 0); }
+        if (m_rigidBody.velocity.y < 0) { m_rigidBody.velocity = new Vector2(m_rigidBody.velocity.x, 0); }
 
-            if (m_JumpCount == 0) { m_rigidBody.AddForce(m_rigidBody.transform.up * _JumpForce * m_rigidBody.mass, ForceMode2D.Impulse); }
-            else { m_rigidBody.AddForce(m_rigidBody.transform.up * _JumpForce * .5f * m_rigidBody.mass, ForceMode2D.Impulse); }
+        m_rigidBody.AddForce(m_rigidBody.transform.up * _JumpForce * m_rigidBody.mass, ForceMode2D.Impulse);
 
-            m_JumpCount++;
-            b_isGrounded = false;
-        }
+        b_isGrounded = false;
     }
 
-    private float GetJumpForceAtHeight() { return Mathf.Sqrt(Mathf.Abs(m_rigidBody.gravityScale * Physics2D.gravity.y) * JumpHeight * 2.0f); }
+    private float GetJumpForceAtHeight()
+    {
+        return Mathf.Sqrt(Mathf.Abs(m_rigidBody.gravityScale * Mathf.Pow(Physics2D.gravity.y, 2)) * JumpHeight);
+    }
 
     private void OrientSelfUp()
     {
@@ -214,7 +219,7 @@ public class PlayerController : MonoBehaviour
         {
             m_curentTime += Time.fixedDeltaTime;
 
-            if (m_curentTime > m_RotationDelay * m_DurationScalar)
+            if (m_curentTime > m_RotationDelay * m_rotationDuration)
             {
                 transform.localRotation = m_QuatDirection;
 
@@ -225,7 +230,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                float t = m_curentTime / (m_RotationDelay * m_DurationScalar);
+                float t = m_curentTime / (m_RotationDelay * m_rotationDuration);
 
                 t = t * t * t * (t * (6f * t - 15f) + 10f);
 
@@ -259,9 +264,8 @@ public class PlayerController : MonoBehaviour
                 if (!m_StandUp)
                 {
                     //Comment out if  no landfeel
-                    // GetComponent<CapsuleCollider2D>().size = new Vector2(.9f, .6f);
-
-                    // GetComponent<CapsuleCollider2D>().direction = CapsuleDirection2D.Horizontal;
+                    // m_capsuleCollider.size = new Vector2(.9f, .6f);
+                    // m_capsuleCollider.direction = CapsuleDirection2D.Horizontal;
 
                     m_StandUp = true;
                     // oldscale = new Vector2(1, 1);
@@ -304,7 +308,6 @@ public class PlayerController : MonoBehaviour
             }
             b_horizR = true;
 
-
             // GetComponent<Animator>().SetBool("isGrounded", true);
         }
         else
@@ -317,9 +320,7 @@ public class PlayerController : MonoBehaviour
     private void FlipSpriteDirection()
     {
         m_faceRight = !m_faceRight;
-
-        SpriteRenderer MyImage = gameObject.GetComponent<SpriteRenderer>();
-        MyImage.flipX = !MyImage.flipX;
+        m_SpriteRenderer.flipX = !m_SpriteRenderer.flipX;
     }
 
     public void ProcessRotation(bool b_direction)
@@ -407,9 +408,9 @@ public class PlayerController : MonoBehaviour
         }
         else if (b_CanRotateSingle)
         {
-            if (b_direction) { for (int i = 0; i < RotAreaList.Count; i++) { RotAreaList[i].RotSelect(1); } }
+            if (b_direction) { for (int i = 0; i < RotAreaList.Count; i++) { RotAreaList[i].SelectRotation(1); } }
 
-            else { for (int i = 0; i < RotAreaList.Count; i++) { RotAreaList[i].RotSelect(0); } }
+            else { for (int i = 0; i < RotAreaList.Count; i++) { RotAreaList[i].SelectRotation(0); } }
         }
     }
 

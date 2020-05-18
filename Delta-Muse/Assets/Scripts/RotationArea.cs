@@ -17,15 +17,9 @@ public class RotationArea : MonoBehaviour
         m_pController = Player.GetComponent<PlayerController>();
     }
 
-    private void Start()
-    {
-        if (Player == null)
-        {
-            gameObject.SetActive(false);
-        }
-    }
+    private void Start() { if (Player == null) { gameObject.SetActive(false); } }
 
-    public void RotSelect(int _dir)
+    public void SelectRotation(int _dir)
     {
         switch (_dir)
         {

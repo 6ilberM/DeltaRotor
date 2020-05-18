@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class RotationManager : MonoBehaviour
 {
     private static RotationManager instance;
-
     private Rigidbody2D rb_Body;
     private float currentTime;
     PlayerController player;
@@ -14,7 +11,7 @@ public class RotationManager : MonoBehaviour
     [SerializeField] float m_rDelay = 0.39f;
     public int rotationId = 0;
 
-    Quaternion prev;
+    Quaternion m_previousRotation;
 
     public static RotationManager Instance
     {
@@ -42,7 +39,7 @@ public class RotationManager : MonoBehaviour
     {
         if (!m_doOnce)
         {
-            prev = transform.rotation;
+            m_previousRotation = transform.rotation;
             m_doOnce = true;
         }
 
@@ -60,12 +57,12 @@ public class RotationManager : MonoBehaviour
                 m_rotate = false;
                 player.b_SelfOrient = true;
 
-                if (wasOrienting == player.b_SelfOrient) { player.m_DurationScalar = 1.5f; }
-                else { player.m_DurationScalar = 1; }
+                if (wasOrienting == player.b_SelfOrient) { player.m_rotationDuration = 1.5f; }
+                else { player.m_rotationDuration = 1; }
 
                 currentTime = 0.0f;
                 //Or you could set do once back off and it can once again go through
-                prev = _desiredRotation;
+                m_previousRotation = _desiredRotation;
                 //how much force should be lost after Rotating 
                 if (player.m_rigidBody.velocity.y <= -0.5f)
                 {
@@ -83,12 +80,11 @@ public class RotationManager : MonoBehaviour
 
                 // easeoutquad
                 t = (t * (2 - t));
-                transform.rotation = Quaternion.Slerp(prev, _desiredRotation, t);
+                transform.rotation = Quaternion.Slerp(m_previousRotation, _desiredRotation, t);
             }
         }
     }
 
-    //Handles World Rotation
     public void Rotate(bool _confirm, int _ID)
     {
         if (_confirm == true)
@@ -129,7 +125,7 @@ public class RotationManager : MonoBehaviour
                 currentTime = 0.0f;
                 // // player.b_lock1 = false;
                 // player.m_rigidBody.simulated = true;
-                prev = DesiredRotation;
+                m_previousRotation = DesiredRotation;
                 //how much force should be lost after Rotating 
                 if (player.m_rigidBody.velocity.y <= -0.5f)
                 {

@@ -1,6 +1,7 @@
 ﻿Shader "Custom/Sprites/DoodleVert"
 {
-    //Author of Idea Alann Zucc
+    // Author:Alann Zucconi
+    // Modified by --Gilberto Moreno, @6ilberM
     
     Properties
     {
@@ -13,7 +14,7 @@
         [PerRendererData] _EnableExternalAlpha ("Enable External Alpha", Float) = 0
         _Seed ("Seed", Float) = 43758.5453
         _NoiseScale ("Scale of displacement", Float) = 0.0876
-        _NoiseSnap ("Time per Second", Range(0, 1)) = 0.5
+        _NoiseSnap ("Time per Second", Float) = 0.5
     }
     
     SubShader
@@ -38,7 +39,7 @@
         
         float2 rand(float2 co)
         {
-            return frac(sin(dot(co.xy, float2(12.9898, 78.233))) * _Seed);
+            return frac(sin(dot(co.xy, float2(12.9898, 78.233))) * 43758.5453);
         }
         
         struct Input
@@ -57,7 +58,7 @@
             v.vertex = UnityFlipSprite(v.vertex, _Flip);
             
             float3 time = snap(_Time.y, _NoiseSnap);
-            float2 noise = rand(v.vertex.xyz + time).xy * _SinTime * _NoiseScale;
+            float2 noise = rand(v.vertex.xyz + time).xy * _NoiseScale;
             v.vertex.xy += noise;
             
             #if defined(PIXELSNAP_ON)

@@ -36,7 +36,6 @@ public class PlayerController : MonoBehaviour
     Quaternion m_QuatDirection;
 
     public bool b_dirChosen;
-    private int m_JumpCount;
 
     private Quaternion m_desiredRotation;
     private ContactFilter2D m_contactFilter;
@@ -257,7 +256,6 @@ public class PlayerController : MonoBehaviour
 
             b_horizL = false;
             b_horizR = false;
-            m_JumpCount = 0;
             if (!wasgrounded)
             {
                 OnLandEvent.Invoke();

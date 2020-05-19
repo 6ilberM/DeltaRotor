@@ -30,9 +30,8 @@ Material:
     m_Floats:
     - PixelSnap: 0
     - _EnableExternalAlpha: 0
-    - _NoiseScale: 0.07
-    - _NoiseSnap: 1
-    - _RandomSeed: 43758.547
+    - _NoiseScale: 0.0776
+    - _NoiseSnap: 0.35
     - _Seed: 43758.547
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}

@@ -25,6 +25,8 @@ public class PlayerInputController : MonoBehaviour
     [SerializeField] PlayerInput m_input;
     //DefaultplayerControls actions;
 
+    //Milagros te amo!
+
     private void Awake()
     {
         controller = GetComponent<PlayerController>();
@@ -37,9 +39,8 @@ public class PlayerInputController : MonoBehaviour
         gameplayActions.actions[1].performed += RotRight;
     }
 
-    private void RotLeft(InputAction.CallbackContext obj) { onRotate?.Invoke(false); }
-
-    private void RotRight(InputAction.CallbackContext obj) { onRotate?.Invoke(true); }
+    private void RotLeft(InputAction.CallbackContext _cbContext) { onRotate?.Invoke(false); }
+    private void RotRight(InputAction.CallbackContext _cbContext) { onRotate?.Invoke(true); }
 
     private void OnEnable()
     {
@@ -55,13 +56,11 @@ public class PlayerInputController : MonoBehaviour
         gameplayActions.Disable();
     }
 
+    //ToDo: Set Interact to another Button
     private void JumpInputAction(InputAction.CallbackContext obj)
     {
-        if (m_jumpEnabled)
-        {
-            onJump?.Invoke();
-            animator.SetBool("IsJumping", true);
-        }
+        onJump?.Invoke();
+        animator.SetBool("IsJumping", true);
     }
 
     void Update()

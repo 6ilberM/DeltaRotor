@@ -31,7 +31,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6620014901843702482}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -5.38, y: -0.57, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -56,7 +56,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 045ef3f2054342c45ba64903ba92ee28, type: 2}
+  - {fileID: 2100000, guid: 5ab0481d6c44cf844b604a4135e203cc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -122,7 +122,7 @@ MonoBehaviour:
   m_rigidBody: {fileID: 6620014901843702445}
   rotManager: {fileID: 0}
   RotAreaList: []
-  JumpHeight: 4
+  JumpHeight: 2
   m_faSmoothing: 0.08
   m_RotationDelay: 0.3
   b_dirChosen: 0
@@ -143,7 +143,7 @@ MonoBehaviour:
   b_SelfOrient: 0
   b_CanRotateSingle: 0
   b_DeathRequest: 0
-  m_DurationScalar: 0
+  m_rotationDuration: 0
 --- !u!61 &6620014901843702447
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -364,8 +364,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 1
   m_Mass: 0.513383
-  m_LinearDrag: 0
-  m_AngularDrag: 62.64
+  m_LinearDrag: 0.03
+  m_AngularDrag: 0.06
   m_GravityScale: 3
   m_Material: {fileID: 0}
   m_Interpolate: 0

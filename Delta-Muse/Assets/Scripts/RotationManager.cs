@@ -3,7 +3,7 @@
 public class RotationManager : MonoBehaviour
 {
     private static RotationManager instance;
-    private Rigidbody2D rb_Body;
+
     private float currentTime;
     PlayerController player;
 

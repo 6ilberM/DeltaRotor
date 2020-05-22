@@ -13,6 +13,10 @@ public class RotationManager : MonoBehaviour
 
     Quaternion m_previousRotation;
 
+    //Test Stuff
+    [SerializeField] EasingFunction.Ease m_easeType = EasingFunction.Ease.EaseInOutQuad;
+    private EasingFunction.Function _easeFunc;
+
     public static RotationManager Instance
     {
         get
@@ -33,7 +37,16 @@ public class RotationManager : MonoBehaviour
 
     private void Awake() { if (Instance && Instance != this) { Destroy(this); } }
 
-    private void Start() { player = Object.FindObjectOfType<PlayerController>(); }
+    private void Start()
+    {
+        player = Object.FindObjectOfType<PlayerController>();
+        _easeFunc = EasingFunction.GetEasingFunction(m_easeType);
+    }
+
+    private void LateUpdate()
+    {
+        if (UnityEngine.Random.value > .9f) { _easeFunc = EasingFunction.GetEasingFunction(m_easeType); }
+    }
 
     public void Rotate(bool _dirChosen, Quaternion _desiredRotation)
     {
@@ -53,9 +66,10 @@ public class RotationManager : MonoBehaviour
             if (currentTime >= m_rDelay)
             {
                 transform.rotation = _desiredRotation;
+
                 player.b_dirChosen = false;
-                m_rotate = false;
                 player.b_SelfOrient = true;
+                m_rotate = false;
 
                 if (wasOrienting == player.b_SelfOrient) { player.m_rotationDuration = 1.5f; }
                 else { player.m_rotationDuration = 1; }
@@ -71,16 +85,24 @@ public class RotationManager : MonoBehaviour
             }
             else
             {
-                float t = currentTime / m_rDelay;
+                float t = (float)currentTime / (float)m_rDelay;
+                //ToDo: Improve this system to work with coroutines!
+                float value = _easeFunc(0, 1, t);
+                // double t2 = (t - 1) * (t - 1);
+                // t = 1 - t2 * t2 * Mathf.Cos((float)t * Mathf.PI * 4.5f);
+
                 // easeout cubic
                 // t = (1 + (--t) * t * t);
                 // easeoutquart
                 // t = (--t) * t;
-                // t =( 1 - t * t);
+                // t = (1 - t * t);
 
                 // easeoutquad
-                t = (t * (2 - t));
-                transform.rotation = Quaternion.Slerp(m_previousRotation, _desiredRotation, t);
+                // t = (t * (2 - t));
+
+                // t = 1 - Mathf.Pow(-3 * t, 2) * Mathf.Abs(Mathf.Cos(t * Mathf.PI * 3.5f / 2));
+
+                transform.rotation = Quaternion.Slerp(m_previousRotation, _desiredRotation, value);
             }
         }
     }

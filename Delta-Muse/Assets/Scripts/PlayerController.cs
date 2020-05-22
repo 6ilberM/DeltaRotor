@@ -30,9 +30,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float m_RotationDelay = 0.3f;
 
     private bool m_StoreRotation;
-
     Quaternion m_QuatDirection;
-
     public bool b_dirChosen;
 
     private Quaternion m_desiredRotation;
@@ -52,10 +50,12 @@ public class PlayerController : MonoBehaviour
 
     //Make conditional Versions of this for enabling bigger rotations
     public bool b_CanRotateSingle;
+
     private bool b_isGrounded;
     private bool b_horizL, b_horizR = false;
     public bool b_DeathRequest = false;
-    private bool m_faceRight;
+    private bool m_faceRight = false;
+    private bool b_hasJumped = false;
     public float m_rotationDuration;
 
     private void Awake()
@@ -109,7 +109,6 @@ public class PlayerController : MonoBehaviour
             GroundRayCheck();
             if (m_animator.speed != 1) { m_animator.speed = 1; }
         }
-
         else { m_animator.speed = 0; }
 
         if (!b_isGrounded) { WallRayCheck(); }
@@ -130,7 +129,10 @@ public class PlayerController : MonoBehaviour
                         b_SelfOrient = false;
                     }
                 }
-                else { this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.identity, 0.135f); }
+                else
+                {
+                    this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.identity, 0.135f);
+                }
             }
         }
         RotationManager.Instance.Rotate(b_dirChosen, m_desiredRotation);
@@ -201,13 +203,15 @@ public class PlayerController : MonoBehaviour
     //ToDo: Improve The New Jump  so that you can do the Mario-Esque Held Button Jump!
     private void JumpMethod()
     {
-        float _JumpForce = GetJumpForceAtHeight();
+        if (!b_hasJumped)
+        {
+            float _JumpForce = GetJumpForceAtHeight();
+            if (m_rigidBody.velocity.y < 0) { m_rigidBody.velocity = new Vector2(m_rigidBody.velocity.x, 0); }
 
-        if (m_rigidBody.velocity.y < 0) { m_rigidBody.velocity = new Vector2(m_rigidBody.velocity.x, 0); }
-
-        m_rigidBody.AddForce(m_rigidBody.transform.up * _JumpForce, ForceMode2D.Impulse);
-
-        b_isGrounded = false;
+            m_rigidBody.AddForce(m_rigidBody.transform.up * _JumpForce, ForceMode2D.Impulse);
+            b_hasJumped = true;
+            b_isGrounded = false;
+        }
     }
 
     private float GetJumpForceAtHeight()
@@ -265,6 +269,7 @@ public class PlayerController : MonoBehaviour
         GetComponent<CapsuleCollider2D>().bounds.extents.y + 0.6f, LayerMask.GetMask("Blocks"))) && (m_rigidBody.velocity.normalized.y <= 0))
         {
             b_isGrounded = true;
+            b_hasJumped = false;
 
             b_horizL = false;
             b_horizR = false;

@@ -605,31 +605,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e2f0adcd76979d48b8a41f061941c25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &274282020 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6620014901843702482, guid: 5dc8483fae498a54bb5f055dcb441e42,
-    type: 3}
-  m_PrefabInstance: {fileID: 1056570260108373435}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &274282021
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 274282020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92a8068997df840899dd6019d80855de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Inputs:
-  - Component: PlayerController
-    Member: val
-    Range: 1
-    Input:
-      Type: 0
-      Number: 0
 --- !u!1 &316390730
 GameObject:
   m_ObjectHideFlags: 0
@@ -3205,8 +3180,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_rotate: 0
   m_doOnce: 0
-  m_rDelay: 0.39
+  m_rDelay: 0.3953
   rotationId: 0
+  m_easeType: 4
 --- !u!1 &1723302256
 GameObject:
   m_ObjectHideFlags: 0

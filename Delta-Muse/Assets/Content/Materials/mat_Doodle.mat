@@ -32,7 +32,7 @@ Material:
     - _EnableExternalAlpha: 0
     - _NoiseScale: 0.0776
     - _NoiseSnap: 0.575
-    - _Seed: 43758.547
+    - _Seed: 43325.297
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}

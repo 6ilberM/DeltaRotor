@@ -14,7 +14,7 @@
         [PerRendererData] _EnableExternalAlpha ("Enable External Alpha", Float) = 0
         _Seed ("Seed", Float) = 43758.5453
         _NoiseScale ("Scale of displacement", Float) = 0.0876
-        _NoiseSnap ("Time per Second", Range(0.2,1.0)) = 0.5
+        _NoiseSnap ("Time per Second", Range(0.2, 1.0)) = 0.5
     }
     
     SubShader
@@ -39,7 +39,7 @@
         
         float2 rand(float2 co)
         {
-            return frac(sin(dot(co.xy, float2(12.9898, 78.233))) * 43758.5453);
+            return frac(sin(dot(co.xy, float2(12.9898, 78.233))) * _Seed);
         }
         
         struct Input

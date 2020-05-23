@@ -50,9 +50,9 @@ public class RotationManager : MonoBehaviour
             //Or you could set do once back off and it can once again go through
             m_startRotation = _desiredRotation;
             //how much force should be lost after Rotating 
-            if (player.m_rigidBody.velocity.y <= -0.5f)
+            if (player.m_rb.velocity.y <= -0.5f)
             {
-                player.m_rigidBody.velocity = new Vector2(player.m_rigidBody.velocity.x, player.m_rigidBody.velocity.y * 0.25f);
+                player.m_rb.velocity = new Vector2(player.m_rb.velocity.x, player.m_rb.velocity.y * 0.25f);
             }
         }
         else

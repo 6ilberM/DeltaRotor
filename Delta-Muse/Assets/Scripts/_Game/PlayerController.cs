@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
 {
 
     //Components
-    public Rigidbody2D m_rigidBody;
+    public Rigidbody2D m_rb;
     private CapsuleCollider2D m_capsuleCollider;
 
     //References
@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     private float m_curentTime;
     private Quaternion m_PrevRot;
 
-    private Vector2 m_Velocity = Vector2.zero;
+    private Vector2 m_velRef = Vector2.zero;
 
     /// How much to smooth out the movement
     [Range(0, .3f)] [SerializeField] private float m_faSmoothing = .08f;
@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour
         m_InitialScale = transform.localScale;
 
         //Physics
-        m_rigidBody = GetComponent<Rigidbody2D>();
+        m_rb = GetComponent<Rigidbody2D>();
         m_capsuleCollider = GetComponent<CapsuleCollider2D>();
 
         //Anims
@@ -107,7 +107,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnJump() { if (!b_hasJumped) { JumpMethod(); } }
+    private void OnJump() { if (!b_hasJumped) { Jump(); } }
 
 
     void Update()
@@ -136,15 +136,14 @@ public class PlayerController : MonoBehaviour
                 if (b_SelfOrient)
                 {
                     this.transform.rotation = Quaternion.identity;
-                    m_rigidBody.simulated = true;
+                    m_rb.simulated = true;
                     b_SelfOrient = false;
                 }
             }
             else
             {
                 Quaternion look = Quaternion.LookRotation(Vector3.forward, Vector3.up);
-                m_rigidBody.simulated = true;
-                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, look, 0.135f);
+                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, look, 5.65f*Time.deltaTime);
             }
         }
     }
@@ -187,20 +186,25 @@ public class PlayerController : MonoBehaviour
             m_capsuleCollider.size = new Vector2(.55f, .86f);
         }
     }
-
+float horizDirection;
     public void Move(float _horizontalAxis)
     {
+        horizDirection=_horizontalAxis;
         if (!m_CurrentRotation.m_rotate)
         {
-            Vector3 v3_targetVel = new Vector2(f_runSpeed * _horizontalAxis * 400 * Time.fixedDeltaTime, m_rigidBody.velocity.y);
+            float _maxfall = 35f;
+            // _maxfall = Mathf.Lerp(m_rb.velocity.y, _maxfall, Time.fixedDeltaTime * _maxfall);
+            m_rb.velocity = new Vector2(m_rb.velocity.x, Mathf.Clamp(Mathf.Abs(m_rb.velocity.y), 0, _maxfall) * Mathf.Sign(m_rb.velocity.y));
+
+            Vector2 _targetVelocity = (Vector2)(transform.right * (f_runSpeed * _horizontalAxis * Time.fixedDeltaTime)) + (Vector2.up * m_rb.velocity.y);
 
             if (b_horizL && _horizontalAxis > 0 || b_horizR && _horizontalAxis < 0)
             {
-                m_rigidBody.velocity = Vector2.SmoothDamp(m_rigidBody.velocity, (Vector2)v3_targetVel, ref m_Velocity, m_faSmoothing);
+                m_rb.velocity = Vector2.SmoothDamp(m_rb.velocity, _targetVelocity, ref m_velRef, m_faSmoothing);
             }
             else if (!b_horizL && !b_horizR)
             {
-                m_rigidBody.velocity = Vector2.SmoothDamp(m_rigidBody.velocity, (Vector2)v3_targetVel, ref m_Velocity, m_faSmoothing);
+                m_rb.velocity = Vector2.SmoothDamp(m_rb.velocity, _targetVelocity, ref m_velRef, m_faSmoothing);
             }
 
             if (_horizontalAxis > 0 && m_faceRight) { FlipSpriteDirection(); }
@@ -209,13 +213,14 @@ public class PlayerController : MonoBehaviour
     }
 
     //ToDo: Improve The New Jump  so that you can do the Mario-Esque Held Button Jump!
-    private void JumpMethod()
+    private void Jump()
     {
-
         float _JumpForce = GetJumpForceAtHeight();
-        if (m_rigidBody.velocity.y < 0) { m_rigidBody.velocity = new Vector2(m_rigidBody.velocity.x, 0); }
+        float xforce = (Mathf.Abs(m_rb.velocity.x) > 0 ? Mathf.Sign(horizDirection)*Mathf.Abs(horizDirection) : 0) * 1.2f;
 
-        m_rigidBody.AddForce(m_rigidBody.transform.up * _JumpForce, ForceMode2D.Impulse);
+        if (m_rb.velocity.y < 0) { m_rb.velocity = new Vector2(m_rb.velocity.x, 0); }
+
+        m_rb.AddForce((m_rb.transform.up * _JumpForce) + (m_rb.transform.right * xforce), ForceMode2D.Impulse);
         b_hasJumped = true;
         b_isGrounded = false;
 
@@ -223,7 +228,7 @@ public class PlayerController : MonoBehaviour
 
     private float GetJumpForceAtHeight()
     {
-        return Mathf.Sqrt(Mathf.Abs(m_rigidBody.gravityScale * Mathf.Pow(m_rigidBody.mass, 2) * Physics2D.gravity.y * JumpHeight * 2));
+        return Mathf.Sqrt(Mathf.Abs(m_rb.gravityScale * Mathf.Pow(m_rb.mass, 2) * Physics2D.gravity.y * JumpHeight * 2));
     }
 
     // ToDo: OnOrientPlayerUp Re enable movement and so no no more checking in Update
@@ -247,7 +252,7 @@ public class PlayerController : MonoBehaviour
             if (m_curentTime > m_RotationDelay * m_rotationDuration)
             {
                 transform.localRotation = m_QuatDirection;
-                m_rigidBody.simulated = true;
+                m_rb.simulated = true;
                 b_SelfOrient = false;
                 m_StoreRotation = false;
                 m_curentTime = 0.0f;
@@ -275,7 +280,7 @@ public class PlayerController : MonoBehaviour
         //Landed
         if (/*(Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>() GetComponent<CapsuleCollider2D>().size.bounds.extents.y
         + 0.1f, LayerMask.GetMask("Blocks")) || */ (Physics2D.Raycast(transform.position, -transform.up,
-        GetComponent<CapsuleCollider2D>().bounds.extents.y + 0.75f, LayerMask.GetMask("Blocks"))) && (m_rigidBody.velocity.normalized.y <= 0))
+        GetComponent<CapsuleCollider2D>().bounds.extents.y + 0.75f, LayerMask.GetMask("Blocks"))) && (m_rb.velocity.normalized.y <= 0))
         {
             b_isGrounded = true;
             b_hasJumped = false;
@@ -298,7 +303,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
+// ToDo: Cache GetCompoenent Calls for box and Capsule Colliders.
     void WallRayCheck()
     {
         Vector3 pos2 = new Vector3(0, -.3f);
@@ -351,7 +356,7 @@ public class PlayerController : MonoBehaviour
         if (m_CurrentRotation.m_rotate == false && !b_RotateSingle)
         {
             b_dirChosen = true;
-            m_rigidBody.simulated = false;
+            m_rb.simulated = false;
             // m_PrevRot = transform.localRotation;
             switch (m_CurrentRotation.rotationId)
             {
@@ -428,7 +433,7 @@ public class PlayerController : MonoBehaviour
     {
         Quaternion rot;
         b_dirChosen = true;
-        m_rigidBody.simulated = false;
+        m_rb.simulated = false;
 
         if (_dir) { rot = m_CurrentRotation.transform.rotation * Quaternion.Euler(0, 0, 90); }
         else { rot = m_CurrentRotation.transform.rotation * Quaternion.Euler(0, 0, -90); }

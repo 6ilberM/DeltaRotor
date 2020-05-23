@@ -17,7 +17,7 @@ public class PlayerInputController : MonoBehaviour
     public Action onJump;
     public Action<bool> onRotate;
     public Animator animator;
-    public float runSpeed = 40f;
+
     private float f_Horizontal = 0f;
 
     public bool m_jumpEnabled = true;
@@ -65,11 +65,12 @@ public class PlayerInputController : MonoBehaviour
 
     void Update()
     {
-        f_Horizontal = MoveAction.ReadValue<float>() * runSpeed;
+        f_Horizontal = MoveAction.ReadValue<float>();
         animator.SetFloat("Speed", Mathf.Abs(f_Horizontal));
     }
 
     public void OnLanding() { animator.SetBool("IsJumping", false); }
 
-    void FixedUpdate() { controller.Move(f_Horizontal * Time.fixedDeltaTime); }
+    void FixedUpdate() { controller.Move(f_Horizontal); }
+
 }

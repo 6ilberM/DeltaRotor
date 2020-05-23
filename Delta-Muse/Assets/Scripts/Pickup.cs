@@ -16,7 +16,7 @@ public class Pickup : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (b_pickedUp)
         {
@@ -25,7 +25,7 @@ public class Pickup : MonoBehaviour
             if (_Dir.magnitude > 0.3f)
             {
                 dt += Time.deltaTime;
-                transform.position = _Dir.normalized * Time.deltaTime * f_speed + transform.position;
+                transform.position = (_Dir.normalized * Time.fixedDeltaTime * f_speed) + transform.position;
             }
         }
     }

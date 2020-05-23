@@ -1,41 +1,21 @@
 ﻿using UnityEngine;
+using System.Collections;
+using EasingHelper;
 
 public class RotationManager : MonoBehaviour
 {
-    private static RotationManager instance;
-
-    private float currentTime;
-    PlayerController player;
+    private Quaternion m_startRotation;
+    private float m_dt;
+    private PlayerController player;
+    private EasingFunction.Function _easeFunc;
 
     public bool m_rotate, m_doOnce;
     [SerializeField] float m_rDelay = 0.39f;
     public int rotationId = 0;
 
-    Quaternion m_previousRotation;
-
-    //Test Stuff
-    [SerializeField] EasingFunction.Ease m_easeType = EasingFunction.Ease.EaseInOutQuad;
-    private EasingFunction.Function _easeFunc;
-
-    public static RotationManager Instance
-    {
-        get
-        {
-            if (null == instance)
-            {
-                instance = FindObjectOfType<RotationManager>();
-                if (null == instance)
-                {
-                    GameObject obj = new GameObject();
-                    obj.name = typeof(RotationManager).Name;
-                    instance = obj.AddComponent<RotationManager>();
-                }
-            }
-            return instance;
-        }
-    }
-
-    private void Awake() { if (Instance && Instance != this) { Destroy(this); } }
+    [Tooltip("Specifies the type of ease that this Rotating Object will have")]
+    ///<summary>The type of ease</summary>
+    public EasingFunction.Ease m_easeType = EasingFunction.Ease.EaseInOutQuad;
 
     private void Start()
     {
@@ -43,126 +23,58 @@ public class RotationManager : MonoBehaviour
         _easeFunc = EasingFunction.GetEasingFunction(m_easeType);
     }
 
-    private void LateUpdate()
-    {
-        if (UnityEngine.Random.value > .9f) { _easeFunc = EasingFunction.GetEasingFunction(m_easeType); }
-    }
-
-    public void Rotate(bool _dirChosen, Quaternion _desiredRotation)
+    public void Rotate(Quaternion _desiredRotation)
     {
         if (!m_doOnce)
         {
-            m_previousRotation = transform.rotation;
+            m_startRotation = transform.rotation;
             m_doOnce = true;
         }
 
-        if (_dirChosen == true)
+        m_dt += Time.fixedDeltaTime;
+        bool wasOrienting = player.b_SelfOrient;
+
+        //Close Enough? w/ thresholdCheck
+        if (m_dt >= m_rDelay)
         {
-            m_rotate = true;
-            currentTime += Time.fixedDeltaTime;
-            bool wasOrienting = player.b_SelfOrient;
+            transform.rotation = _desiredRotation;
 
-            //Close Enough? w/ thresholdCheck
-            if (currentTime >= m_rDelay)
+            player.b_dirChosen = false;
+            player.b_SelfOrient = true;
+            m_rotate = false;
+
+            if (wasOrienting == player.b_SelfOrient) { player.m_rotationDuration = 1.5f; }
+            else { player.m_rotationDuration = 1; }
+
+            m_dt = 0.0f;
+            //Or you could set do once back off and it can once again go through
+            m_startRotation = _desiredRotation;
+            //how much force should be lost after Rotating 
+            if (player.m_rigidBody.velocity.y <= -0.5f)
             {
-                transform.rotation = _desiredRotation;
-
-                player.b_dirChosen = false;
-                player.b_SelfOrient = true;
-                m_rotate = false;
-
-                if (wasOrienting == player.b_SelfOrient) { player.m_rotationDuration = 1.5f; }
-                else { player.m_rotationDuration = 1; }
-
-                currentTime = 0.0f;
-                //Or you could set do once back off and it can once again go through
-                m_previousRotation = _desiredRotation;
-                //how much force should be lost after Rotating 
-                if (player.m_rigidBody.velocity.y <= -0.5f)
-                {
-                    player.m_rigidBody.velocity = new Vector2(player.m_rigidBody.velocity.x, player.m_rigidBody.velocity.y * 0.25f);
-                }
+                player.m_rigidBody.velocity = new Vector2(player.m_rigidBody.velocity.x, player.m_rigidBody.velocity.y * 0.25f);
             }
-            else
-            {
-                float t = (float)currentTime / (float)m_rDelay;
-                //ToDo: Improve this system to work with coroutines!
-                float value = _easeFunc(0, 1, t);
-                // double t2 = (t - 1) * (t - 1);
-                // t = 1 - t2 * t2 * Mathf.Cos((float)t * Mathf.PI * 4.5f);
+        }
+        else
+        {
+            float t = (float)m_dt / (float)m_rDelay;
 
-                // easeout cubic
-                // t = (1 + (--t) * t * t);
-                // easeoutquart
-                // t = (--t) * t;
-                // t = (1 - t * t);
+            float value = _easeFunc(0, 1, t);
+            // easeoutquad
+            // t = (t * (2 - t));
 
-                // easeoutquad
-                // t = (t * (2 - t));
-
-                // t = 1 - Mathf.Pow(-3 * t, 2) * Mathf.Abs(Mathf.Cos(t * Mathf.PI * 3.5f / 2));
-
-                transform.rotation = Quaternion.Slerp(m_previousRotation, _desiredRotation, value);
-            }
+            transform.rotation = Quaternion.Slerp(m_startRotation, _desiredRotation, value);
         }
     }
 
-    public void Rotate(bool _confirm, int _ID)
+    public IEnumerator RotateWhile(Quaternion _rot)
     {
-        if (_confirm == true)
+        m_rotate = true;
+        while (m_rotate)
         {
-            m_rotate = true;
-            currentTime += Time.deltaTime;
-            player.m_rigidBody.simulated = false;
-            Quaternion DesiredRotation = transform.rotation;
-
-            switch (_ID)
-            {
-                case 0:
-                    DesiredRotation = Quaternion.Euler(0, 0, 0);
-                    break;
-
-                case 1:
-                    DesiredRotation = Quaternion.Euler(0, 0, 90);
-
-                    break;
-                case 2:
-                    DesiredRotation = Quaternion.Euler(0, 0, 180);
-
-                    break;
-                case 3:
-                    DesiredRotation = Quaternion.Euler(0, 0, 270);
-
-                    break;
-                default:
-                    break;
-            }
-
-            //Close Enough? w/ thresholdCheck
-            if (currentTime > m_rDelay)
-            {
-                transform.rotation = DesiredRotation;
-                player.b_SelfOrient = true;
-                m_rotate = false;
-                currentTime = 0.0f;
-                // // player.b_lock1 = false;
-                // player.m_rigidBody.simulated = true;
-                m_previousRotation = DesiredRotation;
-                //how much force should be lost after Rotating 
-                if (player.m_rigidBody.velocity.y <= -0.5f)
-                {
-                    player.m_rigidBody.velocity = new Vector2(player.m_rigidBody.velocity.x, player.m_rigidBody.velocity.y * 0.25f);
-                }
-            }
-            else
-            {
-                //percent of lerp
-                float t = currentTime / m_rDelay;
-
-                //easeOutQuad
-                t = (t * (2 - t));
-                transform.rotation = Quaternion.Slerp(transform.rotation, DesiredRotation, t);
-            }
+            yield return new WaitForSeconds(Time.fixedDeltaTime);
+            Rotate(_rot);
         }
     }
+
 }

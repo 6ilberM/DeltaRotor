@@ -5,6 +5,7 @@ public class RotationArea : MonoBehaviour
 {
     GameObject Player;
     PlayerController m_pController;
+
 #pragma warning disable 0649
     [SerializeField] RotTarget[] rotatingObjects;
 #pragma warning restore 0649
@@ -17,7 +18,10 @@ public class RotationArea : MonoBehaviour
         m_pController = Player.GetComponent<PlayerController>();
     }
 
-    private void Start() { if (Player == null) { gameObject.SetActive(false); } }
+    private void Start()
+    {
+        if (Player == null) { gameObject.SetActive(false); }
+    }
 
     public void SelectRotation(int _dir)
     {
@@ -45,7 +49,7 @@ public class RotationArea : MonoBehaviour
     {
         if (Player == other.gameObject)
         {
-            m_pController.b_CanRotateSingle = true;
+            m_pController.b_RotateSingle = true;
             if (!m_pController.RotAreaList.Contains(this)) { m_pController.RotAreaList.Add(this); }
         }
     }
@@ -54,7 +58,7 @@ public class RotationArea : MonoBehaviour
     {
         if (Player == other.gameObject)
         {
-            m_pController.b_CanRotateSingle = false;
+            m_pController.b_RotateSingle = false;
             if (m_pController.RotAreaList.Contains(this)) { m_pController.RotAreaList.Remove(this); }
         }
     }

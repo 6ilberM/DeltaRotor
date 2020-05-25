@@ -28,7 +28,7 @@ public class A_Projectile : MonoBehaviour
     private void Update()
     {
         if (m_rigidBody.velocity.magnitude <= 0) { m_rigidBody.velocity = m_rigidBody.transform.right * f_speed; }
-        if (m_rotationRef != null) { if (m_rotationRef.m_rotate) { m_rigidBody.velocity = new Vector3(0, 0, 0); } }
+        if (m_rotationRef != null) { if (m_rotationRef.isRotating) { m_rigidBody.velocity = new Vector3(0, 0, 0); } }
     }
 
     private void OnCollisionEnter2D(Collision2D other)

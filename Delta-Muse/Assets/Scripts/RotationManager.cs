@@ -9,7 +9,7 @@ public class RotationManager : MonoBehaviour
     private PlayerController player;
     private EasingFunction.Function _easeFunc;
 
-    public bool m_rotate, m_doOnce;
+    public bool isRotating, m_doOnce;
     [SerializeField] float m_rDelay = 0.39f;
     public int rotationId = 0;
 
@@ -20,9 +20,15 @@ public class RotationManager : MonoBehaviour
     private void Start()
     {
         player = Object.FindObjectOfType<PlayerController>();
-        _easeFunc = EasingFunction.GetEasingFunction(m_easeType);
     }
 
+    private void Update()
+    {
+        if (Random.value > .9f)
+        {
+            _easeFunc = EasingFunction.GetEasingFunction(m_easeType);
+        }
+    }
     public void Rotate(Quaternion _desiredRotation)
     {
         if (!m_doOnce)
@@ -41,7 +47,7 @@ public class RotationManager : MonoBehaviour
 
             player.b_dirChosen = false;
             player.b_SelfOrient = true;
-            m_rotate = false;
+            isRotating = false;
 
             if (wasOrienting == player.b_SelfOrient) { player.m_rotationDuration = 1.5f; }
             else { player.m_rotationDuration = 1; }
@@ -69,11 +75,14 @@ public class RotationManager : MonoBehaviour
 
     public IEnumerator RotateWhile(Quaternion _rot)
     {
-        m_rotate = true;
-        while (m_rotate)
+        if (!isRotating)
         {
-            yield return new WaitForSeconds(Time.fixedDeltaTime);
-            Rotate(_rot);
+            isRotating = true;
+            while (isRotating)
+            {
+                yield return new WaitForSeconds(Time.fixedDeltaTime);
+                Rotate(_rot);
+            }
         }
     }
 

@@ -26,7 +26,7 @@ public class A_ProjectileDispenser : MonoBehaviour
     {
         if (m_Delay > Time.time) { LemmeOut = true; }
 
-        if (LemmeOut && !m_rotationRef.m_rotate)
+        if (LemmeOut && !m_rotationRef.isRotating)
         {
             DeltaTime += Time.deltaTime;
 
@@ -40,7 +40,7 @@ public class A_ProjectileDispenser : MonoBehaviour
     }
     void Spawn()
     {
-        if (inactive || m_rotationRef.m_rotate) { return; }
+        if (inactive || m_rotationRef.isRotating) { return; }
 
         for (int i = 0; i < spawnPoints.Length; i++)
         {

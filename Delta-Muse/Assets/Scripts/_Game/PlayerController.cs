@@ -112,7 +112,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (!m_CurrentRotation.m_rotate)
+        if (!m_CurrentRotation.isRotating)
         {
             GroundRayCheck();
             if (m_animator.speed != 1) { m_animator.speed = 1; }
@@ -124,7 +124,7 @@ public class PlayerController : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (!m_CurrentRotation.m_rotate) { OrientUpNew(); }
+        if (!m_CurrentRotation.isRotating) { OrientUpNew(); }
     }
 
     private void OrientUpNew()
@@ -143,7 +143,7 @@ public class PlayerController : MonoBehaviour
             else
             {
                 Quaternion look = Quaternion.LookRotation(Vector3.forward, Vector3.up);
-                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, look, 5.65f*Time.deltaTime);
+                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, look, 10f * Time.deltaTime);
             }
         }
     }
@@ -186,11 +186,11 @@ public class PlayerController : MonoBehaviour
             m_capsuleCollider.size = new Vector2(.55f, .86f);
         }
     }
-float horizDirection;
+    float horizDirection;
     public void Move(float _horizontalAxis)
     {
-        horizDirection=_horizontalAxis;
-        if (!m_CurrentRotation.m_rotate)
+        horizDirection = _horizontalAxis;
+        if (!m_CurrentRotation.isRotating)
         {
             float _maxfall = 35f;
             // _maxfall = Mathf.Lerp(m_rb.velocity.y, _maxfall, Time.fixedDeltaTime * _maxfall);
@@ -216,7 +216,7 @@ float horizDirection;
     private void Jump()
     {
         float _JumpForce = GetJumpForceAtHeight();
-        float xforce = (Mathf.Abs(m_rb.velocity.x) > 0 ? Mathf.Sign(horizDirection)*Mathf.Abs(horizDirection) : 0) * 1.2f;
+        float xforce = (Mathf.Abs(m_rb.velocity.x) > 0 ? Mathf.Sign(horizDirection) * Mathf.Abs(horizDirection) : 0) * 1.2f;
 
         if (m_rb.velocity.y < 0) { m_rb.velocity = new Vector2(m_rb.velocity.x, 0); }
 
@@ -245,7 +245,7 @@ float horizDirection;
             m_StoreRotation = true;
         }
 
-        if (!m_CurrentRotation.m_rotate && b_SelfOrient)
+        if (!m_CurrentRotation.isRotating && b_SelfOrient)
         {
             m_curentTime += Time.fixedDeltaTime;
 
@@ -303,7 +303,7 @@ float horizDirection;
             }
         }
     }
-// ToDo: Cache GetCompoenent Calls for box and Capsule Colliders.
+    // ToDo: Cache GetCompoenent Calls for box and Capsule Colliders.
     void WallRayCheck()
     {
         Vector3 pos2 = new Vector3(0, -.3f);
@@ -353,7 +353,7 @@ float horizDirection;
 
     public void ProcessRotation(bool b_direction)
     {
-        if (m_CurrentRotation.m_rotate == false && !b_RotateSingle)
+        if (m_CurrentRotation.isRotating == false && !b_RotateSingle)
         {
             b_dirChosen = true;
             m_rb.simulated = false;

@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: mat_Doodle
   m_Shader: {fileID: 4800000, guid: 72d9938c3f2630240860d7ef1d0f2647, type: 3}
-  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA PIXELSNAP_ON
+  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -28,9 +28,9 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - PixelSnap: 1
+    - PixelSnap: 0
     - _EnableExternalAlpha: 0
-    - _NoiseScale: 0.0776
+    - _NoiseScale: 0.0582
     - _NoiseSnap: 0.575
     - _Seed: 43325.297
     m_Colors:

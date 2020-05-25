@@ -24,7 +24,7 @@ public class MovingBlock : MonoBehaviour
     {
         myrigidBody.simulated = true;
 
-        if (m_myrotMgr.m_rotate)
+        if (m_myrotMgr.isRotating)
         {
             myrigidBody.simulated = false;
             myrigidBody.velocity = Vector3.zero;

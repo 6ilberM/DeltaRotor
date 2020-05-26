@@ -7,7 +7,6 @@ using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
-
     //Components
     public Rigidbody2D m_rb;
     private CapsuleCollider2D m_capsuleCollider;
@@ -110,11 +109,12 @@ public class PlayerController : MonoBehaviour
     private void OnJump() { if (!b_hasJumped) { Jump(); } }
 
 
+    //ToDo: replace with overlap Checking!
     void Update()
     {
         if (!m_CurrentRotation.isRotating)
         {
-            GroundRayCheck();
+            if (!b_isGrounded) { GroundRayCheck(); }
             if (m_animator.speed != 1) { m_animator.speed = 1; }
         }
         else { m_animator.speed = 0; }
@@ -186,7 +186,10 @@ public class PlayerController : MonoBehaviour
             m_capsuleCollider.size = new Vector2(.55f, .86f);
         }
     }
+
+    //ToDo: move this up
     float horizDirection;
+
     public void Move(float _horizontalAxis)
     {
         horizDirection = _horizontalAxis;
@@ -215,20 +218,30 @@ public class PlayerController : MonoBehaviour
     //ToDo: Improve The New Jump  so that you can do the Mario-Esque Held Button Jump!
     private void Jump()
     {
-        float _JumpForce = GetJumpForceAtHeight();
+        float _JumpForce = GetJumpForceAtHeight(true);
         float xforce = (Mathf.Abs(m_rb.velocity.x) > 0 ? Mathf.Sign(horizDirection) * Mathf.Abs(horizDirection) : 0) * 1.2f;
 
         if (m_rb.velocity.y < 0) { m_rb.velocity = new Vector2(m_rb.velocity.x, 0); }
-
-        m_rb.AddForce((m_rb.transform.up * _JumpForce) + (m_rb.transform.right * xforce), ForceMode2D.Impulse);
+        // // Variation 01
+        // m_rb.AddForce((m_rb.transform.up * _JumpForce) + (m_rb.transform.right * xforce), ForceMode2D.Impulse);
+        // // Variation 02
+        m_rb.velocity += (Vector2)((m_rb.transform.up * _JumpForce) + (m_rb.transform.right * xforce));
         b_hasJumped = true;
         b_isGrounded = false;
-
     }
 
-    private float GetJumpForceAtHeight()
+    private float GetJumpForceAtHeight(bool _variationMode)
     {
-        return Mathf.Sqrt(Mathf.Abs(m_rb.gravityScale * Mathf.Pow(m_rb.mass, 2) * Physics2D.gravity.y * JumpHeight * 2));
+        if (!_variationMode)
+        {
+            // // Variation 01
+            return Mathf.Sqrt(Mathf.Abs(m_rb.gravityScale * Mathf.Pow(m_rb.mass, 2) * Physics2D.gravity.y * JumpHeight * 2));
+        }
+        else
+        {
+            // // Variation 02
+            return Mathf.Sqrt(Mathf.Abs((2 * Physics2D.gravity.y * m_rb.gravityScale)) * JumpHeight);
+        }
     }
 
     // ToDo: OnOrientPlayerUp Re enable movement and so no no more checking in Update
@@ -274,17 +287,17 @@ public class PlayerController : MonoBehaviour
 
     void GroundRayCheck()
     {
+        Color _color = Color.red;
         bool wasgrounded = b_isGrounded;
         b_isGrounded = false;
 
         //Landed
-        if (/*(Physics2D.Raycast(transform.position, Vector2.down, GetComponent<BoxCollider2D>() GetComponent<CapsuleCollider2D>().size.bounds.extents.y
-        + 0.1f, LayerMask.GetMask("Blocks")) || */ (Physics2D.Raycast(transform.position, -transform.up,
-        GetComponent<CapsuleCollider2D>().bounds.extents.y + 0.75f, LayerMask.GetMask("Blocks"))) && (m_rb.velocity.normalized.y <= 0))
+        if (Physics2D.Raycast(transform.position + (-transform.up * GetComponent<CapsuleCollider2D>().bounds.extents.y), Vector2.down,
+        0.1f, LayerMask.GetMask("Blocks")) && m_rb.velocity.normalized.y <= float.Epsilon)
         {
             b_isGrounded = true;
             b_hasJumped = false;
-
+            _color = Color.green;
             b_horizL = false;
             b_horizR = false;
             if (!wasgrounded)
@@ -302,7 +315,9 @@ public class PlayerController : MonoBehaviour
 
             }
         }
+        Debug.DrawRay(transform.position + (-transform.up * GetComponent<CapsuleCollider2D>().bounds.extents.y), -transform.up * .1f, _color, 1.75f);
     }
+
     // ToDo: Cache GetCompoenent Calls for box and Capsule Colliders.
     void WallRayCheck()
     {
@@ -411,7 +426,6 @@ public class PlayerController : MonoBehaviour
                     else
                     {
                         m_desiredRotation = Quaternion.Euler(0, 0, 0);
-
                         m_CurrentRotation.rotationId = 0;
                     }
                     break;

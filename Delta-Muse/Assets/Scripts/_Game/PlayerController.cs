@@ -1,12 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PlayerInputController))]
 
 public class PlayerController : MonoBehaviour
 {
+
     //Components
     public Rigidbody2D m_rb;
     private CapsuleCollider2D m_capsuleCollider;
@@ -215,7 +219,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    //ToDo: Improve The New Jump  so that you can do the Mario-Esque Held Button Jump!
+    /*ToDo: Improve The New Jump  so that you can do the Mario-Esque Held Button Jump! 
+        turns out that for this we will have to apply a force over time which means I'll have 
+        to change this again to do Variation to but over a value from 0 to 1 on time til peak */
     private void Jump()
     {
         float _JumpForce = GetJumpForceAtHeight(true);
@@ -287,17 +293,14 @@ public class PlayerController : MonoBehaviour
 
     void GroundRayCheck()
     {
-        Color _color = Color.red;
         bool wasgrounded = b_isGrounded;
         b_isGrounded = false;
 
         //Landed
-        if (Physics2D.Raycast(transform.position + (-transform.up * GetComponent<CapsuleCollider2D>().bounds.extents.y), Vector2.down,
-        0.1f, LayerMask.GetMask("Blocks")) && m_rb.velocity.normalized.y <= float.Epsilon)
+        if (Physics2D.OverlapCircle(transform.position + (-transform.up * GetComponent<CapsuleCollider2D>().bounds.extents.y), 0.25f, LayerMask.GetMask("Blocks")) && m_rb.velocity.normalized.y <= float.Epsilon)
         {
             b_isGrounded = true;
             b_hasJumped = false;
-            _color = Color.green;
             b_horizL = false;
             b_horizR = false;
             if (!wasgrounded)
@@ -312,10 +315,8 @@ public class PlayerController : MonoBehaviour
                     m_StandUp = true;
                     // oldscale = new Vector2(1, 1);
                 }
-
             }
         }
-        Debug.DrawRay(transform.position + (-transform.up * GetComponent<CapsuleCollider2D>().bounds.extents.y), -transform.up * .1f, _color, 1.75f);
     }
 
     // ToDo: Cache GetCompoenent Calls for box and Capsule Colliders.

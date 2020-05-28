@@ -5856,6 +5856,38 @@ MonoBehaviour:
   m_rDelay: 0.4
   rotationId: 0
   m_easeType: 5
+--- !u!1 &1691456580 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6620014901843702482, guid: 5dc8483fae498a54bb5f055dcb441e42,
+    type: 3}
+  m_PrefabInstance: {fileID: 1056570260108373435}
+  m_PrefabAsset: {fileID: 0}
+--- !u!61 &1691456581
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1691456580}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.04, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.8965517, y: 0.9655172}
+    newSize: {x: 0.8965517, y: 0.9655172}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.51, y: 0.9}
+  m_EdgeRadius: 0
 --- !u!1 &1723302256
 GameObject:
   m_ObjectHideFlags: 0
@@ -6632,6 +6664,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1361738995}
     m_Modifications:
+    - target: {fileID: 6620014901843702443, guid: 5dc8483fae498a54bb5f055dcb441e42,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6620014901843702445, guid: 5dc8483fae498a54bb5f055dcb441e42,
         type: 3}
       propertyPath: m_BodyType
@@ -6656,6 +6693,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SleepingMode
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6620014901843702445, guid: 5dc8483fae498a54bb5f055dcb441e42,
+        type: 3}
+      propertyPath: m_Mass
+      value: 1.2737191
       objectReference: {fileID: 0}
     - target: {fileID: 6620014901843702446, guid: 5dc8483fae498a54bb5f055dcb441e42,
         type: 3}
@@ -6697,6 +6739,16 @@ PrefabInstance:
       propertyPath: m_CurrentRotation
       value: 
       objectReference: {fileID: 1361738996}
+    - target: {fileID: 6620014901843702446, guid: 5dc8483fae498a54bb5f055dcb441e42,
+        type: 3}
+      propertyPath: _SizeScalar
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6620014901843702447, guid: 5dc8483fae498a54bb5f055dcb441e42,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6620014901843702480, guid: 5dc8483fae498a54bb5f055dcb441e42,
         type: 3}
       propertyPath: m_LocalPosition.x

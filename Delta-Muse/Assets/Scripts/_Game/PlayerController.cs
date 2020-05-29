@@ -10,7 +10,6 @@ using UnityEditor;
 
 public class PlayerController : MonoBehaviour
 {
-
     //Components
     public Rigidbody2D m_rb;
     private CapsuleCollider2D m_capsuleCollider;
@@ -38,8 +37,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float m_RotationDelay = 0.3f;
 
     private bool m_StoreRotation;
-    Quaternion m_QuatDirection;
-    public bool b_dirChosen;
+    private Quaternion m_QuatDirection;
 
     private Quaternion m_desiredRotation;
     private ContactFilter2D m_contactFilter;
@@ -55,15 +53,19 @@ public class PlayerController : MonoBehaviour
     [Space(10)]
     public UnityEvent OnLandEvent;
     public bool b_SelfOrient = false;
+    public bool b_dirChosen;
 
     //Make conditional Versions of this for enabling bigger rotations
     public bool b_RotateSingle;
+    public float m_rotationDuration;
+
     private bool b_isGrounded;
     private bool b_horizL, b_horizR = false;
     public bool b_DeathRequest = false;
     private bool m_faceRight = false;
     private bool b_hasJumped = false;
-    public float m_rotationDuration;
+    private float horizDirection;
+    private bool b_itcanrotate = true;
 
     private void Awake()
     {
@@ -103,10 +105,12 @@ public class PlayerController : MonoBehaviour
 
     private void OnRotate(bool _LeftOrRight)
     {
-        if (!ReferenceEquals(m_CurrentRotation, null) && b_isGrounded)
+        if (!ReferenceEquals(m_CurrentRotation, null) && b_isGrounded && b_itcanrotate)
         {
             m_desiredRotation = GetTargetRotation(_LeftOrRight);
             StartCoroutine(m_CurrentRotation.RotateWhile(m_desiredRotation));
+            b_itcanrotate = false;
+            b_isGrounded = false;
         }
     }
 
@@ -126,10 +130,7 @@ public class PlayerController : MonoBehaviour
         if (!b_isGrounded) { WallRayCheck(); }
     }
 
-    private void LateUpdate()
-    {
-        if (!m_CurrentRotation.isRotating) { OrientUpNew(); }
-    }
+    private void LateUpdate() { if (!m_CurrentRotation.isRotating) { OrientUpNew(); } }
 
     private void OrientUpNew()
     {
@@ -190,9 +191,6 @@ public class PlayerController : MonoBehaviour
             m_capsuleCollider.size = new Vector2(.55f, .86f);
         }
     }
-
-    //ToDo: move this up
-    float horizDirection;
 
     public void Move(float _horizontalAxis)
     {
@@ -303,6 +301,7 @@ public class PlayerController : MonoBehaviour
             b_hasJumped = false;
             b_horizL = false;
             b_horizR = false;
+            b_itcanrotate = true;
             if (!wasgrounded)
             {
                 OnLandEvent.Invoke();

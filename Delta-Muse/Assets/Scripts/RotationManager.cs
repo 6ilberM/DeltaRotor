@@ -7,7 +7,7 @@ public class RotationManager : MonoBehaviour
     private Quaternion m_startRotation;
     private float m_dt;
     private PlayerController player;
-    private EasingFunction.Function _easeFunc;
+    private EasingFunction.Function m_easeFunc;
 
     public bool isRotating, m_doOnce;
     [SerializeField] float m_rDelay = 0.39f;
@@ -17,18 +17,21 @@ public class RotationManager : MonoBehaviour
     ///<summary>The type of ease</summary>
     public EasingFunction.Ease m_easeType = EasingFunction.Ease.EaseInOutQuad;
 
+    private void Awake()
+    {
+        m_easeFunc = EasingFunction.GetEasingFunction(m_easeType);
+    }
+
     private void Start()
     {
         player = Object.FindObjectOfType<PlayerController>();
     }
 
-    private void Update()
-    {
-        if (Random.value > .9f)
-        {
-            _easeFunc = EasingFunction.GetEasingFunction(m_easeType);
-        }
-    }
+#if UNITY_EDITOR
+    private void OnValidate() { if (Application.isPlaying && m_easeFunc != EasingFunction.GetEasingFunction(m_easeType)) { m_easeFunc = EasingFunction.GetEasingFunction(m_easeType); } }
+#endif
+
+
     public void Rotate(Quaternion _desiredRotation)
     {
         if (!m_doOnce)
@@ -56,16 +59,14 @@ public class RotationManager : MonoBehaviour
             //Or you could set do once back off and it can once again go through
             m_startRotation = _desiredRotation;
             //how much force should be lost after Rotating 
-            if (player.m_rb.velocity.y <= -0.5f)
-            {
-                player.m_rb.velocity = new Vector2(player.m_rb.velocity.x, player.m_rb.velocity.y * 0.25f);
-            }
+            if (player.m_rb.velocity.y <= -0.5f) { player.m_rb.velocity = new Vector2(player.m_rb.velocity.x, player.m_rb.velocity.y * 0.25f); }
+            m_doOnce = false;
         }
         else
         {
             float t = (float)m_dt / (float)m_rDelay;
 
-            float value = _easeFunc(0, 1, t);
+            float value = m_easeFunc(0, 1, t);
             // easeoutquad
             // t = (t * (2 - t));
 
@@ -75,6 +76,7 @@ public class RotationManager : MonoBehaviour
 
     public IEnumerator RotateWhile(Quaternion _rot)
     {
+        //Don't allow another Rotation if we're already undergoing one
         if (!isRotating)
         {
             isRotating = true;
@@ -83,6 +85,11 @@ public class RotationManager : MonoBehaviour
                 yield return new WaitForSeconds(Time.fixedDeltaTime);
                 Rotate(_rot);
             }
+        }
+        else
+        {
+            Debug.Log("Rotation Already Undergoing");
+            yield return default;
         }
     }
 

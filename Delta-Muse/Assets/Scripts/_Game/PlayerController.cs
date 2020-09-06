@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -96,7 +97,6 @@ public class PlayerController : MonoBehaviour
         if (m_CurrentRotation != transform.parent) { transform.SetParent(m_CurrentRotation.transform); }
     }
 
-
     private void OnDestroy()
     {
         m_inputController.onJump -= OnJump;
@@ -115,7 +115,6 @@ public class PlayerController : MonoBehaviour
     }
 
     private void OnJump() { if (!b_hasJumped) { Jump(); } }
-
 
     //ToDo: replace with overlap Checking!
     void Update()

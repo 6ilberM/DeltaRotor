@@ -13,8 +13,8 @@ public class editmodeGridSnap : MonoBehaviour
             float x, y;
 
             //Smooth movement of tiles easy placement!
-            x = Mathf.Floor(transform.position.x);
-            y = Mathf.Floor(transform.position.y);
+            x = Mathf.Round(transform.position.x);
+            y = Mathf.Round(transform.position.y);
             transform.position = new Vector3(x + .5f, y + .5f);
         }
     }
